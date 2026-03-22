@@ -1265,7 +1265,8 @@ h1,h2,h3,h4,h5 { font-family: 'Montserrat', sans-serif; }
     <div class="content-section" id="section-admin">
       <div class="section-header"><h2>⚙️ Admin Panel</h2><span class="badge badge-purple">Admin Only</span></div>
       <div class="admin-tabs">
-        <div class="admin-tab active" onclick="switchAdminTab('users')">👥 Users</div>
+        <div class="admin-tab active" onclick="switchAdminTab('overview')">📊 Overview</div>
+        <div class="admin-tab" onclick="switchAdminTab('users')">👥 Users</div>
         <div class="admin-tab" onclick="switchAdminTab('syllabus')">📖 Syllabus</div>
         <div class="admin-tab" onclick="switchAdminTab('pyq')">📝 PYQ</div>
         <div class="admin-tab" onclick="switchAdminTab('topics')">⭐ Topics</div>
@@ -1274,8 +1275,20 @@ h1,h2,h3,h4,h5 { font-family: 'Montserrat', sans-serif; }
         <div class="admin-tab" onclick="switchAdminTab('settings')">🔧 Settings</div>
       </div>
 
+      <!-- Overview -->
+      <div class="admin-content active" id="admin-overview">
+        <div class="dash-card">
+          <h3 style="margin-bottom:16px">📊 Content Status — All Branches</h3>
+          <div id="overviewGrid" style="overflow-x:auto"></div>
+        </div>
+        <div class="dash-card" style="margin-top:16px">
+          <h3 style="margin-bottom:16px">⚡ Quick Stats</h3>
+          <div id="overviewStats" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px"></div>
+        </div>
+      </div>
+
       <!-- Users -->
-      <div class="admin-content active" id="admin-users">
+      <div class="admin-content" id="admin-users">
         <div class="dash-card">
           <h3>Registered Users</h3>
           <div style="overflow-x:auto;margin-top:12px">
@@ -1430,60 +1443,264 @@ const builtinData = {
   syllabus: {
     ECE: {
       '3': [
-        { code: 'BEC301', name: 'Network Theory', units: ['Unit 1: Network Theorems & Analysis', 'Unit 2: Graph Theory & Network Topology', 'Unit 3: Transient Analysis (RLC)', 'Unit 4: Two-Port Networks & Parameters', 'Unit 5: Filters & Attenuators'] },
-        { code: 'BEC302', name: 'Electronic Devices & Circuits', units: ['Unit 1: Semiconductor Diodes & Applications', 'Unit 2: BJT Biasing & Small Signal Models', 'Unit 3: FET & MOSFET Characteristics', 'Unit 4: Feedback Amplifiers', 'Unit 5: Oscillators & Multivibrators'] },
-        { code: 'BEC303', name: 'Digital Electronics', units: ['Unit 1: Number Systems & Boolean Algebra', 'Unit 2: Combinational Circuits (MUX, DEMUX, Encoders)', 'Unit 3: Sequential Circuits (Flip-flops, Counters)', 'Unit 4: Shift Registers & Memory', 'Unit 5: ADC/DAC & PLDs'] },
-        { code: 'BAS303', name: 'Mathematics IV', units: ['Unit 1: Partial Differential Equations', 'Unit 2: Applications of PDE', 'Unit 3: Complex Variables & Analytic Functions', 'Unit 4: Contour Integration', 'Unit 5: Statistical Techniques'] },
-        { code: 'BCC301', name: 'Cyber Security', units: ['Unit 1: Introduction to Cyber Security', 'Unit 2: Cryptography Fundamentals', 'Unit 3: Network Security', 'Unit 4: Web Security & Threats', 'Unit 5: Cyber Laws & Ethics'] }
+        { code: 'BEC301', name: 'Network Theory', units: [
+          'Unit 1 — Network Theorems: Superposition, Thevenin, Norton, Maximum Power Transfer, Millman's, Reciprocity theorem',
+          'Unit 2 — Graph Theory: Graph of network, trees, co-trees, incidence matrix, tie-set & cut-set matrices, loop & nodal analysis',
+          'Unit 3 — Transient Analysis: Initial & final conditions, transient response of RL, RC, RLC circuits using Laplace transform',
+          'Unit 4 — Two-Port Networks: Z, Y, h, ABCD parameters; inter-relations; image parameters; lattice & ladder networks',
+          'Unit 5 — Filters & Attenuators: Low pass, high pass, band pass, band stop filters; m-derived filters; T & π attenuators'
+        ]},
+        { code: 'BEC302', name: 'Electronic Devices & Circuits', units: [
+          'Unit 1 — Diodes: PN junction, Zener diode, varactor, tunnel diode; rectifier circuits; clippers & clampers; regulated power supply',
+          'Unit 2 — BJT: Transistor configurations (CB, CE, CC); biasing methods; stability factor; h-parameter model; frequency response',
+          'Unit 3 — FET & MOSFET: JFET characteristics, biasing; MOSFET types (enhancement/depletion); CMOS; small signal model',
+          'Unit 4 — Amplifiers: CE, CB, CC amplifier analysis; multistage amplifiers; differential amplifier; emitter follower',
+          'Unit 5 — Feedback & Oscillators: Feedback amplifiers; Barkhausen criterion; RC phase shift; Wien bridge; Hartley; Colpitts oscillators'
+        ]},
+        { code: 'BEC303', name: 'Digital Electronics', units: [
+          'Unit 1 — Number Systems: Binary, octal, hex; BCD; Gray code; binary arithmetic; 1's & 2's complement; Boolean algebra; De Morgan's theorem',
+          'Unit 2 — Combinational Circuits: SOP/POS; Karnaugh map (2,3,4,5 variables); MUX, DEMUX, encoder, decoder, priority encoder, comparator',
+          'Unit 3 — Sequential Circuits: Latches; SR, JK, D, T flip-flops; race condition; master-slave FF; registers; shift registers',
+          'Unit 4 — Counters & Memory: Synchronous/asynchronous counters; modulo counters; RAM, ROM, PROM, EPROM, EEPROM; memory organization',
+          'Unit 5 — PLDs & ADC/DAC: PLA, PAL, FPGA; A/D conversion (flash, successive approximation); D/A conversion (R-2R ladder); sample & hold'
+        ]},
+        { code: 'BAS303', name: 'Mathematics IV (Engineering Maths)', units: [
+          'Unit 1 — Partial Differential Equations: Formation of PDE; Lagrange's method; linear PDE with constant coefficients; Charpit's method',
+          'Unit 2 — PDE Applications: Heat equation; wave equation; Laplace equation; D'Alembert's solution; Fourier series solution',
+          'Unit 3 — Complex Variables: Analytic functions; Cauchy-Riemann equations; harmonic functions; conformal mapping; bilinear transformation',
+          'Unit 4 — Complex Integration: Cauchy's integral theorem & formula; Taylor & Laurent series; poles & residues; contour integration',
+          'Unit 5 — Statistics & Probability: Probability distributions (Binomial, Poisson, Normal); correlation; regression; curve fitting; chi-square test'
+        ]},
+        { code: 'BCC301', name: 'Cyber Security / Python (Open Elective)', units: [
+          'Unit 1 — Cyber Security Basics: CIA triad; threats; vulnerabilities; attack types (phishing, malware, ransomware, SQL injection)',
+          'Unit 2 — Cryptography: Symmetric (AES, DES) & asymmetric (RSA); digital signatures; hash functions (MD5, SHA); PKI',
+          'Unit 3 — Network Security: Firewalls; IDS/IPS; VPN; SSL/TLS; network protocols security; wireless security (WPA2)',
+          'Unit 4 — Web & System Security: OWASP top 10; XSS; CSRF; authentication attacks; OS security; patch management',
+          'Unit 5 — Cyber Laws & Ethics: IT Act 2000; cyber crimes; digital forensics; incident response; ethical hacking basics'
+        ]}
       ],
       '4': [
-        { code: 'BEC401', name: 'Communication Engineering', units: ['Unit 1: AM Modulation — DSB, SSB, VSB', 'Unit 2: FM & PM Modulation', 'Unit 3: Noise in Communication Systems', 'Unit 4: Pulse Modulation — PAM, PWM, PPM, PCM', 'Unit 5: Digital Communication — ASK, FSK, PSK'] },
-        { code: 'BEC402', name: 'Analog Circuits', units: ['Unit 1: Feedback Amplifiers & Bode Plots', 'Unit 2: Oscillators — RC, LC, Crystal', 'Unit 3: Op-Amp Applications — Integrator, Differentiator, Filters', 'Unit 4: Power Amplifiers — Class A, B, AB, C', 'Unit 5: Waveform Generation & Shaping'] },
-        { code: 'BEC403', name: 'Signal & Systems', units: ['Unit 1: Classification of Signals & Systems', 'Unit 2: LTI Systems & Convolution', 'Unit 3: Fourier Series & Fourier Transform', 'Unit 4: Laplace Transform & Applications', 'Unit 5: Z-Transform & Discrete-Time Systems'] },
-        { code: 'BAS403', name: 'Mathematics / Open Elective', units: ['Unit 1: Numerical Methods', 'Unit 2: Interpolation & Approximation', 'Unit 3: Numerical Differentiation & Integration', 'Unit 4: Numerical Solution of ODE', 'Unit 5: Probability & Statistical Analysis'] },
-        { code: 'BCC401', name: 'Python Programming', units: ['Unit 1: Python Basics & Data Types', 'Unit 2: Control Structures & Functions', 'Unit 3: OOP in Python', 'Unit 4: File Handling & Exception Handling', 'Unit 5: Libraries — NumPy, Pandas, Matplotlib'] }
+        { code: 'BEC401', name: 'Communication Engineering', units: [
+          'Unit 1 — AM Modulation: DSB-FC, DSB-SC, SSB, VSB; modulation index; power relations; AM generation & detection; balanced modulator',
+          'Unit 2 — FM & PM: Frequency & phase modulation; modulation index; Carson's rule; FM bandwidth; pre-emphasis/de-emphasis; FM generation & detection',
+          'Unit 3 — Noise: Sources of noise; SNR; noise figure; noise in AM, FM systems; threshold effect; figure of merit; comparison AM vs FM',
+          'Unit 4 — Pulse Modulation: Sampling theorem; Nyquist rate; PAM, PWM, PPM; PCM — quantization, encoding, decoding; DPCM; delta modulation',
+          'Unit 5 — Digital Communication: ASK, FSK, PSK, QPSK; BER; matched filter; TDM, FDM, CDMA; superheterodyne receiver; spread spectrum'
+        ]},
+        { code: 'BEC402', name: 'Analog Circuits', units: [
+          'Unit 1 — Feedback Amplifiers: Types of feedback (voltage/current, series/shunt); effect on gain, BW, impedance; stability; Bode plots; gain & phase margin',
+          'Unit 2 — Oscillators: Barkhausen criterion; RC phase shift; Wien bridge; Hartley; Colpitts; crystal oscillator; frequency stability',
+          'Unit 3 — Op-Amp Applications: Inverting/non-inverting; summing/difference amplifier; integrator; differentiator; instrumentation amplifier; log/antilog',
+          'Unit 4 — Active Filters & Comparators: 1st & 2nd order Butterworth LPF, HPF, BPF; Chebyshev; Schmitt trigger; comparator; zero crossing detector',
+          'Unit 5 — Power Amplifiers: Class A, B, AB, C — efficiency analysis; push-pull amplifier; crossover distortion; heat sink; VCO; waveform generators'
+        ]},
+        { code: 'BEC403', name: 'Signal & Systems', units: [
+          'Unit 1 — Signals: CT & DT signal classification; basic signals (unit step, impulse, ramp, sinusoid); signal operations; even/odd decomposition',
+          'Unit 2 — LTI Systems: Impulse response; convolution integral & sum; properties of LTI systems; causal, stable, memoryless systems; correlation',
+          'Unit 3 — Fourier Analysis: Fourier series; Fourier transform & properties; DTFT; DFT; FFT algorithm; spectral analysis; Parseval's theorem',
+          'Unit 4 — Laplace Transform: Bilateral & unilateral; ROC; properties; system function H(s); poles & zeros; partial fractions; initial & final value theorems',
+          'Unit 5 — Z-Transform: Definition; ROC; properties; inverse Z-transform; system analysis; stability using Z-transform; relationship between transforms'
+        ]},
+        { code: 'BAS403', name: 'Mathematics / Open Elective', units: [
+          'Unit 1 — Numerical Methods: Errors; Newton-Raphson; bisection; regula-falsi; secant method for solving non-linear equations',
+          'Unit 2 — Interpolation: Newton's forward/backward formula; Lagrange interpolation; divided difference; Hermite interpolation',
+          'Unit 3 — Numerical Differentiation & Integration: Numerical differentiation; Trapezoidal rule; Simpson's 1/3 & 3/8 rule; Gaussian quadrature',
+          'Unit 4 — ODE Numerical Methods: Euler; modified Euler; Runge-Kutta 4th order; predictor-corrector methods; Milne's method',
+          'Unit 5 — Probability & Statistics: Random variables; probability distributions; hypothesis testing; regression analysis; ANOVA'
+        ]},
+        { code: 'BCC401', name: 'Python Programming', units: [
+          'Unit 1 — Python Basics: Variables; data types (int, float, string, list, tuple, dict, set); operators; input/output; type casting',
+          'Unit 2 — Control Structures & Functions: if-elif-else; for/while loops; break/continue; def keyword; *args, **kwargs; lambda; recursion',
+          'Unit 3 — OOP in Python: Classes & objects; __init__; inheritance; polymorphism; encapsulation; abstract classes; magic methods; decorators',
+          'Unit 4 — File Handling & Exceptions: File read/write; CSV; JSON; try-except-finally; custom exceptions; with statement',
+          'Unit 5 — Libraries: NumPy (arrays, operations); Pandas (DataFrame, read_csv); Matplotlib (plots); brief intro to Scikit-learn'
+        ]}
       ]
     },
     ME: {
       '3': [
-        { code: 'BME301', name: 'Thermodynamics', units: ['Unit 1: Basic Concepts & Zeroth Law', 'Unit 2: First Law of Thermodynamics', 'Unit 3: Second Law & Entropy', 'Unit 4: Properties of Steam & Steam Tables', 'Unit 5: Gas Power Cycles'] },
-        { code: 'BME302', name: 'Fluid Mechanics & Fluid Machines', units: ['Unit 1: Fluid Properties & Statics', 'Unit 2: Kinematics of Fluid Flow', 'Unit 3: Bernoulli\'s Equation & Applications', 'Unit 4: Pipe Flow & Head Losses', 'Unit 5: Turbines & Pumps'] },
-        { code: 'BME303', name: 'Materials Engineering', units: ['Unit 1: Crystal Structure & Imperfections', 'Unit 2: Iron-Carbon Phase Diagram', 'Unit 3: Heat Treatment Processes', 'Unit 4: Mechanical Properties & Testing', 'Unit 5: Non-Ferrous Metals & Alloys'] },
-        { code: 'BCC301', name: 'Cyber Security', units: ['Unit 1: Introduction to Cyber Security', 'Unit 2: Cryptography', 'Unit 3: Network Security', 'Unit 4: System Security', 'Unit 5: Cyber Laws'] }
+        { code: 'BME301', name: 'Thermodynamics', units: [
+          'Unit 1 — Basics & Zeroth Law: System, boundary, surroundings; intensive/extensive properties; state, path, process; zeroth law; temperature measurement',
+          'Unit 2 — First Law: Heat & work; first law for closed system; SFEE; applications to nozzle, turbine, compressor, boiler, throttling',
+          'Unit 3 — Second Law: Kelvin-Planck & Clausius statements; reversible/irreversible processes; Carnot cycle; Carnot theorem; COP of refrigerator',
+          'Unit 4 — Entropy & Availability: Clausius inequality; entropy change; T-S diagram; entropy generation; availability & irreversibility; Helmholtz/Gibbs functions',
+          'Unit 5 — Gas & Steam: Perfect gas laws; gas mixtures; Dalton's law; properties of steam; steam tables; wet, dry, superheated steam; Mollier diagram'
+        ]},
+        { code: 'BME302', name: 'Fluid Mechanics & Fluid Machines', units: [
+          'Unit 1 — Fluid Statics: Properties of fluids; viscosity; pressure measurement; manometers; hydrostatic forces on surfaces; buoyancy; flotation',
+          'Unit 2 — Fluid Kinematics: Types of flow; continuity equation; stream function; velocity potential; rotational/irrotational flow; flow net',
+          'Unit 3 — Fluid Dynamics: Euler's & Bernoulli's equation; applications; Venturimeter; orifice; notches; weirs; flow through pipes; Darcy-Weisbach equation',
+          'Unit 4 — Boundary Layer & Dimensional Analysis: Boundary layer concept; drag & lift; Buckingham π theorem; Reynolds & Froude model laws',
+          'Unit 5 — Turbines & Pumps: Pelton wheel; Francis & Kaplan turbines; velocity triangles; specific speed; centrifugal pump; cavitation; pump characteristics'
+        ]},
+        { code: 'BME303', name: 'Materials Engineering', units: [
+          'Unit 1 — Crystal Structure: Unit cell; BCC, FCC, HCP; Miller indices; crystal imperfections; point, line, surface defects; diffusion in solids',
+          'Unit 2 — Phase Diagrams: Gibbs phase rule; lever rule; iron-carbon diagram; eutectic, eutectoid, peritectic reactions; microstructure of steels',
+          'Unit 3 — Heat Treatment: Annealing; normalizing; hardening; tempering; case hardening (carburizing, nitriding); TTT & CCT diagrams',
+          'Unit 4 — Mechanical Properties: Stress-strain; tensile, impact, fatigue, creep tests; hardness (Brinell, Vickers, Rockwell); fracture mechanics',
+          'Unit 5 — Engineering Alloys: Cast irons; alloy steels; aluminum alloys; copper alloys; composites; ceramics; polymers; smart materials'
+        ]},
+        { code: 'BCC301', name: 'Cyber Security / Python (Open Elective)', units: [
+          'Unit 1 — Intro to Cyber Security: Threats, vulnerabilities, attack types; CIA triad; cyber crime categories',
+          'Unit 2 — Cryptography: Symmetric & asymmetric encryption; RSA; digital signatures; hash functions; certificates',
+          'Unit 3 — Network Security: Firewalls, IDS/IPS, VPN; wireless security; DoS/DDoS attacks; intrusion detection',
+          'Unit 4 — System Security: OS security; malware types; authentication; access control; patch management',
+          'Unit 5 — Cyber Laws: IT Act 2000; cyber forensics; incident response; ethical hacking; social engineering'
+        ]}
       ],
       '4': [
-        { code: 'BME401', name: 'Applied Thermodynamics', units: ['Unit 1: Vapour Power Cycles — Rankine, Modified Rankine', 'Unit 2: Gas Power Cycles — Otto, Diesel, Dual, Brayton', 'Unit 3: Steam Turbines — Impulse & Reaction', 'Unit 4: Air Compressors — Reciprocating & Centrifugal', 'Unit 5: Boilers — Types, Mountings & Accessories'] },
-        { code: 'BME402', name: 'Engineering Mechanics & SOM', units: ['Unit 1: Static Analysis — Trusses, Frames, Cables', 'Unit 2: Moment of Inertia & Centroid', 'Unit 3: Stresses & Strains, Principal Stresses', 'Unit 4: Bending Moment & Shear Force Diagrams', 'Unit 5: Torsion, Columns & Curved Beams'] },
-        { code: 'BME403', name: 'Manufacturing Processes', units: ['Unit 1: Metal Casting — Patterns, Sand Casting, Special Casting', 'Unit 2: Welding — Arc, Gas, TIG, MIG, Resistance', 'Unit 3: Metal Forming — Rolling, Forging, Extrusion, Drawing', 'Unit 4: Metal Cutting — Tool Geometry, Cutting Forces, Tool Wear', 'Unit 5: Unconventional Machining — AJM, USM, EDM, LBM'] },
-        { code: 'BCC401', name: 'Python Programming', units: ['Unit 1: Python Basics', 'Unit 2: Functions & Modules', 'Unit 3: OOP Concepts', 'Unit 4: File I/O', 'Unit 5: Data Science Libraries'] }
+        { code: 'BME401', name: 'Applied Thermodynamics', units: [
+          'Unit 1 — Vapour Power Cycles: Rankine cycle — T-S diagram, efficiency; modified Rankine; reheat Rankine; regenerative cycle; binary vapour cycle',
+          'Unit 2 — Gas Power Cycles: Otto; Diesel; Dual cycle — efficiency & MEP derivations; Brayton cycle; gas turbine with intercooling, reheating, regeneration',
+          'Unit 3 — Steam Turbines: Impulse & reaction turbines; velocity triangles; work done; blade efficiency; degree of reaction; compounding — pressure & velocity',
+          'Unit 4 — Boilers & Compressors: Cochran, Lancashire, Babcock & Wilcox boilers; boiler mountings & accessories; draught; air compressors; reciprocating & rotary',
+          'Unit 5 — Nozzles & Refrigeration: Nozzle flow; critical pressure; mass flow rate; steam nozzle; vapour compression refrigeration; COP; air refrigeration cycles'
+        ]},
+        { code: 'BME402', name: 'Engineering Mechanics & SOM', units: [
+          'Unit 1 — Static Analysis: Equilibrium of forces; trusses (method of joints & sections); frames; cables; virtual work; friction — wedge, screw, belt',
+          'Unit 2 — MOI & Centroid: Centroid of plane figures; MOI — parallel & perpendicular axis theorems; product of inertia; mass MOI; principal axes',
+          'Unit 3 — Stress & Strain: Simple stresses; composite bars; thermal stresses; principal stresses; Mohr's circle; theories of failure',
+          'Unit 4 — Bending & Shear: SFD & BMD; bending equation; section modulus; bending stresses; shear stress in beams; unsymmetrical bending',
+          'Unit 5 — Deflection & Torsion: Macaulay's method; Castigliano's theorem; torsion equation; solid & hollow shafts; Euler's column buckling; Lame's equation for thick cylinders'
+        ]},
+        { code: 'BME403', name: 'Manufacturing Processes', units: [
+          'Unit 1 — Casting: Sand casting; patterns & allowances; moulding; gating system; risers; investment casting; die casting; centrifugal casting; casting defects',
+          'Unit 2 — Welding: Arc welding (SMAW); TIG (GTAW); MIG (GMAW); resistance welding; gas welding; welding defects; NDT methods; brazing & soldering',
+          'Unit 3 — Metal Forming: Hot & cold working; rolling; forging; extrusion; drawing; sheet metal operations — blanking, punching, bending, deep drawing',
+          'Unit 4 — Metal Cutting: Tool geometry (ASA/ORS); chip formation; Merchant's force circle; cutting forces; tool wear (crater & flank); tool life (Taylor's equation); machining operations',
+          'Unit 5 — Unconventional Machining: AJM; WJM; USM; EDM; ECM; LBM; EBM; PAM; comparison & selection; grinding; honing; lapping; superfinishing'
+        ]},
+        { code: 'BCC401', name: 'Python Programming', units: [
+          'Unit 1 — Python Basics: Data types; operators; control flow; functions; modules',
+          'Unit 2 — OOP: Classes; inheritance; polymorphism; encapsulation; magic methods',
+          'Unit 3 — Data Structures: Lists; tuples; dicts; sets; comprehensions; iterators',
+          'Unit 4 — File Handling: File I/O; CSV; JSON; exception handling; with statement',
+          'Unit 5 — Scientific Libraries: NumPy; Pandas; Matplotlib; SciPy basics for engineering'
+        ]}
       ]
     },
     EE: {
       '3': [
-        { code: 'BEE301', name: 'Electromagnetic Field Theory', units: ['Unit 1: Vector Analysis & Coordinate Systems', 'Unit 2: Electrostatics — Coulomb\'s Law, Gauss Law', 'Unit 3: Magnetostatics — Biot-Savart, Ampere\'s Law', 'Unit 4: Electromagnetic Induction', 'Unit 5: Maxwell\'s Equations & EM Waves'] },
-        { code: 'BEE302', name: 'Electrical Measurements & Instrumentation', units: ['Unit 1: Measurement Systems & Errors', 'Unit 2: Analog Instruments — PMMC, MI, Dynamometer', 'Unit 3: Bridges — Wheatstone, Maxwell, Schering', 'Unit 4: Electronic Instruments — DVM, CRO', 'Unit 5: Transducers & Signal Conditioning'] },
-        { code: 'BEE303', name: 'Basic Signals & Systems', units: ['Unit 1: Signal Classification & Operations', 'Unit 2: LTI Systems & Convolution', 'Unit 3: Fourier Analysis', 'Unit 4: Laplace Transform', 'Unit 5: Z-Transform'] },
-        { code: 'BCC301', name: 'Cyber Security', units: ['Unit 1: Cyber Security Basics', 'Unit 2: Cryptography', 'Unit 3: Network Security', 'Unit 4: System Security', 'Unit 5: Legal Aspects'] }
+        { code: 'BEE301', name: 'Electromagnetic Field Theory', units: [
+          'Unit 1 — Vector Analysis: Coordinate systems (Cartesian, cylindrical, spherical); gradient; divergence; curl; Stokes & Gauss divergence theorems',
+          'Unit 2 — Electrostatics: Coulomb's law; electric field intensity; Gauss's law; electric potential; capacitance; boundary conditions; Laplace & Poisson equations',
+          'Unit 3 — Magnetostatics: Biot-Savart law; Ampere's circuit law; magnetic flux density; magnetic vector potential; inductance; boundary conditions',
+          'Unit 4 — Time-Varying Fields: Faraday's law; displacement current; Maxwell's equations (integral & differential form); boundary conditions; retarded potentials',
+          'Unit 5 — EM Wave Propagation: Wave equation; plane waves in free space & dielectrics; reflection & refraction; Poynting vector; transmission lines; skin effect'
+        ]},
+        { code: 'BEE302', name: 'Electrical Measurements & Instrumentation', units: [
+          'Unit 1 — Measurement Basics: Standards; errors (systematic, random); sensitivity; accuracy; precision; loading effect; calibration; SI units',
+          'Unit 2 — Analog Instruments: PMMC; MI instruments; electrodynamometer; induction type; wattmeter; energy meter; power factor meter',
+          'Unit 3 — AC Bridges: Wheatstone; Maxwell; Hay; Schering; Anderson; Wien bridges; Q-meter; measurement of L, C, R',
+          'Unit 4 — Electronic Instruments: CRO — block diagram, applications; digital voltmeter; frequency counter; signal generators; spectrum analyzer',
+          'Unit 5 — Transducers & Signal Conditioning: LVDT; strain gauge; thermocouple; RTD; piezoelectric; Hall effect; signal conditioning; amplifiers; filters'
+        ]},
+        { code: 'BEE303', name: 'Basic Signals & Systems', units: [
+          'Unit 1 — Signals: CT & DT signals; basic signal types; signal operations (shifting, scaling, reversal); even/odd decomposition; energy & power signals',
+          'Unit 2 — Systems: System properties (linearity, time-invariance, causality, stability, memory); impulse response; convolution; correlation',
+          'Unit 3 — Fourier Analysis: Fourier series; Fourier transform; properties; DTFT; frequency spectrum; Parseval's theorem; sampling theorem',
+          'Unit 4 — Laplace Transform: Definition; ROC; properties; initial & final value theorems; system function; poles-zeros; inverse Laplace',
+          'Unit 5 — Z-Transform: Definition; ROC; properties; inverse Z-transform; DT system analysis; stability; relationship with DTFT'
+        ]},
+        { code: 'BCC301', name: 'Cyber Security (Open Elective)', units: [
+          'Unit 1 — Cyber Security Fundamentals: CIA triad; threats & vulnerabilities; attack types',
+          'Unit 2 — Cryptography: Encryption algorithms; public key infrastructure; digital certificates',
+          'Unit 3 — Network Security: Firewalls; VPN; intrusion detection; wireless security',
+          'Unit 4 — System Security: OS security; access control; authentication; malware analysis',
+          'Unit 5 — Cyber Laws: IT Act 2000; digital forensics; ethical hacking; incident response'
+        ]}
       ],
       '4': [
-        { code: 'BEE401', name: 'Digital Electronics', units: ['Unit 1: Number Systems & Boolean Algebra', 'Unit 2: Combinational Logic Design', 'Unit 3: Sequential Logic — Counters & Registers', 'Unit 4: PLDs & Memory Devices', 'Unit 5: ADC/DAC Converters'] },
-        { code: 'BEE402', name: 'Electrical Machines-I', units: ['Unit 1: DC Machines — Construction & EMF Equation', 'Unit 2: DC Generator Characteristics', 'Unit 3: DC Motor — Torque & Speed Characteristics', 'Unit 4: Transformers — Construction & EMF Equation', 'Unit 5: Transformer Testing & Efficiency'] },
-        { code: 'BEE403', name: 'Network Analysis & Synthesis', units: ['Unit 1: Network Theorems', 'Unit 2: Graph Theory', 'Unit 3: Two-Port Networks', 'Unit 4: Network Functions & Poles/Zeros', 'Unit 5: Filter Design & Synthesis'] },
-        { code: 'BCC401', name: 'Python Programming', units: ['Unit 1: Python Fundamentals', 'Unit 2: OOP in Python', 'Unit 3: Data Structures', 'Unit 4: File Handling', 'Unit 5: Libraries'] }
+        { code: 'BEE401', name: 'Digital Electronics', units: [
+          'Unit 1 — Number Systems & Logic: Binary; BCD; Gray code; Boolean algebra; De Morgan's theorem; SOP & POS forms; Karnaugh map simplification',
+          'Unit 2 — Combinational Design: Adder; subtractor; multiplier; MUX; DEMUX; encoder; decoder; magnitude comparator; code converters',
+          'Unit 3 — Sequential Circuits: SR, JK, D, T flip-flops; race condition; master-slave; registers; SISO, SIPO, PISO, PIPO shift registers',
+          'Unit 4 — Counters & Memory: Ripple & synchronous counters; modulo-N; ring; Johnson; MOD-K; RAM; ROM; PROM; EPROM; EEPROM; Flash memory',
+          'Unit 5 — PLDs & ADC/DAC: PLA; PAL; CPLD; FPGA; D/A converters (R-2R, weighted); A/D converters (flash, successive approximation, dual slope)'
+        ]},
+        { code: 'BEE402', name: 'Electrical Machines-I', units: [
+          'Unit 1 — DC Machine Basics: Construction; working principle; EMF equation; armature winding (lap & wave); commutation; armature reaction',
+          'Unit 2 — DC Generators: Types (separately excited, self-excited: shunt, series, compound); characteristics (OCC, load); efficiency; parallel operation',
+          'Unit 3 — DC Motors: Back EMF; torque equation; types (shunt, series, compound); speed-torque characteristics; speed control methods; starters',
+          'Unit 4 — Transformers: Construction; EMF equation; ideal vs practical; equivalent circuit; losses (copper & iron); voltage regulation; efficiency; OC & SC tests',
+          'Unit 5 — Special Machines & 3-Phase: Auto-transformer; instrument transformers (CT, PT); 3-phase transformer connections; per-unit system; Scott connection'
+        ]},
+        { code: 'BEE403', name: 'Network Analysis & Synthesis', units: [
+          'Unit 1 — Network Theorems: Superposition; Thevenin; Norton; Maximum power; Tellegen; Reciprocity; Millman; Compensation theorem',
+          'Unit 2 — Graph Theory: Graph; tree; co-tree; incidence matrix; fundamental cut-set; loop matrix; KVL & KCL using matrices',
+          'Unit 3 — Two-Port Networks: Z, Y, ABCD, h-parameters; conversion; cascading; image parameters; network functions; poles & zeros',
+          'Unit 4 — Network Functions: Driving point & transfer functions; Hurwitz polynomial; positive real functions; network stability; Bode plots',
+          'Unit 5 — Filter Synthesis: Image parameter method; LC ladder networks; low-pass, high-pass, band-pass filters; Butterworth & Chebyshev approximation'
+        ]},
+        { code: 'BCC401', name: 'Python Programming', units: [
+          'Unit 1 — Python Fundamentals: Data types; operators; control structures; functions; modules; packages',
+          'Unit 2 — OOP in Python: Classes; inheritance; polymorphism; operator overloading; abstract classes',
+          'Unit 3 — Advanced Features: Decorators; generators; iterators; comprehensions; closures; lambda',
+          'Unit 4 — File I/O & Exceptions: File handling; CSV; JSON; try-except-finally; custom exceptions',
+          'Unit 5 — Engineering Libraries: NumPy for matrix operations; Matplotlib for plotting; SciPy for signals'
+        ]}
       ]
     },
     CSE: {
       '3': [
-        { code: 'BCS301', name: 'Data Structure', units: ['Unit 1: Arrays, Linked Lists, Stacks & Queues', 'Unit 2: Trees — Binary, BST, AVL, B-Trees', 'Unit 3: Graphs — BFS, DFS, Spanning Trees', 'Unit 4: Sorting — Merge, Quick, Heap Sort', 'Unit 5: Hashing & Collision Resolution'] },
-        { code: 'BCS302', name: 'Computer Organization & Architecture', units: ['Unit 1: Basic Structure of Computers', 'Unit 2: Machine Instructions & Addressing Modes', 'Unit 3: CPU Design — ALU, Control Unit', 'Unit 4: Memory Hierarchy — Cache, Virtual Memory', 'Unit 5: I/O Organization & Peripheral Devices'] },
-        { code: 'BCS303', name: 'Discrete Structures & Theory of Logic', units: ['Unit 1: Set Theory & Relations', 'Unit 2: Functions & Pigeonhole Principle', 'Unit 3: Graph Theory', 'Unit 4: Propositional & Predicate Logic', 'Unit 5: Automata Theory Basics'] },
-        { code: 'BCC301', name: 'Cyber Security', units: ['Unit 1: Introduction', 'Unit 2: Cryptography', 'Unit 3: Network Security', 'Unit 4: Web Security', 'Unit 5: Cyber Laws'] }
+        { code: 'BCS301', name: 'Data Structure', units: [
+          'Unit 1 — Linear DS: Arrays (1D, 2D); singly & doubly linked list; circular list; stack (array & linked); queue — simple, circular, deque, priority queue',
+          'Unit 2 — Trees: Binary tree; traversals (inorder, preorder, postorder); BST — insertion, deletion, search; AVL tree — rotations; B-tree; B+ tree; heap',
+          'Unit 3 — Graphs: Representation (adjacency matrix/list); BFS; DFS; spanning trees (Kruskal, Prim); shortest path (Dijkstra, Bellman-Ford); topological sort',
+          'Unit 4 — Sorting & Searching: Bubble; selection; insertion; merge sort; quick sort; heap sort; radix sort; binary search; hashing — chaining, open addressing',
+          'Unit 5 — Advanced Topics: Tries; segment trees; disjoint sets (Union-Find); dynamic programming on trees; string matching (KMP, Rabin-Karp)'
+        ]},
+        { code: 'BCS302', name: 'Computer Organization & Architecture', units: [
+          'Unit 1 — Basic Structure: Components; registers; buses; instruction cycle; addressing modes; instruction formats; RISC vs CISC; Flynn's taxonomy',
+          'Unit 2 — ALU & Control: ALU design; half/full adder; multiplier; Booth's algorithm; floating point representation (IEEE 754); hardwired vs microprogrammed control',
+          'Unit 3 — Memory: Hierarchy; cache (direct mapped, set associative, fully associative); replacement policies; virtual memory; paging; TLB; segmentation',
+          'Unit 4 — I/O Organization: I/O interfaces; programmed I/O; interrupt-driven I/O; DMA; I/O processors; USB; PCI bus; memory-mapped I/O',
+          'Unit 5 — Pipelining & Parallelism: Instruction pipelining; pipeline hazards (structural, data, control); forwarding; stalls; superscalar; multicore processors'
+        ]},
+        { code: 'BCS303', name: 'Discrete Structures & Theory of Logic', units: [
+          'Unit 1 — Set Theory & Relations: Sets; Venn diagrams; set operations; power set; Cartesian product; relations; properties (reflexive, symmetric, transitive); equivalence classes',
+          'Unit 2 — Functions & Combinatorics: Types of functions; bijection; composition; inverse; counting — permutations, combinations; Pigeonhole principle; inclusion-exclusion',
+          'Unit 3 — Graph Theory: Paths; cycles; connectivity; Euler & Hamiltonian paths; planarity; coloring; trees; spanning trees; Prüfer sequence',
+          'Unit 4 — Propositional Logic: Propositions; connectives; truth tables; tautology; logical equivalences; normal forms (CNF, DNF); resolution; proof methods',
+          'Unit 5 — Predicate Logic & Algebraic Structures: Predicates; quantifiers; rules of inference; groups; rings; fields; lattices; Boolean algebra'
+        ]},
+        { code: 'BCC301', name: 'Cyber Security / Python (Open Elective)', units: [
+          'Unit 1 — Intro to Cyber Security: Threats; vulnerabilities; CIA triad; cyber crimes; attack types',
+          'Unit 2 — Cryptography: Symmetric & asymmetric; RSA; hashing; digital signatures; PKI',
+          'Unit 3 — Web Security: OWASP top 10; SQL injection; XSS; CSRF; authentication attacks',
+          'Unit 4 — Network Security: Firewalls; IDS; VPN; DNS security; Wi-Fi security; packet sniffing',
+          'Unit 5 — Cyber Laws: IT Act 2000 amendments; GDPR basics; forensics; ethical hacking; bug bounty'
+        ]}
       ],
       '4': [
-        { code: 'BCS401', name: 'Operating System', units: ['Unit 1: OS Concepts — Process & Thread Management', 'Unit 2: CPU Scheduling Algorithms', 'Unit 3: Process Synchronization & Deadlock', 'Unit 4: Memory Management — Paging, Segmentation', 'Unit 5: File Systems & I/O Management'] },
-        { code: 'BCS402', name: 'Theory of Automata & Formal Languages', units: ['Unit 1: Finite Automata — DFA, NFA', 'Unit 2: Regular Expressions & Pumping Lemma', 'Unit 3: Context Free Grammar & PDA', 'Unit 4: Turing Machines', 'Unit 5: Decidability & Complexity'] },
-        { code: 'BCS403', name: 'OOP with Java', units: ['Unit 1: Java Basics & OOP Concepts', 'Unit 2: Inheritance & Polymorphism', 'Unit 3: Interfaces, Packages & Exception Handling', 'Unit 4: Multithreading & I/O Streams', 'Unit 5: Collections Framework & Generics'] },
-        { code: 'BCC401', name: 'Python Programming', units: ['Unit 1: Python Basics', 'Unit 2: OOP in Python', 'Unit 3: Modules & Packages', 'Unit 4: File Handling', 'Unit 5: Data Libraries'] }
+        { code: 'BCS401', name: 'Operating System', units: [
+          'Unit 1 — Process Management: OS types; process concept; PCB; process states & transitions; process creation (fork); context switching; IPC; threads vs processes',
+          'Unit 2 — CPU Scheduling: Scheduling criteria; FCFS; SJF (preemptive = SRTF); Round Robin; Priority (preemptive & non-preemptive); MLFQ; Gantt charts; avg WT & TAT',
+          'Unit 3 — Synchronization & Deadlock: Critical section; Peterson's & Dekker's solution; semaphores; Producer-Consumer; Readers-Writers; Dining Philosophers; deadlock conditions; Banker's algorithm',
+          'Unit 4 — Memory Management: Fixed & variable partitioning; paging; segmentation; TLB; virtual memory; demand paging; page replacement (FIFO, LRU, Optimal); thrashing',
+          'Unit 5 — File & I/O Systems: File attributes & operations; directory structures; file allocation (contiguous, linked, indexed); disk scheduling (SSTF, SCAN, LOOK, C-LOOK); RAID 0,1,5'
+        ]},
+        { code: 'BCS402', name: 'Theory of Automata & Formal Languages', units: [
+          'Unit 1 — Finite Automata: DFA (formal definition, transition table, diagram); NFA; ε-NFA; NFA to DFA conversion (subset construction); DFA minimization (table filling)',
+          'Unit 2 — Regular Languages: Regular expressions; Arden's theorem; Kleene's theorem; Pumping lemma proof; closure properties; Myhill-Nerode theorem; Mealy & Moore machines',
+          'Unit 3 — Context Free Grammar: CFG formal definition; derivation trees; ambiguity; simplification (useless, ε, unit productions); CNF; GNF; pumping lemma for CFL; Chomsky hierarchy',
+          'Unit 4 — Pushdown Automata: PDA formal definition; acceptance (empty stack vs final state); DPDA vs NPDA; two-stack PDA; CFG to PDA conversion; PDA to CFG',
+          'Unit 5 — Turing Machines: TM formal definition; instantaneous description; variants (multi-tape, non-deterministic, UTM); Church's thesis; halting problem; PCP; recursive & RE languages'
+        ]},
+        { code: 'BCS403', name: 'OOP with Java', units: [
+          'Unit 1 — Java Basics: JVM; JDK; JRE; bytecode; data types; operators; control structures; arrays; strings; String methods; StringBuilder; platform independence',
+          'Unit 2 — OOP & Exception Handling: Classes & objects; constructors; inheritance; method overriding & overloading; polymorphism; abstract classes; interfaces; exception hierarchy; try-catch-finally; throw vs throws',
+          'Unit 3 — Functional Programming: Functional interfaces; @FunctionalInterface; lambda expressions; method references; Stream API — filter, map, reduce, collect; sorted, distinct; Optional class; annotations',
+          'Unit 4 — Collections Framework: Collection hierarchy (List, Set, Queue, Map); ArrayList vs LinkedList; HashMap; TreeMap; HashSet; Iterator; Comparator; Comparable; generics; Collections utility class',
+          'Unit 5 — Spring Framework: IoC container; Dependency Injection (constructor, setter, field); Spring beans; bean lifecycle; ApplicationContext; Spring Boot — auto-configuration; @RestController; CRUD REST API; Spring MVC basics'
+        ]},
+        { code: 'BCC401', name: 'Python Programming', units: [
+          'Unit 1 — Python Basics: Syntax; data types; type casting; operators; control flow; functions; scope (LEGB)',
+          'Unit 2 — OOP in Python: Classes; __init__; inheritance; multiple inheritance; polymorphism; @property; abstract classes',
+          'Unit 3 — Advanced Python: Decorators; generators; context managers; comprehensions; closures; *args, **kwargs',
+          'Unit 4 — File I/O: Text & binary files; CSV; JSON; pickle; exception handling; logging module',
+          'Unit 5 — Data Science Libraries: NumPy arrays; Pandas DataFrame; Matplotlib plots; brief Scikit-learn intro'
+        ]}
       ]
     },
     Civil: {
@@ -1496,6 +1713,7 @@ const builtinData = {
       '7': [{ code: 'BCE701', name: 'Civil Sem 7 — Coming Soon', units: ['Data will be added by admin'] }],
       '8': [{ code: 'BCE801', name: 'Civil Sem 8 — Coming Soon', units: ['Data will be added by admin'] }]
     }
+  }
   },
   pyq: {
     CSE: {
@@ -1731,65 +1949,254 @@ const builtinData = {
   },
   topics: {
     ECE: {
-      '4': [
-        { code: 'BEC401', title: 'AM Modulation & Power Calculation', stars: '⭐⭐', freq: '4/4 years', content: 'AM Wave: v(t) = Vc(1 + ma·cosωmt)cosωct\n\nPower: Pt = Pc(1 + ma²/2)\n\nFor ma=1: Pt = 1.5 Pc\n\nBandwidth = 2fm\n\nModulation Index: ma = Em/Ec = (Emax-Emin)/(Emax+Emin)\n\nNUMERICAL TRICK: If ma = 0.8 and Pc = 10kW\n→ Pt = 10(1 + 0.64/2) = 10 × 1.32 = 13.2 kW\n\nSideband power = Pc·ma²/2 each\nTotal sideband power = Pc·ma²' },
-        { code: 'BEC401', title: 'FM vs PM & Superheterodyne Receiver', stars: '⭐⭐', freq: '4/4 years', content: 'FM: Δf = kf·Am → modulation index mf = Δf/fm\nBW (Carson\'s rule) = 2(Δf + fm) = 2fm(mf + 1)\n\nPM: Δφ = kp·Am → mp = kp·Am (independent of fm)\n\nSuperheterodyne Receiver Blocks:\n1. RF Amplifier → Select station\n2. Mixer → Frequency conversion\n3. Local Oscillator → fLO = fRF + fIF\n4. IF Amplifier → Fixed 455 kHz (AM)\n5. Detector → AM/FM Demodulation\n6. AF Amplifier → Audio output\n\nImage frequency = fRF + 2×fIF\nImage rejection ratio = √(1 + Q²·ρ²)' },
-        { code: 'BEC401', title: 'PCM & Sampling Theorem', stars: '⭐⭐', freq: '4/4 years', content: 'Nyquist Rate: fs ≥ 2fm (minimum sampling frequency)\n\nPCM Steps:\n1. Sampling (PAM signal)\n2. Quantization (2ⁿ levels for n bits)\n3. Encoding (Binary code)\n\nQuantization Noise: Nq = Δ²/12 where Δ = step size\nSNR for PCM ≈ 6.02n + 1.76 dB\n\nBandwidth of PCM = n × fs/2\n\nFor 8-bit PCM with fm=4kHz:\nfs = 8kHz, bits = 64000 bps\nBW = 32 kHz' },
-        { code: 'BEC402', title: 'BJT Amplifier & Feedback Analysis', stars: '⭐⭐', freq: '4/4 years', content: 'CE Amplifier Voltage Gain: Av = -hfe·Rc/hie\n\nWith Negative Feedback:\nAf = A/(1 + Aβ)\nBWf = BW(1 + Aβ)\nRif = Ri(1 + Aβ) [for series feedback]\nRof = Ro/(1 + Aβ) [for shunt feedback]\n\nDesensitivity factor = (1 + Aβ)\n\nFour Types of Feedback:\n1. Voltage series → High Rin, Low Rout\n2. Voltage shunt → Low Rin, Low Rout\n3. Current series → High Rin, High Rout\n4. Current shunt → Low Rin, High Rout' },
-        { code: 'BEC402', title: 'Oscillators — Barkhausen & RC/LC', stars: '⭐⭐', freq: '4/4 years', content: 'Barkhausen Criterion:\n|Aβ| = 1 and ∠Aβ = 0° (or 360°)\n\nRC Phase Shift Oscillator:\nf = 1/(2π√6·RC)\nMinimum A = 29\n\nWein Bridge Oscillator:\nf = 1/(2πRC)\nA = 3 (minimum for oscillation)\n\nHartley Oscillator:\nf = 1/(2π√((L1+L2)C))\nβ = L1/L2\n\nColpitts Oscillator:\nf = 1/(2π√(LC_eq)) where Ceq = C1C2/(C1+C2)\nβ = C1/C2' },
-        { code: 'BEC403', title: 'Fourier Transform Properties', stars: '⭐⭐', freq: '4/4 years', content: 'Key Fourier Transform Pairs:\nδ(t) ↔ 1\nu(t) ↔ πδ(f) + 1/j2πf\ne^(-at)u(t) ↔ 1/(a+j2πf)\nrect(t/τ) ↔ τ·sinc(fτ)\n\nProperties to Remember:\n• Linearity: ax(t)+by(t) ↔ aX(f)+bY(f)\n• Time Shift: x(t-t₀) ↔ X(f)e^(-j2πft₀)\n• Frequency Shift: x(t)e^(j2πf₀t) ↔ X(f-f₀)\n• Duality: X(t) ↔ x(-f)\n• Convolution: x(t)*y(t) ↔ X(f)·Y(f)\n• Parseval: ∫|x(t)|²dt = ∫|X(f)|²df' },
-        { code: 'BEC403', title: 'Laplace & Z-Transform', stars: '⭐⭐', freq: '4/4 years', content: 'Laplace Transform Pairs:\nu(t) ↔ 1/s\ne^(-at)u(t) ↔ 1/(s+a)\nδ(t) ↔ 1\ntu(t) ↔ 1/s²\n\nInitial Value Theorem: x(0+) = lim s→∞ sX(s)\nFinal Value Theorem: x(∞) = lim s→0 sX(s)\n\nZ-Transform Pairs:\nδ[n] ↔ 1\nu[n] ↔ z/(z-1)\naⁿu[n] ↔ z/(z-a)\n\nROC Rules:\n• Right-sided: |z| > |pole|\n• Left-sided: |z| < |pole|\n• Two-sided: ring region\n\nSystem Stability: Poles inside unit circle' }
-      ],
       '3': [
-        { code: 'BEC301', title: 'Network Theorems', stars: '⭐⭐', freq: '4/4 years', content: 'Thevenin\'s Theorem:\nVth = Open circuit voltage at terminals\nRth = Resistance looking into terminals (sources deactivated)\n\nNorton\'s Theorem:\nIn = Short circuit current\nRn = Rth\n\nConversion: Vth = In × Rth\n\nMaximum Power Transfer:\nRL = Rth for maximum power\nPmax = Vth²/4Rth\n\nSuperposition: Applicable only to linear circuits\nMillman\'s Theorem: For parallel voltage sources' }
+        { code: 'BEC301', title: 'Thevenin & Norton Theorem — SURE SHOT', stars: '⭐⭐', freq: '4/4 years', content: "Thevenin's Theorem:\nVth = Open circuit voltage across terminals A-B\nRth = Equivalent resistance (deactivate all independent sources)\n\nSteps:\n1. Remove load RL from terminals\n2. Find Voc = Vth (open circuit voltage)\n3. Deactivate sources (V→short, I→open)\n4. Find Rth looking into terminals\n5. Connect Vth + Rth + RL\n\nNorton's Theorem:\nIn = Short circuit current\nRn = Rth (same as Thevenin)\n\nConversion: Vth = In × Rth\n\nMax Power Transfer: RL = Rth → Pmax = Vth²/4Rth\n\nNUMERICAL TRICK:\nIf circuit has dependent source → use Voc/Isc method for Rth\nRth = Voc/Isc" },
+        { code: 'BEC301', title: 'Two-Port Network Parameters — Very Imp', stars: '⭐⭐', freq: '4/4 years', content: 'Z-Parameters (Open circuit):\nV1 = Z11·I1 + Z12·I2\nV2 = Z21·I1 + Z22·I2\nZ11 = V1/I1|I2=0 (input impedance, output open)\nZ12 = V1/I2|I1=0 (reverse transfer impedance)\n\nY-Parameters (Short circuit):\nI1 = Y11·V1 + Y12·V2\nI2 = Y21·V1 + Y22·V2\n\nh-Parameters (Hybrid — used in BJT):\nV1 = h11·I1 + h12·V2\nI2 = h21·I1 + h22·V2\nh11=hie, h12=hre, h21=hfe, h22=hoe\n\nABCD (Transmission):\nV1 = A·V2 - B·I2\nI1 = C·V2 - D·I2\nAD - BC = 1 (reciprocal network)\nA = D (symmetrical network)' },
+        { code: 'BEC301', title: 'RLC Transient Analysis — Laplace Method', stars: '⭐⭐', freq: '3/4 years', content: 'Initial Conditions:\nInductor: iL(0+) = iL(0-) [current cannot change instantly]\nCapacitor: vC(0+) = vC(0-) [voltage cannot change instantly]\n\nRL Circuit (DC excitation):\ni(t) = (V/R)(1 - e^(-t/τ)) where τ = L/R\nAt t=τ: i = 63.2% of final value\n\nRC Circuit (DC excitation):\nv(t) = V(1 - e^(-t/τ)) where τ = RC\n\nRLC Series (DC):\nCharacteristic equation: s² + (R/L)s + 1/LC = 0\nα = R/2L (damping), ω₀ = 1/√LC\nOverdamped: α > ω₀\nCritically damped: α = ω₀\nUnderdamped: α < ω₀' },
+        { code: 'BEC302', title: 'BJT Biasing & h-Parameter Model', stars: '⭐⭐', freq: '4/4 years', content: 'Voltage Divider Bias (most stable):\nVB = VCC × R2/(R1+R2)\nIE ≈ (VB - VBE)/RE\nIC ≈ IE (since IB very small)\nVC = VCC - IC×RC\n\nStability Factor S = ΔIC/ΔICO\nSmaller S → More stable\nVoltage divider: S ≈ 1+RB/RE (best stability)\n\nh-Parameter Equivalent Circuit:\nAv = -hfe×RC / hie (CE amplifier)\nAi = hfe (current gain)\nRin = hie\nRout = 1/hoe\n\nFrequency Response:\nLow freq: coupling/bypass capacitors limit\nHigh freq: junction capacitors limit\nMid freq: flat region (gain constant)' },
+        { code: 'BEC303', title: 'Karnaugh Map — 3 & 4 Variable', stars: '⭐⭐', freq: '4/4 years', content: "K-Map Rules:\n• Group 1s in powers of 2 (1,2,4,8,16)\n• Groups must be rectangular\n• Wrap around allowed (top-bottom, left-right)\n• Use largest possible groups\n• Minimize number of groups\n\n4-Variable K-Map Layout:\nAB\\CD | 00 | 01 | 11 | 10\n  00  |    |    |    |\n  01  |    |    |    |\n  11  |    |    |    |\n  10  |    |    |    |\n\nGroup of 8 → 1 variable in SOP\nGroup of 4 → 2 variables\nGroup of 2 → 3 variables\nGroup of 1 → 4 variables (no simplification)\n\nDon't cares (X): Use if helps make larger groups" },
+        { code: 'BEC303', title: 'Flip-Flops & Counters', stars: '⭐⭐', freq: '4/4 years', content: 'SR Flip-Flop: S=1,R=0→Q=1 | S=0,R=1→Q=0 | S=R=0→No change | S=R=1→Invalid\n\nJK Flip-Flop (solves SR invalid state):\nJ=K=1 → Toggle (Q→Q̄)\nCharacteristic eq: Q(t+1) = J·Q̄ + K̄·Q\n\nD Flip-Flop: Q(t+1) = D (data)\nT Flip-Flop: Q(t+1) = T⊕Q (toggle if T=1)\n\nConversions (very important):\nSR→JK: J=S, K=R (with S=JQ̄, R=KQ)\n\nRipple Counter (Asynchronous):\n- MOD-N counter uses N flip-flops → counts 0 to 2ⁿ-1\n- MOD-6: use 3 FFs, reset when Q=6 (110)\n\nSynchronous Counter: All FFs clocked simultaneously, faster\nRing Counter: Single 1 circulates, N FFs → MOD-N\nJohnson Counter: Complemented output fed back, 2N states'
+        }
+      ],
+      '4': [
+        { code: 'BEC401', title: 'AM Modulation & Power Calculation', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: 'AM Wave: v(t) = Vc(1 + ma·cosωmt)cosωct\n\nPower: Pt = Pc(1 + ma²/2)\nFor ma=1: Pt = 1.5 Pc\nBandwidth = 2fm\n\nModulation Index: ma = Em/Ec = (Emax-Emin)/(Emax+Emin)\n\nNUMERICAL: If ma=0.8, Pc=10kW\n→ Pt = 10(1+0.64/2) = 13.2 kW\nSideband power each = Pc·ma²/4\n\nDSB-SC: No carrier, only sidebands → bandwidth = 2fm\nSSB: One sideband only → bandwidth = fm (most efficient)\nVSB: Used in TV broadcasting' },
+        { code: 'BEC401', title: 'FM & Superheterodyne Receiver', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: 'FM: Δf = kf·Am, mf = Δf/fm\nBW (Carson): BW = 2(Δf + fm) = 2fm(mf+1)\n\nNarrowband FM: mf < 1, BW ≈ 2fm (like AM)\nWideband FM: mf >> 1, BW ≈ 2Δf\n\nPM: mp = kp·Am (independent of fm!)\n\nSuperheterodyne Receiver Blocks:\n1. RF Amplifier → Tuned to station frequency\n2. Mixer → Converts to IF frequency\n3. Local Oscillator → fLO = fRF + fIF\n4. IF Amplifier → Fixed 455 kHz (AM) / 10.7 MHz (FM)\n5. Detector → Demodulation\n6. AF Amplifier → Audio output\n\nImage Freq = fRF + 2×fIF\nImage rejection: High Q RF amplifier needed' },
+        { code: 'BEC401', title: 'PCM & Sampling Theorem', stars: '⭐⭐', freq: '4/4 years', content: 'Nyquist Rate: fs ≥ 2fmax\nAliasing: occurs when fs < 2fmax\n\nPCM Steps:\n1. Sampling → PAM signal\n2. Quantization → 2ⁿ levels (n-bit)\n3. Encoding → Binary representation\n\nSNR for PCM = 6.02n + 1.76 dB\nFor n=8 bits: SNR = 49.9 dB\n\nQuantization noise: Nq = Δ²/12, Δ = Vmax/(2ⁿ-1)\n\nBit rate = n × fs\nFor telephone (4kHz, 8-bit): 64 kbps\n\nDelta Modulation: 1-bit quantization, simple but slope overload\nDPCM: Encode difference between samples → less bits needed' },
+        { code: 'BEC402', title: 'Feedback Amplifiers — 4 Topologies', stars: '⭐⭐', freq: '4/4 years', content: 'Negative Feedback Effects:\nAf = A/(1+Aβ) → Gain reduced by (1+Aβ)\nBWf = BW(1+Aβ) → Bandwidth increased\nDistortion reduced by (1+Aβ)\nNoise reduced by (1+Aβ)\n\n4 Topologies:\n1. Voltage Series: Rin↑, Rout↓, samples Vout, mixes Vin\n2. Voltage Shunt: Rin↓, Rout↓, samples Vout, mixes Iin\n3. Current Series: Rin↑, Rout↑, samples Iout, mixes Vin\n4. Current Shunt: Rin↓, Rout↑, samples Iout, mixes Iin\n\nGain-Bandwidth product = constant\nIf gain ↓ by 10× → BW ↑ by 10×' },
+        { code: 'BEC402', title: 'Oscillators — RC, LC, Crystal', stars: '⭐⭐', freq: '4/4 years', content: 'Barkhausen Criterion:\n|Aβ| = 1 AND ∠Aβ = 0° (360°)\n\nRC Phase Shift Oscillator:\nf = 1/(2π√6·RC)\nMinimum A = 29\nEach RC section provides 60° → total 180° + inverting amp = 360°\n\nWein Bridge Oscillator:\nf = 1/(2πRC)\nA = 3 minimum (Rf = 2R1)\n\nHartley Oscillator (LC):\nf = 1/(2π√((L1+L2)C))\nβ = L1/L2 (tank circuit ratio)\n\nColpitts Oscillator (LC):\nCeq = C1C2/(C1+C2)\nf = 1/(2π√(LCeq))\nβ = C2/C1\n\nCrystal Oscillator: Most stable, Q factor 10,000-100,000' },
+        { code: 'BEC402', title: 'Op-Amp Applications', stars: '⭐⭐', freq: '4/4 years', content: 'Ideal Op-Amp: Av=∞, Rin=∞, Rout=0, BW=∞, CMRR=∞\nVirtual Ground: V+ = V- (due to high gain)\n\nInverting Amplifier: Av = -Rf/R1\nNon-inverting: Av = 1 + Rf/R1\nVoltage Follower: Av = 1 (Rf=0, R1=∞)\n\nSumming Amplifier: Vo = -Rf(V1/R1 + V2/R2 + V3/R3)\nDifferential Amplifier: Vo = (Rf/R1)(V2 - V1)\n\nIntegrator: Vo = -(1/RC)∫Vin dt (square→triangle)\nDifferentiator: Vo = -RC(dVin/dt) (triangle→square)\n\nComparator: Output swings to ±Vsat\nSchmitt Trigger: Hysteresis prevents noise triggering\nUTP = +Vsat×R1/(R1+R2)\nLTP = -Vsat×R1/(R1+R2)' },
+        { code: 'BEC403', title: 'Fourier Transform Properties', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: 'Key FT Pairs:\nδ(t) ↔ 1\nu(t) ↔ πδ(ω) + 1/jω\ne^(-at)u(t) ↔ 1/(a+jω) [a>0]\nrect(t/τ) ↔ τ·sinc(fτ)\ne^(-a|t|) ↔ 2a/(a²+ω²)\n\nProperties (memorize all):\n• Linearity: ax(t)+by(t) ↔ aX(ω)+bY(ω)\n• Time shift: x(t-t₀) ↔ X(ω)e^(-jωt₀)\n• Freq shift: x(t)e^(jω₀t) ↔ X(ω-ω₀)\n• Time scaling: x(at) ↔ (1/|a|)X(ω/a)\n• Duality: X(t) ↔ 2πx(-ω)\n• Convolution: x(t)*h(t) ↔ X(ω)·H(ω)\n• Multiplication: x(t)·y(t) ↔ X(ω)*Y(ω)/2π\n• Differentiation: dx/dt ↔ jωX(ω)\n• Integration: ∫x(τ)dτ ↔ X(ω)/jω + πX(0)δ(ω)\n• Parseval: ∫|x(t)|²dt = (1/2π)∫|X(ω)|²dω' },
+        { code: 'BEC403', title: 'Laplace & Z-Transform Complete', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: 'Laplace Pairs:\nδ(t) ↔ 1 [all s]\nu(t) ↔ 1/s [Re(s)>0]\ne^(-at)u(t) ↔ 1/(s+a) [Re(s)>-a]\ntu(t) ↔ 1/s² \nsin(ω₀t)u(t) ↔ ω₀/(s²+ω₀²)\ncos(ω₀t)u(t) ↔ s/(s²+ω₀²)\n\nInitial Value: x(0+) = lim(s→∞) sX(s)\nFinal Value: x(∞) = lim(s→0) sX(s) [only if stable]\n\nZ-Transform Pairs:\nδ[n] ↔ 1 [all z]\nu[n] ↔ z/(z-1) [|z|>1]\naⁿu[n] ↔ z/(z-a) [|z|>|a|]\nnᵃu[n] ↔ az/(z-a)² \n\nROC Rules:\nRight-sided signal: |z| > |largest pole|\nLeft-sided: |z| < |smallest pole|\nStable system: ROC includes unit circle\nPoles inside unit circle → stable causal system' },
+        { code: 'BEC403', title: 'LTI Systems & Convolution', stars: '⭐⭐', freq: '4/4 years', content: 'Convolution Integral: y(t) = x(t)*h(t) = ∫x(τ)h(t-τ)dτ\n\nProperties:\n• Commutative: x*h = h*x\n• Associative: (x*h1)*h2 = x*(h1*h2)\n• Distributive: x*(h1+h2) = x*h1 + x*h2\n\nConvolution of u(t) with e^(-at)u(t):\n= (1/a)(1-e^(-at))u(t)\n\nDT Convolution: y[n] = Σ x[k]h[n-k]\n\nSystem Properties:\nMemoryless: h(t) = Aδ(t)\nCausal: h(t)=0 for t<0\nStable BIBO: ∫|h(t)|dt < ∞ (CT) or Σ|h[n]| < ∞ (DT)\nInvertible: H(s)·Hinv(s) = 1\n\nCorrelation (not convolution!):\nRxy(τ) = ∫x(t)y(t+τ)dt\nAutocorrelation: Rxx(0) = total energy' }
       ]
     },
     ME: {
-      '4': [
-        { code: 'BME401', title: 'Rankine Cycle Numerical — SAME 3 YEARS!', stars: '⭐⭐', freq: '4/4 years — REPEATED!', content: 'Standard Rankine Cycle Numerical:\n\nGiven: P1 (boiler) bar, P2 (condenser) bar, dry saturated steam\n\nProcess:\n1→2: Isentropic expansion in turbine\n2→3: Condensation at P2\n3→4: Pump work\n4→1: Heat addition in boiler\n\nFormulas:\nTurbine work: wt = h1 - h2\nPump work: wp = v3(P1-P2) × 100 kJ/kg\n[P in bar, v in m³/kg]\nh4 = h3 + wp\n\nHeat Input: q = h1 - h4\nEfficiency: η = (wt - wp)/q\n\nREMEMBER from steam tables:\n• hf, hfg at condenser pressure\n• h1 at boiler pressure (dry sat) = hg\n• s1 = sg at boiler pressure\n• At turbine exit: x = (s1-sf)/sfg at P2\n• h2 = hf + x·hfg at P2' },
-        { code: 'BME401', title: 'Impulse Turbine Velocity Triangle — SAME 3 YEARS!', stars: '⭐⭐', freq: '4/4 years — REPEATED!', content: 'Impulse Turbine Velocity Triangle:\n\nGiven: α (nozzle angle), u (blade speed), C1 (steam speed)\n\nInlet Triangle:\nWhirl velocity: Cw1 = C1·cosα\nFlow velocity: Cf1 = C1·sinα\nRelative velocity: Vr1 = √(C1²+u²-2C1·u·cosα)\nBlade inlet angle: β1 = arctan(Cf1/(Cw1-u))\n\nExit Triangle (assume no friction: Vr2=Vr1):\nCw2 = Vr2·cosβ2 - u\n\nWork Done: W = u(Cw1+Cw2)\nBlade Efficiency: ηb = 2u(Cw1+Cw2)/C1²\n\nMaximum ηb at u/C1 = cosα/2\nMax ηb = cos²α' },
-        { code: 'BME401', title: 'Otto & Diesel Cycle Efficiency', stars: '⭐⭐', freq: '4/4 years', content: 'Otto Cycle:\nη = 1 - 1/rᵞ⁻¹ where γ=1.4, r=compression ratio\n\nFor r=8: η = 1 - 1/8⁰·⁴ = 1 - 1/2.297 = 56.5%\n\nDiesel Cycle:\nη = 1 - (1/rᵞ⁻¹) × (ρᵞ-1)/(γ(ρ-1))\nwhere ρ = cut-off ratio\n\nBrayton Cycle (Gas Turbine):\nη = 1 - 1/rp^((γ-1)/γ)\nwhere rp = pressure ratio\n\nOptimum pressure ratio for max work:\nrp_opt = (T3/T1)^(γ/2(γ-1))\n\nMEP = Net work/Swept volume' },
-        { code: 'BME402', title: 'SFD & BMD — Beam Analysis', stars: '⭐⭐', freq: '4/4 years', content: 'Steps for SFD & BMD:\n\n1. Find support reactions (ΣFy=0, ΣM=0)\n2. Draw SFD (positive upward force = positive shear)\n3. Draw BMD (sagging = positive)\n\nKey Relations:\ndV/dx = -w(x) [distributed load]\ndM/dx = V [shear force]\n\nCommon Formulas:\nSS beam, central point load P:\nMax BM = PL/4 at center\nMax deflection = PL³/48EI\n\nSS beam, UDL w per unit length:\nMax BM = wL²/8 at center\nMax deflection = 5wL⁴/384EI\n\nCantilever, end load P:\nMax BM = PL at fixed end\nMax deflection = PL³/3EI' },
-        { code: 'BME402', title: 'Torsion & Shaft Design — SAME 2 YEARS!', stars: '⭐⭐', freq: '4/4 years', content: 'Torsion Equation:\nT/J = τ/r = Gθ/L\n\nFor Solid Shaft:\nJ = πd⁴/32\nτmax = 16T/πd³\n\nFor Hollow Shaft:\nJ = π(D⁴-d⁴)/32\n\nPower Transmission:\nT = P×60/(2πN) [in N·m, P in Watts, N in rpm]\n\nAngle of Twist:\nθ = TL/GJ [in radians]\n\nNUMERICAL APPROACH:\n1. Find T from P and N\n2. Apply torsion equation for diameter\n3. Find angle of twist\n4. Check stiffness requirement' },
-        { code: 'BME402', title: 'Macaulay\'s Method — SAME 2 YEARS!', stars: '⭐⭐', freq: '4/4 years', content: 'Macaulay\'s Method for Beam Deflection:\n\nEI(d²y/dx²) = M(x) using Macaulay brackets <x-a>\n\nBrackets <x-a> = 0 when x < a\n              = (x-a) when x > a\n\nSteps:\n1. Take origin at left support\n2. Write BM expression using Macaulay brackets\n3. Integrate twice\n4. Apply boundary conditions (y=0 at supports)\n5. Solve for C1 and C2\n6. Find deflection at required point\n\nExample: SS beam, central load P at L/2\nEIy = Px/2<x>-P/2<x-L/2>² + C1x\nAt x=L/2: max deflection = PL³/48EI' },
-        { code: 'BME402', title: 'Lame\'s Equation — Thick Cylinder', stars: '⭐⭐', freq: '4/4 years', content: 'Lame\'s Equations:\nHoop Stress: σh = A + B/r²\nRadial Stress: σr = A - B/r²\n\nConstants from BC:\nAt r=ri: σr = -pi (internal pressure)\nAt r=ro: σr = -po (external pressure, 0 for open)\n\nFor Internal Pressure Only (po=0):\nA = pi·ri²/(ro²-ri²)\nB = pi·ri²·ro²/(ro²-ri²)\n\nMax hoop stress at r=ri:\nσh_max = pi(ro²+ri²)/(ro²-ri²)\n\nThick vs Thin: Use thick if t/Di > 0.05\n\nStrain Energy: U = V(σh²+σr²-2μσhσr)/2E' },
-        { code: 'BME403', title: 'Tool Geometry ASA System — NEVER MISSED!', stars: '⭐⭐', freq: '4/4 years — NEVER MISSED!', content: 'ASA Tool Nomenclature:\nBack Rake Angle (γb): In machine plane (+ = positive rake)\nSide Rake Angle (γs): In plane ⊥ to feed\nEnd Clearance Angle (αe): Below cutting edge\nSide Clearance Angle (αs): Side of tool\nEnd Cutting Edge Angle (φe): End of tool\nSide Cutting Edge Angle (φs): SCEA\nNose Radius (r): Tool tip radius\n\nFor mild steel: +ve rake angle used\nFor hard materials: -ve or 0° rake\n\nMerchant\'s Circle:\nResultant force R = √(Fc²+Ft²)\nFriction angle: λ = arctan(F/N)\nShear angle: φ = 45 + γ/2 - λ/2\n\nCutting power = Fc × V (kW)' },
-        { code: 'BME403', title: 'TIG & MIG Welding — NEVER MISSED!', stars: '⭐⭐', freq: '4/4 years — NEVER MISSED!', content: 'TIG (Tungsten Inert Gas) Welding:\n• Non-consumable tungsten electrode\n• Shielding gas: Argon or Helium\n• Filler rod added separately\n• Used for: Stainless steel, aluminum, thin sheets\n• DC straight polarity for steel\n• DC reverse polarity for aluminum\n\nMIG (Metal Inert Gas) Welding:\n• Consumable wire electrode (continuously fed)\n• Shielding gas: Argon, CO2, or mixture\n• Faster than TIG\n• Used for: Thick steel sections, fabrication\n• Process: Semi-automatic or automatic\n\nComparison:\nTIG: Better quality, slower, expensive, thin sections\nMIG: Higher deposition rate, suitable for thick sections' },
-        { code: 'BME403', title: 'AJM & LBM Machining', stars: '⭐⭐', freq: '4/4 years', content: 'Abrasive Jet Machining (AJM):\n• High velocity stream of abrasive particles\n• Gas pressure: 2-8 kg/cm²\n• Nozzle-work distance: 0.5-10 mm\n• Abrasives: Al2O3, SiC\n• Applications: Deburring, drilling glass, brittle materials\n• Cannot machine ductile materials effectively\n\nLaser Beam Machining (LBM):\n• High energy laser beam melts/vaporizes material\n• Types: CO2 laser, Nd:YAG laser\n• No contact → no tool wear\n• Very precise → ±0.005 mm\n• Applications: Drilling small holes, cutting, scribing\n• Limitations: HAZ formation, reflective materials difficult\n\nMRR depends on:\n• Velocity of abrasive\n• Size and concentration of abrasive\n• Hardness of workpiece' }
-      ],
       '3': [
-        { code: 'BME301', title: 'Thermodynamics Laws', stars: '⭐', freq: '4/4 years', content: 'First Law: Q - W = ΔU (closed system)\nSFEE: Q - W = m[(h2-h1) + (V2²-V1²)/2 + g(z2-z1)]\n\nSecond Law:\nClausius: No process that transfers heat from cold to hot without work\nKelvin-Planck: No engine converts all heat to work\n\nEntropy: dS = dQrev/T\nFor irreversible: dS > dQ/T\nFor reversible: dS = dQ/T' }
+        { code: 'BME301', title: 'Thermodynamics — Laws & Entropy', stars: '⭐⭐', freq: '4/4 years', content: 'First Law (Closed System): Q - W = ΔU\nSFEE: Q - Ws = m[(h2-h1) + (V2²-V1²)/2 + g(z2-z1)]\n\nApplications of SFEE:\nNozzle: Q=0, W=0 → h1 + V1²/2 = h2 + V2²/2\nTurbine: Q=0 → Ws = h1 - h2 (work output)\nCompressor: Ws = h2 - h1 (work input)\nBoiler: W=0 → Q = h2 - h1\nThrottling: h1 = h2 (isenthalpic process)\n\nSecond Law:\nKelvin-Planck: No heat engine with 100% efficiency\nClausius: Heat cannot spontaneously flow cold→hot\nCarnot efficiency: η = 1 - TL/TH\n\nEntropy: dS = δQrev/T\nClausius inequality: ∮δQ/T ≤ 0\nFor irreversible: ΔSuniverse > 0\nFor reversible: ΔSuniverse = 0' },
+        { code: 'BME301', title: 'Properties of Steam & Steam Tables', stars: '⭐⭐', freq: '4/4 years', content: 'States of Steam:\nCompressed liquid: T < Tsat at given P\nSaturated liquid: x=0 (on liquid line)\nWet steam: 0 < x < 1\nDry saturated steam: x=1 (on vapour line)\nSuperheated steam: T > Tsat at given P\n\nDryness fraction: x = mg/(mf + mg)\nSpecific volume: v = vf + x·vfg\nEnthalpy: h = hf + x·hfg\nEntropy: s = sf + x·sfg\n\nFrom Steam Tables (at 1 bar):\nhf = 417.4, hfg = 2258, hg = 2675 kJ/kg\nTsat = 99.6°C\n\nMollier Diagram (h-s chart):\nSaturation curve; steam nozzle → horizontal line\nIsentropic expansion: vertical line on Mollier diagram' },
+        { code: 'BME302', title: 'Bernoulli & Flow Measurement', stars: '⭐⭐', freq: '4/4 years', content: "Bernoulli's Equation:\nP/ρg + V²/2g + z = constant\n(Pressure head + Velocity head + Datum head)\n\nAssumptions: Steady, incompressible, inviscid, along streamline\n\nVenturimeter:\nQ = Cd × A1A2 × √(2gh) / √(A1²-A2²)\nwhere h = differential head\nCd = 0.96 to 0.99 (high efficiency)\n\nOrifice meter: Cd = 0.6 to 0.65 (lower, cheap)\nPitot tube: V = √(2gh) (measures local velocity)\n\nDarcy-Weisbach equation:\nhf = 4fLV²/2gd = fLV²/2gd\nf = Darcy friction factor\n\nMajor losses: Darcy-Weisbach\nMinor losses: Valves, bends, entry/exit" },
+        { code: 'BME303', title: 'Iron-Carbon Diagram & Heat Treatment', stars: '⭐⭐', freq: '4/4 years', content: 'Iron-Carbon Diagram Key Points:\n0.008% C: Maximum solubility in α-iron\n0.83% C: Eutectoid point (723°C) → Pearlite (α + Fe3C)\n2.0% C: Steel/cast iron boundary\n4.3% C: Eutectic point (1147°C)\n6.67% C: Pure cementite (Fe3C)\n\nMicrostructures:\nFerrite (α): BCC, soft, magnetic, <0.008% C\nAustenite (γ): FCC, non-magnetic, exists at high T\nCementite (Fe3C): Hard, brittle, 6.67% C\nPearlite: Alternating layers of ferrite + cementite (0.83% C)\nMartensite: Hard, brittle, formed by rapid quenching\nBainite: Between pearlite & martensite (in TTT diagram)\n\nHeat Treatment:\nAnnealing: Full (for softening), Process (stress relief)\nNormalizing: Air cool after austenitizing → fine pearlite\nHardening: Quench in water/oil → martensite\nTempering: Heat martensite → reduce brittleness\nCase Hardening: Carburizing, Nitriding → hard surface, tough core' }
+      ],
+      '4': [
+        { code: 'BME401', title: 'Rankine Cycle — SAME 3 YEARS', stars: '⭐⭐', freq: '4/4 years — REPEATED', content: 'Rankine Cycle (Standard):\n1→2: Isentropic expansion in turbine (s1=s2)\n2→3: Condensation at P2 (constant P)\n3→4: Pump work (isentropic compression)\n4→1: Heat addition in boiler\n\nFormulas:\nTurbine work: wt = h1 - h2\nPump work: wp = v3(P1-P2)×100 [P in bar, v in m³/kg]\nh4 = h3 + wp\nHeat input: q = h1 - h4\nEfficiency: η = (wt - wp)/q\n\nFrom Steam Tables:\nh1 = hg at P1 (dry saturated)\ns1 = sg at P1\nx2 = (s1-sf2)/sfg2 at P2\nh2 = hf2 + x2·hfg2\nh3 = hf2, v3 = vf2\n\nReheat Rankine: η improves by ~5%\nRegenerative Rankine: Uses feed water heaters\nModified Rankine: For wet/superheated conditions' },
+        { code: 'BME401', title: 'Impulse Turbine Velocity Triangles — REPEATED', stars: '⭐⭐', freq: '4/4 years — REPEATED', content: 'Impulse Turbine:\nAll pressure drop in nozzle, no pressure drop in blades\nVelocity triangles (inlet):\nCw1 = C1·cosα (whirl component)\nCf1 = C1·sinα (flow component)\nVr1² = C1² + u² - 2C1·u·cosα\nBlade inlet angle: β1 = arctan(Cf1/(Cw1-u))\n\nExit triangle (no friction: Vr2=Vr1):\nCw2 = Vr2·cosβ2 - u\nCf2 = Vr2·sinβ2\n\nWork done: W = u(Cw1+Cw2) per kg\nPower = m × u(Cw1+Cw2) kW\nBlade efficiency: ηb = 2u(Cw1+Cw2)/C1²\n\nOptimum speed ratio: u/C1 = cosα/2\nMaximum blade efficiency: η_max = cos²α\n\nWith friction (K = Vr2/Vr1 < 1):\nηb = 2u[(C1cosα - u)(1+K·cosβ2/cosβ1)]/C1²' },
+        { code: 'BME401', title: 'Otto, Diesel & Brayton Cycles', stars: '⭐⭐', freq: '4/4 years', content: 'Otto Cycle (Petrol engine):\nη = 1 - 1/r^(γ-1) where r=compression ratio, γ=1.4\nFor r=8: η = 1 - 1/8^0.4 = 56.5%\nMEP = P1·r^γ(r^(γ-1)-1)·(γ-1) / [(r-1)(γ-1)]\n\nDiesel Cycle (CI engine):\nη = 1 - [1/r^(γ-1)] × [(ρ^γ-1)/(γ(ρ-1))]\nρ = cut-off ratio = V3/V2\nη_Diesel < η_Otto for same r, but Diesel has higher r\n\nDual Cycle (Modern diesel):\nη = 1 - [1/r^(γ-1)] × [(αρ^γ-1)/((α-1)+αγ(ρ-1))]\nα = pressure ratio (constant V heat addition)\n\nBrayton Cycle (Gas turbine):\nη = 1 - 1/rp^((γ-1)/γ) where rp = pressure ratio\nOptimum rp for max work = (TH/TL)^(γ/2(γ-1))\nWith regeneration: η improves significantly' },
+        { code: 'BME402', title: 'SFD & BMD Complete Method', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: 'Steps to draw SFD & BMD:\n1. Find support reactions (ΣFy=0, ΣMhinge=0)\n2. Start from left end\n3. SFD: Upward force → positive jump, downward → negative\n4. UDL → sloped line on SFD\n5. BMD: Integrate SFD (area under SFD = BM change)\n\nImportant:\ndV/dx = -w(x), dM/dx = V\nPoint of zero shear → maximum BM\nPoint load → kink in BMD, jump in SFD\n\nStandard Results:\nSS beam, central load P: Vmax = P/2, Mmax = PL/4 (at center)\nSS beam, UDL w: Vmax = wL/2, Mmax = wL²/8 (at center)\nSS beam, UDL w, max deflection = 5wL⁴/384EI\nCantilever, end load P: Vmax = P, Mmax = PL (at fixed end)\nCantilever, UDL: Vmax = wL, Mmax = wL²/2 (at fixed end)' },
+        { code: 'BME402', title: 'Torsion & Shaft Numericals', stars: '⭐⭐', freq: '4/4 years — REPEATED', content: 'Torsion Equation: T/J = τ/r = Gθ/L\n\nSolid Shaft:\nJ = πd⁴/32\nτmax = 16T/πd³\nθ = TL/GJ\n\nHollow Shaft (D outer, d inner):\nJ = π(D⁴-d⁴)/32\nτmax = 16TD/π(D⁴-d⁴)\n\nPower to Torque:\nT = P×60/(2πN) Nm [P in Watts, N in rpm]\nOr: T = P×1000×60/(2πN) [P in kW]\n\nNUMERICAL APPROACH:\n1. P=100 kW, N=200 rpm → T = 100000×60/(2π×200) = 4775 Nm\n2. τ ≤ 60 MPa → d³ ≥ 16T/πτ = 16×4775/(π×60×10⁶)\n3. d ≥ 0.0725 m = 72.5 mm → use 75 mm\n\nShaft in series: Same torque T, θ_total = θ1 + θ2\nShaft in parallel: Same angle θ, T_total = T1 + T2' },
+        { code: 'BME402', title: 'Macaulay's Method — Beam Deflection', stars: '⭐⭐', freq: '4/4 years — REPEATED', content: 'Governing equation: EI·d²y/dx² = M(x)\n\nMacaulay bracket: <x-a>ⁿ = 0 if x<a\n                         = (x-a)ⁿ if x>a\n\nSteps:\n1. Take origin at left end, x measured rightward\n2. Write BM using Macaulay brackets (include all terms)\n3. Integrate TWICE: EI·dy/dx = ... + C1\n                    EI·y = ... + C1x + C2\n4. Apply BCs: y=0 at both supports\n5. Solve for C1, C2\n6. Find deflection at required point\n\nExample: SS beam L=5m, P=20kN at 2m from left\nRA = 20×3/5 = 12 kN\nEI·d²y/dx² = 12x - 20<x-2>\nEI·dy/dx = 6x² - 10<x-2>² + C1\nEI·y = 2x³ - (10/3)<x-2>³ + C1x + C2\nBC: y=0 at x=0 → C2=0\ny=0 at x=5 → C1 = -(2×125 - 10/3×27)/5 = -37.8\nmax deflection at x where dy/dx=0' },
+        { code: 'BME403', title: 'Tool Geometry & Cutting Forces', stars: '⭐⭐', freq: '4/4 years — NEVER MISSED', content: 'ASA Tool Nomenclature (in order):\nBack Rake, Side Rake, End Relief, Side Relief, End Cutting Edge, Side Cutting Edge angles + Nose Radius\nExample: 8-14-6-6-6-15-1 (Back rake 8°, Side rake 14°...)\n\nFor mild steel: positive rake (better finish)\nFor hard/brittle: negative rake (stronger edge)\n\nMerchant's Force Circle:\nFc = Cutting force (tangential, main force)\nFt = Thrust/feed force (axial)\nFs = Shear force\nFn = Normal to shear\nF = Friction on face\nN = Normal to friction\n\nRelations:\nR = √(Fc²+Ft²) = resultant\nμ = F/N = tan(λ) = friction coefficient\nShear angle: φ = 45 + γ/2 - λ/2 (Merchant)\nChip thickness ratio: r = t1/t2 = sinφ/cos(φ-γ)\n\nTaylor's Tool Life: VTⁿ = C\nn=0.1-0.2 (HSS), 0.2-0.4 (Carbide)' },
+        { code: 'BME403', title: 'Welding — TIG, MIG, Resistance', stars: '⭐⭐', freq: '4/4 years — NEVER MISSED', content: 'TIG Welding (GTAW):\n• Non-consumable tungsten electrode\n• Shielding: Argon or Helium\n• Separate filler rod added manually\n• DCSP (straight polarity) for steel → electrode negative\n• DCRP (reverse) for aluminum → cleaning action\n• Best quality weld, slow, expensive\n• Used for: SS, Al, Ti, thin sheets\n\nMIG Welding (GMAW):\n• Consumable wire electrode (auto-fed)\n• Shielding: Ar, CO2 or Ar+CO2 mix\n• No flux, no slag\n• Semi-automatic/automatic, fast deposition\n• Used for: thick steel, fabrication\n\nResistance Welding (Spot welding):\nHeat = I²Rt (Joule heating)\nNo filler material, sheets clamped between electrodes\nUsed for: sheet metal, automotive body\n\nComparison:\nTIG: quality >, speed <, cost >\nMIG: speed >, quality < TIG, easy to use\nArc (SMAW): versatile, slag formation, outdoor ok' },
+        { code: 'BME403', title: 'Unconventional Machining — AJM, EDM, USM', stars: '⭐⭐', freq: '4/4 years', content: 'AJM (Abrasive Jet Machining):\n• High velocity (150-300 m/s) abrasive particles in gas\n• Nozzle to work: 0.5-10 mm\n• Abrasives: Al2O3, SiC (size 10-50 μm)\n• Gas: Dry air, N2, CO2 at 2-8 kg/cm²\n• For: Hard/brittle materials, deburring, glass drilling\n• Cannot machine ductile materials (embedding)\n\nEDM (Electric Discharge Machining):\n• Spark erosion between electrode and workpiece\n• Dielectric fluid: kerosene or deionized water\n• Gap: 0.005-0.05 mm\n• For: Any electrically conductive material\n• Complex shapes, hard dies, molds\n• Surface finish: 0.5-25 μm Ra\n\nUSM (Ultrasonic Machining):\n• 15-30 kHz vibrations, tool feeds abrasive slurry\n• For: Hard, brittle, non-conductive materials\n• Glass, ceramics, quartz, silicon carbide\n\nLBM (Laser Beam):\n• Focused laser → melting/vaporization\n• No contact, no tool wear\n• Precision ±0.005 mm\n• HAZ is limitation' }
+      ]
+    },
+    EE: {
+      '3': [
+        { code: 'BEE301', title: 'Maxwell's Equations & EM Waves', stars: '⭐⭐', freq: '4/4 years', content: 'Maxwell's Equations (Differential form):\n∇×H = J + ∂D/∂t  (Ampere's law + displacement current)\n∇×E = -∂B/∂t      (Faraday's law)\n∇·D = ρv           (Gauss's law, electric)\n∇·B = 0            (Gauss's law, magnetic — no magnetic monopoles)\n\nIntegral form:\n∮H·dl = Ienc + ∫∂D/∂t·dS\n∮E·dl = -d/dt∫B·dS\n∮D·dS = Qenc\n∮B·dS = 0\n\nDisplacement current: Jd = ∂D/∂t (Maxwell's correction)\n\nEM Wave in free space:\n∇²E = με·∂²E/∂t²\nVelocity: v = 1/√(με) = 3×10⁸ m/s\nWave impedance: η = √(μ/ε) = 377 Ω (free space)\n\nPoynting vector: P = E×H (power density, W/m²)' },
+        { code: 'BEE302', title: 'AC Bridges — Maxwell, Schering', stars: '⭐⭐', freq: '4/4 years', content: 'Wheatstone Bridge (DC, resistance):\nBalance: P/Q = R/S or PS = QR\n\nMaxwell Bridge (Inductance):\nLx = R2·R3·C1\nRx = R2·R3/R1\nBalance independent of frequency\nSuitable for Q < 10\n\nHay Bridge (High-Q inductance):\nLx = R2·R3·C1/(1+1/Q²) ≈ R2·R3·C1 (high Q)\nRx = ω²·L²x/Rx → iterative\nBest for Q > 10\n\nSchering Bridge (Capacitance & loss):\nCx = C1·R4/R3\nRx = R3·C4/C1\ntanδ = ωCxRx (dissipation factor)\n\nAnderson Bridge (Inductance, modified Maxwell):\nMore accurate for low Q inductors\n\nQ-meter (Series resonance):\nQ = VL/V = ωL/R = 1/ωCR\nAt resonance: Vc = Q×Vs' },
+        { code: 'BEE303', title: 'Signals Classification & LTI Systems', stars: '⭐⭐', freq: '4/4 years', content: 'Signal Classification:\nContinuous-time (CT): defined for all t\nDiscrete-time (DT): defined only at integer values\nPeriodic: x(t+T)=x(t), fundamental period T0=2π/ω0\nEnergy signal: E<∞, P=0 (finite duration)\nPower signal: P<∞, E=∞ (periodic signals)\nE = ∫|x(t)|²dt, P = lim(1/T)∫|x(t)|²dt\n\nUnit impulse: δ(t) = 0 for t≠0, ∫δ(t)dt = 1\nSifting property: ∫x(t)δ(t-t0)dt = x(t0)\n\nLTI System Properties:\nLinear: Satisfies superposition\nTime-invariant: x(t-t0) → y(t-t0)\nCausal: h(t)=0 for t<0\nStable (BIBO): ∫|h(t)|dt < ∞\nMemoryless: y(t) depends only on x(t)\n\nConvolution: y(t) = x(t)*h(t)\nFreq response: H(jω) = FT{h(t)}\nSystem function: H(s) = LT{h(t)}' },
+        { code: 'BEE301', title: 'Electrostatics & Magnetostatics', stars: '⭐', freq: '3/4 years', content: 'Coulomb's Law: F = Q1Q2/(4πε₀r²) N\nElectric field: E = F/Q = Q/(4πε₀r²) V/m\n\nGauss's Law (Electric): ∮D·dS = Qenc\nD = εE = ε₀εrE\n\nFor line charge (ρL): E = ρL/(2πεr) a_r\nFor infinite sheet (ρS): E = ρS/(2ε) a_n\n\nCapacitance:\nParallel plate: C = εA/d\nCoaxial: C = 2πεL/ln(b/a)\nEnergy: W = CV²/2 = Q²/2C\n\nBiot-Savart Law: dH = Idl×aR/(4πR²)\nFor infinite straight wire: H = I/(2πρ) a_φ\nAmpere's law: ∮H·dl = Ienc\n\nInductance:\nToroid: L = μN²A/(2πr)\nSolenoid: L = μN²A/l\nEnergy: W = LI²/2' }
+      ],
+      '4': [
+        { code: 'BEE401', title: 'Digital Electronics — K-Map & Flip-Flops', stars: '⭐⭐', freq: '4/4 years', content: 'K-Map Simplification:\nGroup 1s in groups of 1,2,4,8 (powers of 2)\nLarger groups → fewer literals\nWrap-around allowed\n\n4-variable K-Map:\nAB\CD | 00 | 01 | 11 | 10\n  00  |\n  01  |\n  11  |\n  10  |\n\nFlip-Flop Types:\nSR: S=1→Set, R=1→Reset, S=R=1 invalid\nJK: J=K=1→Toggle; Q(t+1)=JQ̄+K̄Q\nD: Q(t+1)=D (data capture)\nT: Q(t+1)=T⊕Q (toggle when T=1)\n\nADC Types:\nFlash ADC: Fastest, 2ⁿ-1 comparators\nSAR (Successive Approximation): n comparisons for n bits\nDual Slope: Accurate, slow, used in DMMs\n\nDAC:\nR-2R Ladder: Most popular, only 2 resistor values\nWeighted resistor: Simple but needs precise resistors' },
+        { code: 'BEE402', title: 'DC Machines & Transformers — SURE SHOT', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: 'DC Generator EMF Equation:\nE = PΦNZ/(60A)\nP = poles, Φ = flux/pole, N = rpm, Z = conductors\nA = parallel paths (lap: A=P, wave: A=2)\n\nDC Motor:\nBack EMF: Eb = PΦNZ/60A\nTorque: T = 0.159×PΦIaZ/A N·m\nSpeed: N ∝ (V-IaRa)/Φ\n\nSpeed Control:\nArmature resistance control: N↓, wasteful\nField flux control: N↑ above rated (above base speed)\nArmature voltage control: N↓ below rated\n\nTransformer EMF Equation:\nE = 4.44fΦmN = 4.44fBmAcN\nTurns ratio: a = N1/N2 = V1/V2 = I2/I1\n\nEfficiency: η = Pout/(Pout + PCu + PFe)\nMax η when: PCu = PFe (copper loss = iron loss)\n\nVoltage Regulation: VR = (V0-VFL)/VFL × 100%\nOC test: Iron losses | SC test: Copper losses' },
+        { code: 'BEE403', title: 'Network Theorems & Two-Port Parameters', stars: '⭐⭐', freq: '4/4 years', content: 'Thevenin: Vth = Voc, Rth = Voc/Isc\nNorton: In = Isc, Rn = Rth\nMax Power: RL = Rth → Pmax = Vth²/4Rth\n\nTellegen's Theorem: ΣVkIk = 0 (sum of power = 0)\nReciprocity: V1/I2 = V2/I1 (for excitation swap)\n\nZ-Parameters (Open circuit):\nZ11 = V1/I1|I2=0, Z12 = V1/I2|I1=0\nZ21 = V2/I1|I2=0, Z22 = V2/I2|I1=0\nSymmetrical: Z11=Z22; Reciprocal: Z12=Z21\n\nY-Parameters: [I] = [Y][V]\nY11 = I1/V1|V2=0 (input admittance, output shorted)\n\nABCD (Transmission):\n[V1] = [A B][V2]\n[I1]   [C D][-I2]\nAD-BC=1 (reciprocal); A=D (symmetrical)\nFor cascade: [ABCD]total = [ABCD]1 × [ABCD]2\n\nHurwitz Polynomial: All coefficients positive + Routh criterion' },
+        { code: 'BEE402', title: 'Electrical Machines — Starters & Speed Control', stars: '⭐⭐', freq: '4/4 years', content: 'DC Motor Starters (needed because Ia = (V-Eb)/Ra, at start Eb=0!)\nAt start: Ia = V/Ra → very high current (damages motor)\n\nThree-point starter: NVR (no volt release) + OLR protection\nFour-point starter: Allows field weakening speed control\n\nSpeed Control Methods:\n1. Armature resistance: Insert R in series → speed↓ (wasteful)\n2. Field flux control: Reduce field → speed↑ (weak field)\n   - Used for speeds ABOVE rated\n   - Danger: If field breaks → speed → ∞ (runaway)\n3. Armature voltage (Ward-Leonard): Smooth control, expensive\n\nTransformer Tests:\nOC Test (LV side): Measure iron losses (Pi), no-load current\nSC Test (HV side): Measure copper losses (Pc), equivalent R, X\n\nAuto-transformer: Same winding used for both primary & secondary\nAdvantage: More efficient, lighter, cheaper\nLimitation: No electrical isolation\nRatio: V2/V1 = N2/N1 (same as 2-winding)' }
       ]
     },
     CSE: {
-      '4': [
-        { code: 'BCS401', title: 'CPU Scheduling — Gantt Chart Numericals', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: 'FCFS: Non-preemptive, convoy effect\nWT = Start time - Arrival time\nTAT = Completion - Arrival time\n\nSJF (Preemptive=SRTF): Minimum remaining burst time gets CPU\n\nRound Robin: If burst > quantum → preempt, add to queue end\n\nPriority (recent papers): 0 = Highest priority\n\nNUMERICAL TABLE FORMAT:\nProcess | AT | BT | Priority | Start | CT | TAT | WT\n\nAvg WT = ΣWT/n\nAvg TAT = ΣTAT/n\n\nComparison:\nFCFS: Simple but poor avg WT\nSJF: Minimum avg WT (optimal), starvation possible\nRR: Fair, good response, overhead\nPriority: Flexible, aging prevents starvation' },
-        { code: 'BCS401', title: "Banker's Algorithm — NEVER MISSED", stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: "Step 1 — Need Matrix:\nNeed[i][j] = Max[i][j] - Allocation[i][j]\n\nStep 2 — Safety Algorithm:\nWork = Available (copy)\nFinish[i] = false for all\nFind i: Finish[i]=false AND Need[i] ≤ Work\n→ Work += Allocation[i], Finish[i] = true\nRepeat → if all Finish=true: SAFE STATE\n\nStep 3 — Resource Request:\nIf Request ≤ Need AND Request ≤ Available:\n→ Tentatively allocate\n→ Run Safety Algorithm\n→ If safe: GRANT; else: WAIT\n\nTip: Always write Need matrix first then safe sequence!" },
-        { code: 'BCS401', title: 'PCB + Process States — SURE SHOT', stars: '⭐⭐', freq: '4/4 years', content: '5 Process States:\nNew → Ready → Running → Waiting → Terminated\n\nPCB Contents:\n• PID, Process State, Program Counter\n• CPU Registers, Scheduling Info (priority)\n• Memory limits, I/O status, Accounting info\n\nfork() Numerical:\n3 fork() calls → 2³ = 8 processes total\n\nContext Switching: Save PCB of current, load PCB of new' },
-        { code: 'BCS401', title: 'Page Replacement — FIFO/LRU/Optimal', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: 'FIFO: Replace oldest loaded page (use queue)\nLRU: Replace least recently used (track last use)\nOptimal: Replace page used farthest in future\n\nPage Faults: Count each time page NOT in frames\n\nBelady\'s Anomaly: Only FIFO suffers (more frames→more faults)\n\nPage Table Entries Numerical:\n32-bit logical, page size 2048 = 2^11\nPage bits = 32-11 = 21 bits\nMax entries = 2^21 = 2097152\n\nEAT (Effective Access Time) with TLB:\nEAT = h×(TLB time + mem time) + (1-h)×(TLB + 2×mem)\nwhere h = hit ratio' },
-        { code: 'BCS401', title: 'Deadlock — Conditions + Banker\'s Safety', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: '4 Necessary Conditions:\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait\n\nSemaphore Deadlock (2024-25 paper exact!):\nS1=1, S2=1\nP1: wait(S1); wait(S2);\nP2: wait(S2); wait(S1);\n→ P1 holds S1, waits S2\n→ P2 holds S2, waits S1 → DEADLOCK!\n\nRAG: Cycle with single-instance resources = Deadlock\n\nBanker\'s Safety Check:\nP1:alloc=3,max=7; P2:alloc=1,max=6; P3:alloc=3,max=5\nTotal=9, Need: P1=4, P2=5, P3=2, Available=2\nSeq: P3(need=2≤2)→avail=5; P2(need=5≤5)→avail=6; P1(need=4≤6) → SAFE' },
-        { code: 'BCS401', title: 'Semaphores — Producer-Consumer & Dining Philosophers', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: 'Critical Section — 3 conditions:\n1. Mutual Exclusion\n2. Progress\n3. Bounded Waiting\n\nProducer-Consumer:\nmutex=1, empty=n, full=0\nProducer: wait(empty)→wait(mutex)→produce→signal(mutex)→signal(full)\nConsumer: wait(full)→wait(mutex)→consume→signal(mutex)→signal(empty)\n\nDining Philosophers (5):\nProblem: All pick left fork → deadlock!\nSolution: Allow max 4 philosophers OR pick both atomically\n\nPeterson\'s Solution (2 processes):\nflag[i]=true; turn=j;\nwhile(flag[j] && turn==j); // busy wait\n// critical section\nflag[i]=false;\nLimitation: Doesn\'t work on modern multiprocessors (memory reordering)' },
-        { code: 'BCS401', title: 'Disk Scheduling + File Allocation', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: 'C-LOOK (2024-25 Numerical):\nQueue: 47,38,121,191,87,11,92,10; Head=63 moving UP\nSort: 10,11,38,47,87,92,121,191\nFrom 63, go UP: 87,92,121,191 → jump back to 10,11,38,47\nMovement = (191-63)+(191-10) = 128+181 = 309 cylinders\n\nFile Allocation:\nContiguous: Fast direct access, external fragmentation\nLinked: No fragmentation, no direct access\nIndexed: Best of both, inode structure in Unix\n\nRAID Levels:\nRAID 0: Striping only — performance, no redundancy\nRAID 1: Mirroring — full redundancy, 50% capacity\nRAID 5: Striping + distributed parity — balance' },
-        { code: 'BCS402', title: 'DFA Construction — SURE SHOT (7x+ years)', stars: '⭐⭐', freq: '7+ years — ABSOLUTE SURE SHOT', content: 'DFA: M = (Q, Σ, δ, q0, F)\n\nDFA for binary divisible by N:\nStates = remainders {0,1,...,N-1}\nδ(q,0) = (2q) mod N\nδ(q,1) = (2q+1) mod N\nFinal state = q0 (remainder 0)\n\nDivisible by 4: States q0,q1,q2,q3\nδ(q0,0)=q0, δ(q0,1)=q1\nδ(q1,0)=q2, δ(q1,1)=q3\nδ(q2,0)=q0, δ(q2,1)=q1 ...\n\nDFA Minimization:\n1. Mark (final, non-final) pairs as distinguishable\n2. Mark (p,q) if δ(p,a) and δ(q,a) already distinguishable\n3. Merge all unmarked (indistinguishable) pairs' },
-        { code: 'BCS402', title: 'NFA to DFA — Subset Construction SURE SHOT', stars: '⭐⭐', freq: '7+ years — SURE SHOT', content: 'Subset Construction:\n1. Compute ε-closure(q0) = start DFA state\n2. For each DFA state S, for each input a:\n   → MOVE(S,a) = union of δ(q,a) for all q in S\n   → ε-closure(MOVE(S,a)) = new DFA state\n3. Final states: any DFA state containing NFA final state\n\nε-closure: All states via ε transitions (including self)\n\nEXAM TIP:\n• Compute ALL ε-closures FIRST (show work clearly)\n• Then make transition table\n• Label DFA states as sets: {1,2,3}, {2,4}, etc.' },
-        { code: 'BCS402', title: 'Pumping Lemma — L={aᵖ | p prime} Proof', stars: '⭐⭐', freq: '6+ years — SURE SHOT', content: 'Pumping Lemma Statement:\nFor any regular L with pumping length p:\nw=xyz where |xy|≤p, |y|≥1, xyⁱz∈L for all i≥0\n\nProof L={aᵖ | p is prime} is NOT regular:\n1. Assume L regular, pumping length = p\n2. Choose w = a^p (p is prime ✓)\n3. w=xyz, |xy|≤p, let |y|=k (k≥1)\n4. For i=p+1: |xy^(p+1)z| = p + pk = p(1+k)\n5. Since k≥1: 1+k≥2, so p(1+k) is COMPOSITE\n6. Contradiction! ∴ L is NOT regular ✓' },
-        { code: 'BCS402', title: 'CFG to CNF Conversion — SURE SHOT (5x+)', stars: '⭐⭐', freq: '5+ years — SURE SHOT', content: 'CNF Rules: A→BC or A→a only\n\nConversion Steps:\n1. Remove ε-productions\n   Find nullable: A→ε directly or transitively\n   Add combinations, remove A→ε\n\n2. Remove unit productions (A→B)\n   Replace with all B-productions\n\n3. Remove useless productions\n\n4. Convert long rules:\n   A→aBC: Add Ta→a, then A→TaBC\n   A→BCD: Add X→CD, then A→BX\n\nEXAMPLE from 2022-23 paper:\nS→bA|aB, A→bAA|aS|a, B→aBB|bS|b\nAdd Tb→b, Ta→a\nS→TbA|TaB\nA→TbAA→TbX1 where X1→AA\nA→TaS|a\nB→TaBB→TaX2 where X2→BB\nB→TbS|b' },
-        { code: 'BCS402', title: 'PDA Design — aⁿbⁿ, wwᴿ, Two Stack', stars: '⭐⭐', freq: '7+ years — SURE SHOT', content: 'PDA for L={aⁿbⁿ}:\nδ(q0,a,Z0)=(q0,AZ0) — push A\nδ(q0,a,A)=(q0,AA) — push A\nδ(q0,b,A)=(q1,ε) — pop A (switch phase)\nδ(q1,b,A)=(q1,ε) — pop A\nδ(q1,ε,Z0)=(q2,Z0) — accept\n\nPDA for L={wwᴿ}:\nPhase 1: Push everything\nδ(q0,ε,-)=(q1,-) — non-deterministic switch at middle\nPhase 2: Pop matching\nδ(q1,a,A)=(q1,ε); δ(q1,b,B)=(q1,ε)\nδ(q1,ε,Z0)=(q2,Z0) — accept\n\nTwo Stack PDA for L={aⁿbⁿcⁿ}:\nStack1: push a\'s, pop on b\'s\nStack2: push b\'s, pop on c\'s\n(Single stack PDA CANNOT accept this language!)' },
-        { code: 'BCS402', title: 'Turing Machine Design — SURE SHOT', stars: '⭐⭐', freq: '6+ years — SURE SHOT', content: 'TM for L={aⁿbⁿ}:\n(q0,a)→(q1,X,R) mark a\n(q1,a)→(q1,a,R) skip a\'s\n(q1,b)→(q2,Y,L) mark b\n(q2,a)→(q2,a,L) move left\n(q2,X)→(q0,X,R) next iteration\n(q0,Y)→(q3,Y,R) all done\n(q3,Y)→(q3,Y,R) skip Y\'s\n(q3,B)→(qf,B,R) ACCEPT\n\nHalting Problem — UNDECIDABLE:\nAssume H(M,w) decides halting.\nConstruct D(M): if H(M,M)=halts → loop; else halt\nD(D): if D halts → loops; if D loops → halts → Contradiction!\n\nChurch\'s Thesis: Every effectively computable function = Turing computable' },
-        { code: 'BCS402', title: 'Chomsky Hierarchy + Closure Properties', stars: '⭐⭐', freq: '5+ years — SURE SHOT', content: 'Type 3 — Regular: DFA/NFA | A→aB or A→a\nType 2 — CFL: PDA | A→γ\nType 1 — CSL: LBA | αAβ→αγβ\nType 0 — RE: TM | α→β\n\nHierarchy: Type3 ⊂ Type2 ⊂ Type1 ⊂ Type0\n\nRegular Languages — CLOSED under:\n✓ Union, Intersection, Complement\n✓ Concatenation, Kleene*, Reversal\n✓ Homomorphism, Inverse Homomorphism\n\nCFLs — CLOSED under:\n✓ Union, Concatenation, Kleene*\n✗ Intersection, Complement\n\nProof regular closed under complement:\nSwap final and non-final states in DFA' },
-        { code: 'BCS403', title: 'Exception Handling Programs — SURE SHOT', stars: '⭐⭐', freq: '2/2 years — SURE SHOT', content: 'Exception Hierarchy:\nThrowable → Error (don\'t catch!) / Exception\nException → Checked (IOException) / Unchecked (RuntimeException)\n\ntry-catch-finally program:\ntry {\n  int[] arr = {1,2,3};\n  int x = 10/0; // ArithmeticException\n  arr[5] = 1;   // ArrayIndexOutOfBounds\n} catch(ArithmeticException e) {\n  System.out.println("Arithmetic: "+e.getMessage());\n} catch(ArrayIndexOutOfBoundsException e) {\n  System.out.println("Array: "+e.getMessage());\n} finally {\n  System.out.println("finally ALWAYS runs!");\n}\n\nthrow: throw new IllegalArgumentException("msg");\nthrows: void read() throws IOException { ... }\n\nfinally executes even after return statement!' },
-        { code: 'BCS403', title: 'Multithreading — Even/Odd Program SURE SHOT', stars: '⭐⭐', freq: '2/2 years — SURE SHOT', content: 'Two threads — Even and Odd:\npublic class EvenOddDemo {\n  public static void main(String[] args) {\n    Thread even = new Thread(() -> {\n      for(int i=0; i<=10; i+=2)\n        System.out.println("Even: "+i);\n    });\n    Thread odd = new Thread(() -> {\n      for(int i=1; i<=10; i+=2)\n        System.out.println("Odd: "+i);\n    });\n    even.start();\n    odd.start();\n  }\n}\n\nThread Lifecycle:\nNew → start() → Runnable → CPU assigned → Running\n→ wait()/sleep() → Blocked/Waiting → Back to Runnable\n→ run() completes → Dead/Terminated\n\nRunnable preferred over Thread extend (allows other inheritance)' },
-        { code: 'BCS403', title: 'Collections + HashMap Program — SURE SHOT', stars: '⭐⭐', freq: '2/2 years — SURE SHOT', content: 'Collections Hierarchy (MUST DRAW):\nCollection → List (ArrayList, LinkedList)\n           → Set (HashSet, TreeSet)\n           → Queue (PriorityQueue)\nMap → HashMap, TreeMap (separate from Collection)\n\nArrayList vs LinkedList:\nArrayList: O(1) random access, O(n) insert middle\nLinkedList: O(n) access, O(1) insert/delete anywhere\n\nHashMap 5 Methods Program:\nHashMap<String,Integer> map = new HashMap<>();\nmap.put("Alice", 90);        // add\nmap.put("Bob", 85);\nmap.get("Alice");            // returns 90\nmap.remove("Bob");           // delete\nmap.containsKey("Alice");    // true\nmap.size();                  // 1\n// Iterate keys and values:\nfor(Map.Entry<String,Integer> e : map.entrySet())\n  System.out.println(e.getKey()+": "+e.getValue());\n// Or with forEach:\nmap.forEach((k,v) -> System.out.println(k+": "+v));' },
-        { code: 'BCS403', title: 'Lambda + Stream API — SURE SHOT', stars: '⭐⭐', freq: '2/2 years — SURE SHOT', content: '@FunctionalInterface = exactly ONE abstract method\n\nLambda syntax: (params) -> expression\n\nSum of even numbers 1-10 (EXACT exam question):\nList<Integer> list = new ArrayList<>();\nfor(int i=1; i<=10; i++) list.add(i);\nint sum = list.stream()\n  .filter(n -> n%2 == 0)    // intermediate\n  .reduce(0, Integer::sum);  // terminal\nSystem.out.println("Sum of evens: " + sum); // 30\n\nIntermediate operations (lazy):\nfilter(), map(), sorted(), distinct(), limit()\n\nTerminal operations (trigger execution):\nforEach(), collect(), reduce(), count(), findFirst()\n\nMethod Reference: System.out::println\nConstructor Reference: ArrayList::new' },
-        { code: 'BCS403', title: 'Spring Boot + DI — SURE SHOT', stars: '⭐⭐', freq: '2/2 years — SURE SHOT', content: 'IoC: Container manages object lifecycle\nDI: Dependencies injected externally\n\nDI Types:\n1. Constructor: @Autowired on constructor\n2. Setter: @Autowired on setter method\n3. Field: @Autowired on field (most common)\n\nSpring Boot CRUD (exam expects this code):\n@RestController\n@RequestMapping("/students")\npublic class StudentController {\n  private List<String> students = new ArrayList<>();\n  \n  @GetMapping\n  public List<String> getAll() { return students; }\n  \n  @PostMapping\n  public String add(@RequestBody String name) {\n    students.add(name);\n    return "Added: " + name;\n  }\n  \n  @DeleteMapping("/{index}")\n  public String delete(@PathVariable int index) {\n    return "Removed: " + students.remove(index);\n  }\n}\n\nSpring Boot vs Spring: No XML, auto-config, embedded Tomcat!' }
-      ],
       '3': [
-        { code: 'BCS301', title: 'Data Structures — Arrays, Trees, Sorting', stars: '⭐', freq: '4/4 years', content: 'Arrays: O(1) access, O(n) search\nLinked List: O(n) access, O(1) insert at head\nStack (LIFO): push/pop O(1)\nQueue (FIFO): enqueue/dequeue O(1)\nBST: O(log n) avg, O(n) worst case\nAVL: Self-balancing, |height diff| ≤ 1\nHashing: O(1) avg search, handle collisions\nQuick Sort: O(n log n) avg, O(n²) worst\nMerge Sort: O(n log n) always, O(n) space' }
+        { code: 'BCS301', title: 'Linked Lists & Stack/Queue — Complete', stars: '⭐⭐', freq: '4/4 years', content: 'Singly Linked List Operations:\nInsert at beginning: O(1)\nInsert at end: O(n) or O(1) with tail pointer\nDelete node: O(n) for search + O(1) for deletion\nSearch: O(n)\n\nDoubly Linked List: prev + data + next\nCircular List: last→first\n\nStack (LIFO): push(), pop(), peek(), isEmpty()\nApplications: Expression evaluation, recursion, undo\nInfix→Postfix: A+B*C → ABC*+\nPrefix: +A*BC\n\nQueue (FIFO): enqueue(), dequeue(), front(), rear()\nCircular Queue: Solve rear pointer overflow\nfront = (front+1) % MAX\nrear = (rear+1) % MAX\nFull: (rear+1)%MAX == front\nEmpty: front == rear\n\nDeque (Double-ended queue): Insert/delete from both ends\nPriority Queue: Heap-based, O(log n) operations' },
+        { code: 'BCS301', title: 'Trees — BST, AVL, Heap', stars: '⭐⭐', freq: '4/4 years', content: 'Binary Tree Traversals:\nInorder (LNR): BST → sorted order\nPreorder (NLR): Copy tree, prefix expression\nPostorder (LRN): Delete tree, postfix expression\nLevel order: BFS using queue\n\nBST Operations:\nSearch: Compare, go left/right → O(h)\nInsert: Reach null position → O(h)\nDelete: 3 cases (leaf, one child, two children)\nFor two children: Find inorder successor (leftmost in right subtree)\n\nAVL Tree (Self-balancing BST):\nBalance factor = height(left) - height(right)\nAllowed: -1, 0, +1\nRotations: LL, RR, LR, RL\nLL: Right rotation on unbalanced node\nRR: Left rotation\nLR: Left rotation on child, then right on node\nRL: Right rotation on child, then left on node\nHeight: O(log n) always\n\nHeap (Max-heap):\nParent ≥ children\nInsert: Add at end, heapify up O(log n)\nDelete max: Replace with last, heapify down O(log n)\nBuild heap: O(n)\nHeap sort: O(n log n)' },
+        { code: 'BCS301', title: 'Graph Algorithms — BFS, DFS, Shortest Path', stars: '⭐⭐', freq: '4/4 years', content: 'Graph Representations:\nAdjacency Matrix: O(V²) space, O(1) edge check\nAdjacency List: O(V+E) space, O(degree) edge check\n\nBFS (Breadth-First Search):\nUses Queue, visits level by level\nTime: O(V+E)\nApplications: Shortest path (unweighted), level-order\n\nDFS (Depth-First Search):\nUses Stack (or recursion)\nTime: O(V+E)\nApplications: Topological sort, cycle detection, connected components\n\nDijkstra (Weighted shortest path, non-negative weights):\nTime: O((V+E)log V) with min-heap\nGreedy approach — always pick minimum distance vertex\n\nBellman-Ford (Negative weights allowed):\nTime: O(VE), detects negative cycles\n\nMinimum Spanning Tree:\nKruskal: Sort edges, add if no cycle (union-find) O(E log E)\nPrim: Start from vertex, always add minimum edge O(E log V)\n\nTopological Sort (DAG only): DFS-based, O(V+E)' },
+        { code: 'BCS302', title: 'CPU Design — Pipeline & Memory Hierarchy', stars: '⭐⭐', freq: '4/4 years', content: 'Instruction Cycle: Fetch → Decode → Execute → Memory → Writeback\n\nAddressing Modes:\nImmediate: operand in instruction\nRegister: operand in register\nDirect: memory address in instruction\nIndirect: address of address in instruction\nIndexed: base + offset\n\nPipelining (5-stage: IF-ID-EX-MEM-WB):\nHazards:\nStructural: Two instructions need same hardware\nData: RAW (most common), WAW, WAR\nControl: Branch — predict or stall\n\nData forwarding: Resolve RAW without stalling\nBranch prediction: Static (always taken) or dynamic (history)\n\nCache Memory:\nDirect mapped: Each block maps to one cache line\nSet associative: k-way associative (k blocks per set)\nFully associative: Any block, any line (most flexible)\n\nHit time: 1-4 cycles | Miss penalty: 100+ cycles\nEffective access time = h×Tc + (1-h)×(Tc+Tm)\n\nVirtual Memory:\nPage table: VA→PA translation\nTLB: Fast translation cache\nPage fault: Page not in memory → fetch from disk' },
+        { code: 'BCS303', title: 'Propositional Logic & Boolean Algebra', stars: '⭐', freq: '3/4 years', content: 'Logical Connectives:\n¬P (NOT), P∧Q (AND), P∨Q (OR), P→Q (implication), P↔Q (biconditional)\n\nP→Q is FALSE only when P=T and Q=F\nP↔Q is TRUE when both same\n\nImportant Equivalences:\nDe Morgan: ¬(P∧Q) ≡ ¬P∨¬Q\nDe Morgan: ¬(P∨Q) ≡ ¬P∧¬Q\nP→Q ≡ ¬P∨Q\nDouble negation: ¬¬P ≡ P\nDistributive: P∧(Q∨R) ≡ (P∧Q)∨(P∧R)\n\nTautology: Always true | Contradiction: Always false\n\nPredicate Logic:\n∀x P(x): P is true for all x\n∃x P(x): P is true for some x\n\nRules of Inference:\nModus Ponens: P, P→Q ⊢ Q\nModus Tollens: ¬Q, P→Q ⊢ ¬P\nHypothetical Syllogism: P→Q, Q→R ⊢ P→R' }
+      ],
+      '4': [
+        { code: 'BCS401', title: 'CPU Scheduling — Gantt Charts', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: 'FCFS: Non-preemptive, serve in arrival order\nConvoy effect: Short process waits behind long one\n\nSJF: Shortest burst time first\nPreemptive SJF (SRTF): Preempt if new arrival has shorter remaining time\nOptimal — minimum average waiting time\n\nRound Robin: Time quantum q, circular queue\nIf burst > q → preempt, rejoin queue end\nLarge q → FCFS, Small q → context switch overhead\n\nPriority: Lower number = higher priority (in AKTU 2024-25)\nStarvation: Low priority processes may never execute\nAging: Gradually increase priority of waiting processes\n\nGANTT CHART METHOD:\nAlways draw table: Process|AT|BT|Priority|Start|CT|TAT|WT\nWT = Start - AT (for first run) or TAT - BT\nTAT = CT - AT\nAvg WT = ΣWT/n, Avg TAT = ΣTAT/n\n\nMLFQ: Multiple queues, different priorities & quanta\nNew process → highest priority queue\nIf uses full quantum → demote to lower queue' },
+        { code: 'BCS401', title: "Banker's Algorithm Complete", stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: "Need Matrix: Need[i][j] = Max[i][j] - Allocation[i][j]\n\nSafety Algorithm:\n1. Work = Available (copy)\n2. Finish[i] = false for all i\n3. Find i: Finish[i]=false AND Need[i] ≤ Work\n4. Work = Work + Allocation[i]; Finish[i] = true\n5. Repeat step 3-4\n6. If all Finish[i]=true → SAFE STATE\n\nResource Request Algorithm:\n1. If Request[i] > Need[i] → error\n2. If Request[i] > Available → wait\n3. Tentatively: Available -= Request[i]\n   Allocation[i] += Request[i]\n   Need[i] -= Request[i]\n4. Run Safety Algorithm\n5. If safe → grant; else → rollback\n\nExample (2024-25 paper):\n9 tape drives, P1(alloc=3,max=7), P2(alloc=1,max=6), P3(alloc=3,max=5)\nAvailable = 9-3-1-3 = 2\nNeed: P1=4, P2=5, P3=2\nP3: Need(2)≤Available(2) → Work=2+3=5\nP2: Need(5)≤Work(5) → Work=5+1=6\nP1: Need(4)≤Work(6) → Safe! Sequence: P3→P2→P1" },
+        { code: 'BCS401', title: 'Page Replacement — Numericals', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: 'FIFO: Replace oldest loaded page\nUse queue: oldest at front\n\nLRU: Replace least recently used\nTrack last use time, replace minimum\n\nOptimal: Replace page used farthest in future\n(Theoretical best — not implementable in practice)\n\nNUMERICAL TEMPLATE (3 frames):\nRef string: 7 0 1 2 0 3 0 4 2 3 0 3\n\nFIFO:\nFrame | 7 | 0 | 1 | 2 | 0 | 3 | 0 | 4\n  F1  | 7 | 7 | 7 | 2 | 2 | 2 | 2 | 4\n  F2  |   | 0 | 0 | 0 | 0 | 3 | 3 | 3\n  F3  |   |   | 1 | 1 | 1 | 1 | 0 | 0\nFault?  Y   Y   Y   Y   N   Y   Y   Y\n\nBelady Anomaly: More frames can cause MORE faults with FIFO\nLRU and Optimal are stack algorithms (no Belady anomaly)\n\nPage Table Entries:\n32-bit logical, page size 2KB = 2^11\nPage bits = 32-11 = 21 → max entries = 2^21' },
+        { code: 'BCS401', title: 'Deadlock & Semaphores', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: '4 Necessary Conditions (ALL must hold for deadlock):\n1. Mutual Exclusion: Resource held exclusively\n2. Hold & Wait: Holding one, waiting for another\n3. No Preemption: Cannot forcibly take resource\n4. Circular Wait: P1→R1→P2→R2→P1\n\nDeadlock with Semaphores (AKTU 2024-25 exact):\nS1=1, S2=1\nP1: wait(S1); wait(S2); ... signal(S2); signal(S1)\nP2: wait(S2); wait(S1); ... signal(S1); signal(S2)\nScenario: P1 gets S1, P2 gets S2 → DEADLOCK!\n\nCritical Section 3 Requirements:\n1. Mutual Exclusion\n2. Progress (no unnecessary blocking)\n3. Bounded Waiting (no starvation)\n\nProducer-Consumer with Semaphore:\nmutex=1, empty=n, full=0\nProducer: wait(empty)→wait(mutex)→add→signal(mutex)→signal(full)\nConsumer: wait(full)→wait(mutex)→remove→signal(mutex)→signal(empty)\n\nDining Philosophers (5):\nSolution: Max 4 philosophers at table simultaneously' },
+        { code: 'BCS401', title: 'Disk Scheduling Numericals', stars: '⭐⭐', freq: '4/4 years', content: 'Algorithms:\nSSTF: Service nearest request first (from current position)\nSCAN: Move in one direction, service all, then reverse\nC-SCAN: Move one direction, jump to opposite end, repeat\nLOOK: Like SCAN but only to last request (no disk end)\nC-LOOK: Like C-SCAN but jump to first request (not cylinder 0)\n\nC-LOOK Example (2024-25):\nHead=63, Moving UP, requests: 47,38,121,191,87,11,92,10\nSort all: 10,11,38,47,87,92,121,191\nFrom 63 going UP: serve 87,92,121,191\nJump to smallest: 10, then 11,38,47\nMovement = (191-63) + (191-10) = 128+181 = 309 cylinders\n\nSSTF Example:\nHead=50, Queue: 95,180,34,119,11,123,62,64\nOrder: 62,64,34,11,95,119,123,180\nAlways pick nearest from current position' },
+        { code: 'BCS402', title: 'DFA Construction — Divisibility', stars: '⭐⭐', freq: '7+ years — SURE SHOT', content: 'DFA Formal: M = (Q, Σ, δ, q0, F)\n\nDFA for binary divisible by N:\nStates = {0,1,...,N-1} (remainders)\nδ(q,0) = 2q mod N\nδ(q,1) = (2q+1) mod N\nFinal state = {0} (remainder 0)\n\nExample: Divisible by 4 (N=4):\nStates: q0(rem=0), q1(rem=1), q2(rem=2), q3(rem=3)\nδ(q0,0)=q0, δ(q0,1)=q1\nδ(q1,0)=q2, δ(q1,1)=q3\nδ(q2,0)=q0, δ(q2,1)=q1\nδ(q3,0)=q2, δ(q3,1)=q3\nF={q0}\n\nDivisible by 5 (over {0,1}):\n5 states q0-q4, same formula\n\nDFA Minimization:\n1. Remove unreachable states\n2. Table filling: Mark (final, non-final) pairs as distinguishable\n3. Mark (p,q) if ∃a: (δ(p,a),δ(q,a)) already marked\n4. Merge all unmarked (equivalent) pairs' },
+        { code: 'BCS402', title: 'NFA to DFA — Subset Construction', stars: '⭐⭐', freq: '7+ years — SURE SHOT', content: 'Subset Construction Algorithm:\n1. Compute ε-closure(q0) = start state of DFA\n2. For each DFA state T and input symbol a:\n   MOVE(T,a) = ∪{δ(q,a) | q∈T}\n   New DFA state = ε-closure(MOVE(T,a))\n3. Repeat for all new states\n4. Final states: any DFA state containing NFA final state\n\nε-closure: States reachable via ε-transitions only\nε-closure(q) = {q} ∪ {p | q →ε p →ε ...}\n\nExample Template:\nNFA states: {1,2,3,4}, start=1, final={4}\nStep 1: ε-closure({1}) = {1,2,3} = state A\nStep 2: δ(A,a) = MOVE(A,a) = δ(1,a)∪δ(2,a)∪δ(3,a) = {2,4}\n        ε-closure({2,4}) = {2,4} = state B\nStep 3: continue for all states and inputs...\n\nEXAM TIP: Show ε-closure separately first, then table\nLabel DFA states as sets: {1,2,3}, {2,4}, etc.' },
+        { code: 'BCS402', title: 'CNF Conversion Step-by-Step', stars: '⭐⭐', freq: '5+ years — SURE SHOT', content: 'CNF Requirements: All rules A→BC or A→a only\n\nConversion Steps (DO IN ORDER!):\n\nStep 1: Remove START symbol from RHS\nAdd S0→S if S appears in any RHS\n\nStep 2: Remove ε-productions\n• Find nullable: directly A→ε, or A→BC where both nullable\n• For each rule with nullable var, add version without it\n• Delete all A→ε rules (except start if ε∈L)\n\nStep 3: Remove unit productions (A→B)\n• Find all unit pairs (A,B) where A→*B\n• For each (A,B), add A→γ for all B→γ (not unit)\n• Delete all unit rules\n\nStep 4: Proper CNF form\n• Rule A→u1u2...uk (k≥2) with terminals:\n  Add Ta→a for each terminal a\n  Replace: A→u1u2...uk → use Ta instead of a\n• Rule A→u1u2...uk (k≥3):\n  Split: A→u1A1, A1→u2A2, ..., Ak-2→uk-1uk' },
+        { code: 'BCS402', title: 'PDA Design — Complete Formulas', stars: '⭐⭐', freq: '7+ years — SURE SHOT', content: 'PDA for L={aⁿbⁿ | n≥1}:\nδ(q0,a,Z0)=(q0,AZ0) — push A on Z0\nδ(q0,a,A)=(q0,AA)  — push A on A\nδ(q0,b,A)=(q1,ε)   — pop A on b (switch phase)\nδ(q1,b,A)=(q1,ε)   — continue popping\nδ(q1,ε,Z0)=(q2,Z0) — accept by final state\n\nPDA for L={wwᴿ | w∈(a,b)*}:\nδ(q0,a,Z0)=(q0,AZ0), δ(q0,b,Z0)=(q0,BZ0)\nδ(q0,a,A)=(q0,AA), δ(q0,b,B)=(q0,BB)\nδ(q0,ε,-)=(q1,-) — non-det. switch at middle\nδ(q1,a,A)=(q1,ε), δ(q1,b,B)=(q1,ε)\nδ(q1,ε,Z0)=(q2,Z0) — accept\n\nTwo Stack PDA for L={aⁿbⁿcⁿ}:\nStack1: Push a, pop on b\nStack2: Push b, pop on c\n(Single stack PDA CANNOT accept this!)\n\nCFG to PDA conversion:\nFor each A→α: δ(q,ε,A)=(q,α)\nFor each terminal a: δ(q,a,a)=(q,ε)' },
+        { code: 'BCS402', title: 'Turing Machine & Halting Problem', stars: '⭐⭐', freq: '6+ years — SURE SHOT', content: 'TM for L={aⁿbⁿ | n≥1} (step by step):\n(q0,a)→(q1,X,R) — mark a with X\n(q1,a)→(q1,a,R) — skip a's\n(q1,b)→(q2,Y,L) — mark b with Y\n(q2,a)→(q2,a,L) — move left\n(q2,X)→(q0,X,R) — find next unmarked a\n(q0,Y)→(q3,Y,R) — all a's marked\n(q3,Y)→(q3,Y,R) — skip Y's\n(q3,B)→(qf,B,R) — ACCEPT\n\nTM for L={aⁿbⁿcⁿ}:\nMark one a, skip b's, mark one c, skip back\nRepeat for each remaining a-b-c triple\n\nHalting Problem Proof (Undecidable):\n1. Assume H decides halting problem\n2. Construct D(M): if H(M,M)=halts → loop; else halt\n3. Run D(D):\n   - If D(D) halts → H(D,D)=halts → D should loop → contradiction\n   - If D(D) loops → H(D,D)=loops → D should halt → contradiction\n4. Contradiction! H cannot exist → Halting Problem undecidable\n\nChurch's Thesis: Effective computation = Turing computation' },
+        { code: 'BCS403', title: 'Java OOP — Polymorphism & Constructors', stars: '⭐⭐', freq: '2/2 years — SURE SHOT', content: 'Compile-time polymorphism: Method overloading\nvoid add(int a, int b) {}\nvoid add(double a, double b) {} // different params\n\nRuntime polymorphism: Method overriding\nclass Shape { void draw() { } }\nclass Circle extends Shape {\n  @Override\n  void draw() { System.out.println("Drawing circle"); }\n}\nShape s = new Circle(); s.draw(); // calls Circle.draw()\n\nConstructors:\nclass Student {\n  String name; int roll;\n  Student() {} // default\n  Student(String n, int r) { name=n; roll=r; } // parameterized\n  Student(Student s) { name=s.name; roll=s.roll; } // copy\n}\nStudent s1 = new Student("Ram", 101);\nStudent s2 = new Student(s1); // copy constructor\n\nAbstract class: Cannot instantiate, can have abstract + concrete methods\nabstract class Shape { abstract double area(); void display() {} }\n\nInterface: All methods abstract by default (Java 7)\nJava 8+: default & static methods allowed' },
+        { code: 'BCS403', title: 'Collections + Stream API Programs', stars: '⭐⭐', freq: '2/2 years — SURE SHOT', content: '// Collections Hierarchy (DRAW THIS IN EXAM!)\n// Collection → List (ArrayList, LinkedList)\n//            → Set (HashSet, TreeSet)\n//            → Queue (PriorityQueue)\n// Map (separate) → HashMap, TreeMap\n\n// ArrayList 5 methods:\nArrayList<String> list = new ArrayList<>();\nlist.add("Apple");      // add at end\nlist.add(0, "Mango");   // add at index\nlist.get(0);            // get by index\nlist.remove("Apple");   // remove by value\nlist.size();            // count\nlist.contains("Mango"); // search\nlist.forEach(System.out::println); // iterate\n\n// HashMap 5 methods:\nHashMap<String,Integer> map = new HashMap<>();\nmap.put("Alice",90); map.put("Bob",85);\nmap.get("Alice");          // → 90\nmap.remove("Bob");\nmap.containsKey("Alice");  // → true\nmap.entrySet().forEach(e->\n  System.out.println(e.getKey()+":"+e.getValue()));\n\n// Stream — Sum of evens 1-10 (EXACT exam Q):\nList<Integer> nums = IntStream.rangeClosed(1,10)\n  .boxed().collect(Collectors.toList());\nint sum = nums.stream()\n  .filter(n -> n%2 == 0)\n  .reduce(0, Integer::sum);  // Output: 30' },
+        { code: 'BCS403', title: 'Spring Boot — DI & CRUD API', stars: '⭐⭐', freq: '2/2 years — SURE SHOT', content: '// Spring Boot Application\n@SpringBootApplication\npublic class App { public static void main(String[] a)\n  { SpringApplication.run(App.class, a); } }\n\n// REST Controller with CRUD\n@RestController\n@RequestMapping("/students")\npublic class StudentController {\n  private List<String> students = new ArrayList<>();\n\n  @GetMapping                          // GET all\n  public List<String> getAll() { return students; }\n\n  @GetMapping("/{id}")                  // GET by id\n  public String get(@PathVariable int id) {\n    return students.get(id); }\n\n  @PostMapping                         // CREATE\n  public String add(@RequestBody String s) {\n    students.add(s); return "Added: "+s; }\n\n  @PutMapping("/{id}")                 // UPDATE\n  public String update(@PathVariable int id,\n    @RequestBody String s) {\n    students.set(id,s); return "Updated"; }\n\n  @DeleteMapping("/{id}")              // DELETE\n  public String delete(@PathVariable int id) {\n    return "Deleted: "+students.remove(id); }\n}\n\n// Dependency Injection:\n@Service class StudentService { ... }\n@RestController class Ctrl {\n  @Autowired StudentService svc; // Field injection\n}' }
       ]
+    },
+    Civil: {
+      '3': [{ code: 'BCE301', title: 'Civil Sem 3 Topics — Coming Soon', stars: '⭐', freq: 'Admin se add hoga', content: 'Data admin panel se add kiya jayega jab civil branch ka data available hoga.' }],
+      '4': [{ code: 'BCE401', title: 'Civil Sem 4 Topics — Coming Soon', stars: '⭐', freq: 'Admin se add hoga', content: 'Data admin panel se add kiya jayega.' }]
     }
+  }
   },
   videos: [],
-  placement: []
+  placement: [
+    {
+      branch: 'CSE', title: '💻 CSE Placement Roadmap — Year 2 & 3',
+      steps: [
+        'Month 1-2: DSA Basics — Arrays, Linked List, Stack, Queue (LeetCode Easy 50+)',
+        'Month 3-4: DSA Advanced — Trees, Graphs, DP (LeetCode Medium 50+)',
+        'Month 5-6: Core CS — OS, DBMS, CN, OOP revision + practice',
+        'Month 7-8: Development — Pick one: Web (React/Node) or Android or ML basics',
+        'Month 9-10: Projects — 2 good projects on GitHub with README',
+        'Month 11-12: Internship hunting — Apply on LinkedIn, Internshala, AngelList',
+        'Year 3 Sem 5-6: Competitive coding — CodeChef, Codeforces rating build karo',
+        'Year 3 Sem 6: Campus placement prep — Aptitude + Group Discussion + HR rounds',
+        'Final: Target companies — TCS, Infosys, Wipro (mass), Accenture, Cognizant (mid), Amazon, Microsoft (dream)'
+      ]
+    },
+    {
+      branch: 'CSE', title: '🎯 CSE Interview Preparation Strategy',
+      steps: [
+        'Resume: 1 page, ATS-friendly, GitHub link must, 2-3 projects highlight karo',
+        'Aptitude: R.S. Aggarwal book + IndiaBix daily 30 min practice',
+        'Coding rounds: HackerRank, HackerEarth profile strong banao',
+        'Technical Interview: FAANG-style questions — system design basics Year 4 mein',
+        'HR Round: STAR method — Situation, Task, Action, Result',
+        'Certifications helpful: AWS Cloud Practitioner, Google Data Analytics, Meta Front-End',
+        'LinkedIn: 500+ connections, regular posts, recruiter mode ON karo',
+        'Mock interviews: Pramp.com, Interviewing.io use karo free mein'
+      ]
+    },
+    {
+      branch: 'ECE', title: '📡 ECE Placement Roadmap — Core + IT',
+      steps: [
+        'Month 1-2: Core fundamentals — Network Theory, EDC, Digital Electronics revise karo',
+        'Month 3-4: Communication + Signals — BEC401/402/403 deep study',
+        'Month 5-6: Embedded Systems — Arduino, Raspberry Pi projects banao',
+        'Month 7-8: Programming — C/C++ strong karo, Python basics seekho',
+        'Month 9-10: VLSI basics — Verilog/VHDL introduction (for core companies)',
+        'Month 11-12: IT side option — DSA basics for IT companies (TCS, Infosys)',
+        'Year 3: Choose path — Core (PSU/DRDO/ISRO) or IT (Software companies)',
+        'PSU prep: GATE exam — start from Year 3 Sem 5 seriously',
+        'Target: L&T, Siemens, Bosch (core), TCS, Wipro, HCL (IT side)'
+      ]
+    },
+    {
+      branch: 'ECE', title: '🏛️ ECE Government/PSU Strategy',
+      steps: [
+        'GATE 2026 target: Start preparation from 3rd year',
+        'GATE subjects: Networks, EDC, Analog, Digital, Signals, Electromagnetics, Control Systems',
+        'GATE books: Kanodia series for ECE — unit wise practice',
+        'PSU via GATE: BHEL, NTPC, PGCIL, BSNL, ONGC — score above 600 needed',
+        'ESE/IES: Engineering Services Exam — for top government engineering posts',
+        'DRDO/ISRO: Separate exams — syllabus similar to GATE',
+        'State PSUs: UPPCL, UPPSC — for UP students very good option',
+        'Preparation time: 6-8 months dedicated after 3rd year exams'
+      ]
+    },
+    {
+      branch: 'ME', title: '⚙️ Mechanical Placement Roadmap',
+      steps: [
+        'Month 1-2: Core subjects revise — Thermodynamics, Fluid Mechanics, SOM',
+        'Month 3-4: Manufacturing processes + CAD/CAM — SolidWorks/AutoCAD siikho',
+        'Month 5-6: Industrial training/internship — manufacturing plant preferred',
+        'Month 7-8: Design tools — CATIA/ANSYS basics for design companies',
+        'Month 9-10: Automobile sector prep — IC engines, vehicle dynamics',
+        'Month 11-12: Aptitude + technical MCQ practice for campus placements',
+        'Year 3: GATE preparation start karo — ME is highly competitive',
+        'PSU target: BHEL, ONGC, IOCL, HPCL, Coal India — GATE score needed',
+        'Target companies: Tata Motors, Maruti, Mahindra, L&T, Larsen, BHEL'
+      ]
+    },
+    {
+      branch: 'ME', title: '🏭 ME Core + PSU Strategy',
+      steps: [
+        'GATE ME subjects: Thermo, FM, HMT, Manufacturing, SOM, Machine Design, Theory of Machines',
+        'GATE books: Made Easy notes + previous year papers (20 years)',
+        'PSU via GATE: BHEL, NTPC, ONGC, GAIL, IOCL — minimum 60-70 marks needed',
+        'Non-GATE PSUs: HAL, BEL, ECIL — have separate written tests',
+        'Design companies: AutoCAD + SolidWorks certification helpful',
+        'Oil & Gas sector: Good salary, remote locations — ONGC, HPCL, BPCL',
+        'Automobile internship: Target Maruti, Tata, Mahindra plants in 3rd year',
+        'MBA option: CAT/MAT after B.Tech for management roles in manufacturing'
+      ]
+    },
+    {
+      branch: 'EE', title: '⚡ Electrical Placement Roadmap',
+      steps: [
+        'Month 1-2: Core revision — Electrical Machines, Power Systems, Control Systems',
+        'Month 3-4: Power Electronics + Drives — very important for industry',
+        'Month 5-6: PLC/SCADA basics — industrial automation in demand',
+        'Month 7-8: MATLAB/Simulink projects — simulation projects for resume',
+        'Month 9-10: Renewable energy basics — Solar, Wind (growing sector)',
+        'Month 11-12: GATE preparation seriously start karo',
+        'Year 3: Industrial training — power plant or substation preferred',
+        'PSU target: NTPC, PGCIL, NHPC, UPPCL, BSES — GATE score required',
+        'Target: NTPC, Power Grid, NHPC, Siemens, ABB, Schneider Electric'
+      ]
+    },
+    {
+      branch: 'EE', title: '🏛️ EE Government Jobs Strategy',
+      steps: [
+        'GATE EE subjects: Networks, Machines, Power Systems, Control, Power Electronics, Signals',
+        'UPPCL AE: State level exam — good for UP students, syllabus similar to GATE',
+        'NTPC Engineer Trainee: Via GATE — one of best PSU for EE students',
+        'Power Grid PGCIL: Excellent salary + perks — highly competitive',
+        'Railways RRB JE/SSE: Junior/Senior Section Engineer — good stable job',
+        'BSNL TTA: Telecom company — EE + ECE students eligible',
+        'State Electricity Boards: UPPCL, DVVNL — state level exams',
+        'Preparation strategy: GATE first, then specific PSU papers practice'
+      ]
+    },
+    {
+      branch: 'Civil', title: '🏗️ Civil Placement Roadmap',
+      steps: [
+        'Month 1-2: Core subjects — Structural Analysis, RCC Design, Soil Mechanics revise',
+        'Month 3-4: AutoCAD 2D/3D + Revit BIM — must have skills for industry',
+        'Month 5-6: Site internship — construction site ya consulting firm',
+        'Month 7-8: Estimation & Costing + Project Management basics',
+        'Month 9-10: STAAD Pro / ETABS basics — structural software',
+        'Month 11-12: GATE preparation + government exam prep',
+        'Year 3: Choose — Private construction or Government (PSU/CPWD)',
+        'Government target: CPWD, PWD, NHAI, Railways, Municipal corporations',
+        'Target companies: L&T Construction, Shapoorji Pallonji, DLF, Godrej Properties'
+      ]
+    },
+    {
+      branch: 'Civil', title: '🏛️ Civil Government Jobs Strategy',
+      steps: [
+        'GATE CE subjects: Structural, Geotechnical, Fluid Mechanics, Environmental, Transportation',
+        'SSC JE: Junior Engineer exam — good entry level government job',
+        'UPSSSC JE: State level — UP students ke liye good option',
+        'CPWD AE/JE: Central Public Works Department — prestigious post',
+        'NHAI: National Highways — infrastructure projects, good growth',
+        'Municipal Corporation: City level infrastructure work',
+        'IES/ESE: Engineering Services — top government engineering post',
+        'Private sector: Real estate booming — L&T, Tata Projects, NCC Ltd'
+      ]
+    },
+    {
+      branch: 'All', title: '📝 Common Aptitude & Soft Skills',
+      steps: [
+        'Quantitative Aptitude: R.S. Aggarwal — complete in 3 months, 1 chapter/day',
+        'Logical Reasoning: M.K. Pandey book + IndiaBix daily practice',
+        'Verbal Ability: The Hindu newspaper daily reading + vocab apps',
+        'Communication: Speak English daily, record yourself, join debate club',
+        'Group Discussion: Practice current topics — AI, Climate Change, Startup India',
+        'Resume building: Use Canva/Novoresume, keep 1 page, no photo needed',
+        'LinkedIn: Professional photo, complete profile, 500+ connections target',
+        'Interview etiquette: Formal dress, punctuality, firm handshake, eye contact'
+      ]
+    },
+    {
+      branch: 'All', title: '🎓 Important Certifications for All Branches',
+      steps: [
+        'NPTEL courses: Free IIT/IISc courses — certificate adds value to resume',
+        'Coursera/edX: Google, IBM, Meta certifications — industry recognized',
+        'AWS/Azure Cloud: Cloud computing basics — good for all branches',
+        'Six Sigma (ME/IE): Quality management — manufacturing companies prefer',
+        'PMP basics: Project management — useful for all engineering branches',
+        'AutoCAD: Mechanical + Civil students must have certification',
+        'MATLAB: ECE + EE + ME students — simulation projects make resume strong',
+        'GitHub profile: All branches — at least 5 repositories with good code'
+      ]
+    }
+  ]
 };
 
 // ===== FIREBASE HELPER FUNCTIONS =====
@@ -2343,12 +2750,69 @@ window.globalSearchHandler = function(query) {
 };
 
 // ===== ADMIN FUNCTIONS =====
+function renderAdminOverview() {
+  const branches = ['ECE','ME','EE','CSE','Civil'];
+  const sems = ['3','4','5','6','7','8'];
+  let html = '<table class="admin-table"><thead><tr><th>Branch</th>';
+  sems.forEach(s => html += `<th>Sem ${s}</th>`);
+  html += '</tr></thead><tbody>';
+
+  branches.forEach(branch => {
+    html += `<tr><td><strong>${branch}</strong></td>`;
+    sems.forEach(sem => {
+      const hasSyl = (allData.syllabus[branch]?.[sem] || []).filter(s => !s.name.includes('Coming Soon')).length;
+      const hasPyq = Object.keys(allData.pyq[branch]?.[sem] || {}).length;
+      const hasTopics = (allData.topics[branch]?.[sem] || []).length;
+      const hasVideos = allData.videos.filter(v => v.branch === branch || v.branch === 'All').length;
+
+      const dots = [];
+      if(hasSyl) dots.push(`<span title="${hasSyl} subjects" style="color:var(--accent-green)">📖${hasSyl}</span>`);
+      else dots.push(`<span style="color:var(--text-muted)">📖—</span>`);
+      if(hasPyq) dots.push(`<span title="${hasPyq} subjects" style="color:var(--accent-purple)">📝${hasPyq}</span>`);
+      else dots.push(`<span style="color:var(--text-muted)">📝—</span>`);
+      if(hasTopics) dots.push(`<span title="${hasTopics} topics" style="color:var(--accent-orange)">⭐${hasTopics}</span>`);
+      else dots.push(`<span style="color:var(--text-muted)">⭐—</span>`);
+
+      html += `<td style="font-size:0.82em">${dots.join(' ')}</td>`;
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  html += '<div style="margin-top:12px;font-size:0.78em;color:var(--text-muted)">📖=Syllabus subjects &nbsp; 📝=PYQ subjects &nbsp; ⭐=Important topics &nbsp; — = No data</div>';
+
+  const el = document.getElementById('overviewGrid');
+  if(el) el.innerHTML = html;
+
+  // Stats
+  let totalSubs = 0, totalPyq = 0, totalTopics = 0;
+  for(const b in allData.syllabus) for(const s in allData.syllabus[b]) totalSubs += allData.syllabus[b][s].filter(x => !x.name.includes('Coming')).length;
+  for(const b in allData.pyq) for(const s in allData.pyq[b]) for(const c in allData.pyq[b][s]) totalPyq += Object.keys(allData.pyq[b][s][c].years||{}).length;
+  for(const b in allData.topics) for(const s in allData.topics[b]) totalTopics += (allData.topics[b][s]||[]).length;
+
+  const statsEl = document.getElementById('overviewStats');
+  if(statsEl) statsEl.innerHTML = [
+    ['📖','Total Subjects',totalSubs,'badge-blue'],
+    ['📝','PYQ Papers',totalPyq,'badge-purple'],
+    ['⭐','Imp Topics',totalTopics,'badge-green'],
+    ['▶️','Videos',allData.videos.length,'badge-blue'],
+    ['💼','Placement Cards',allData.placement.length,'badge-green'],
+    ['👥','Registered Users','—','badge-purple']
+  ].map(([icon,label,val,cls]) => `
+    <div class="stat-card">
+      <div class="stat-icon">${icon}</div>
+      <div class="stat-value" style="font-size:1.4em">${val}</div>
+      <div class="stat-label">${label}</div>
+    </div>
+  `).join('');
+}
+
 window.switchAdminTab = function(tab) {
   document.querySelectorAll('.admin-tab').forEach(t => {
     t.classList.toggle('active', t.textContent.trim().toLowerCase().includes(tab) || t.getAttribute('onclick')?.includes("'"+tab+"'"));
   });
   document.querySelectorAll('.admin-content').forEach(c => c.classList.remove('active'));
   document.getElementById('admin-' + tab).classList.add('active');
+  if (tab === 'overview') renderAdminOverview();
   if (tab === 'users') loadUsers();
   if (tab === 'syllabus') renderAdminSylList();
   if (tab === 'pyq') renderAdminPyqStats();
@@ -2645,6 +3109,7 @@ window.resetStudentPassword = async function() {
 function refreshAdminContent() {
   const activeAdminTab = document.querySelector('.admin-content.active');
   if (activeAdminTab?.id === 'admin-users') loadUsers();
+  if (activeAdminTab?.id === 'admin-overview') renderAdminOverview();
 }
 
 // ===== SIDEBAR =====
