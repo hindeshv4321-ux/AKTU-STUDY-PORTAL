@@ -1,0 +1,2686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AKTU Study Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Roboto:wght@300;400;500&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #050d1a;
+  --bg-secondary: #0a1628;
+  --bg-card: #0d1f3a;
+  --bg-card2: #0f2444;
+  --accent-blue: #1e90ff;
+  --accent-cyan: #00d4ff;
+  --accent-purple: #7c3aed;
+  --accent-green: #10b981;
+  --accent-orange: #f59e0b;
+  --accent-red: #ef4444;
+  --text-primary: #e8f4fd;
+  --text-secondary: #8ab4d4;
+  --text-muted: #4a6a8a;
+  --border: #1a3050;
+  --border-glow: #1e90ff44;
+  --gradient-main: linear-gradient(135deg, #1e90ff, #00d4ff);
+  --gradient-card: linear-gradient(145deg, #0d1f3a, #0a1628);
+  --shadow-glow: 0 0 20px #1e90ff33;
+  --sidebar-width: 260px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Roboto', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+h1,h2,h3,h4,h5 { font-family: 'Montserrat', sans-serif; }
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: var(--accent-blue); border-radius: 3px; }
+
+/* ===== PAGES ===== */
+.page { display: none; }
+.page.active { display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ===== AUTH PAGE ===== */
+#authPage {
+  background: var(--bg-primary);
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+#authPage::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, #1e90ff11 0%, transparent 70%);
+  top: -200px; left: -200px;
+  animation: pulse 4s ease-in-out infinite;
+}
+#authPage::after {
+  content: '';
+  position: absolute;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, #7c3aed11 0%, transparent 70%);
+  bottom: -100px; right: -100px;
+  animation: pulse 4s ease-in-out infinite reverse;
+}
+@keyframes pulse {
+  0%,100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+.auth-container {
+  width: 100%;
+  max-width: 480px;
+  z-index: 1;
+  padding: 20px;
+}
+.auth-logo {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.auth-logo h1 {
+  font-size: 2.2em;
+  font-weight: 900;
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 2px;
+}
+.auth-logo p {
+  color: var(--text-secondary);
+  font-size: 0.85em;
+  margin-top: 5px;
+  font-family: 'Roboto', sans-serif;
+}
+.auth-tabs {
+  display: flex;
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+}
+.auth-tab {
+  flex: 1;
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 8px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 0.85em;
+  color: var(--text-muted);
+  transition: all 0.3s;
+}
+.auth-tab.active {
+  background: var(--gradient-main);
+  color: white;
+}
+.auth-form { display: none; }
+.auth-form.active { display: block; }
+.form-group { margin-bottom: 16px; }
+.form-group label {
+  display: block;
+  font-size: 0.8em;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 0.95em;
+  font-family: 'Roboto', sans-serif;
+  transition: all 0.3s;
+  outline: none;
+}
+.form-group input:focus, .form-group select:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px var(--border-glow);
+}
+.form-group select option { background: var(--bg-card); }
+.btn-primary {
+  width: 100%;
+  padding: 13px;
+  background: var(--gradient-main);
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1em;
+  cursor: pointer;
+  transition: all 0.3s;
+  letter-spacing: 0.5px;
+}
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: var(--shadow-glow); }
+.auth-dev {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.8em;
+  color: var(--text-muted);
+}
+.auth-dev span { color: var(--accent-cyan); font-weight: 600; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.auth-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 20px 60px #00000066;
+}
+.error-msg {
+  color: var(--accent-red);
+  font-size: 0.82em;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #ef444422;
+  border-radius: 6px;
+  border: 1px solid #ef444433;
+  display: none;
+}
+.success-msg {
+  color: var(--accent-green);
+  font-size: 0.82em;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #10b98122;
+  border-radius: 6px;
+  border: 1px solid #10b98133;
+  display: none;
+}
+
+/* ===== MAIN APP ===== */
+#appPage {
+  flex-direction: row;
+  min-height: 100vh;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--bg-secondary);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; left: 0;
+  height: 100vh;
+  z-index: 100;
+  transition: transform 0.3s;
+  overflow-y: auto;
+}
+.sidebar-header {
+  padding: 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.sidebar-logo {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 900;
+  font-size: 1.3em;
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.sidebar-user {
+  margin-top: 10px;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.sidebar-user .user-name {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.9em;
+  color: var(--text-primary);
+}
+.sidebar-user .user-branch {
+  font-size: 0.75em;
+  color: var(--accent-cyan);
+  margin-top: 2px;
+}
+.sidebar-nav { flex: 1; padding: 12px 10px; }
+.nav-section-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.65em;
+  color: var(--text-muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 8px 8px 4px;
+  margin-top: 8px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 2px;
+  font-size: 0.9em;
+  color: var(--text-secondary);
+  font-family: 'Roboto', sans-serif;
+}
+.nav-item:hover { background: var(--bg-card); color: var(--text-primary); }
+.nav-item.active {
+  background: var(--gradient-main);
+  color: white;
+  box-shadow: var(--shadow-glow);
+}
+.nav-item .icon { font-size: 1.1em; width: 20px; text-align: center; }
+.sidebar-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 0.72em;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+  margin-left: var(--sidebar-width);
+  flex: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.topbar {
+  padding: 14px 24px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 1.1em;
+}
+.topbar-actions { display: flex; gap: 10px; align-items: center; }
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 14px;
+}
+.search-box input {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 0.9em;
+  width: 200px;
+}
+.sem-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-size: 0.85em;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+.sem-selector select {
+  background: none; border: none; outline: none;
+  color: var(--accent-cyan);
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+}
+.btn-logout {
+  padding: 7px 14px;
+  background: #ef444422;
+  border: 1px solid #ef444433;
+  border-radius: 8px;
+  color: var(--accent-red);
+  font-size: 0.82em;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+}
+.btn-logout:hover { background: #ef444433; }
+
+/* ===== CONTENT SECTIONS ===== */
+.content-section { display: none; padding: 24px; }
+.content-section.active { display: block; }
+
+/* ===== DASHBOARD ===== */
+.welcome-banner {
+  background: linear-gradient(135deg, #0d1f3a, #1a3050);
+  border: 1px solid var(--border-glow);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.welcome-banner::before {
+  content: '';
+  position: absolute;
+  right: -50px; top: -50px;
+  width: 200px; height: 200px;
+  background: radial-gradient(circle, #1e90ff22 0%, transparent 70%);
+}
+.welcome-banner h2 {
+  font-size: 1.6em;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+.welcome-banner h2 span { color: var(--accent-cyan); }
+.welcome-banner p { color: var(--text-secondary); font-size: 0.9em; }
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s;
+}
+.stat-card:hover { border-color: var(--accent-blue); transform: translateY(-2px); }
+.stat-icon { font-size: 1.8em; margin-bottom: 8px; }
+.stat-value {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 1.8em;
+  background: var(--gradient-main);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.stat-label { font-size: 0.78em; color: var(--text-muted); margin-top: 4px; }
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.dash-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+}
+.dash-card h3 {
+  font-size: 0.95em;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.quick-links { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.quick-link {
+  padding: 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  font-size: 0.85em;
+  color: var(--text-secondary);
+}
+.quick-link:hover { border-color: var(--accent-blue); color: var(--accent-cyan); background: var(--bg-card2); }
+.quick-link .ql-icon { font-size: 1.5em; margin-bottom: 6px; }
+
+/* ===== ATTENDANCE ===== */
+.attendance-display {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.attendance-circle {
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  background: conic-gradient(var(--accent-green) var(--pct, 0%), var(--bg-secondary) 0%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.attendance-circle::before {
+  content: '';
+  position: absolute;
+  width: 76px; height: 76px;
+  background: var(--bg-card);
+  border-radius: 50%;
+}
+.attendance-pct {
+  position: relative;
+  z-index: 1;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 1.2em;
+  color: var(--accent-green);
+}
+.att-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; flex: 1; }
+.att-input { display: flex; flex-direction: column; gap: 4px; }
+.att-input label { font-size: 0.75em; color: var(--text-muted); font-family: 'Montserrat', sans-serif; font-weight: 600; }
+.att-input input {
+  padding: 8px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.9em;
+  outline: none;
+  width: 100%;
+}
+.att-input input:focus { border-color: var(--accent-blue); }
+
+/* ===== PROGRESS TRACKER ===== */
+.progress-day {
+  padding: 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+.progress-day-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.88em;
+  font-weight: 700;
+}
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: 0.88em;
+}
+.task-check {
+  width: 18px; height: 18px;
+  border-radius: 4px;
+  border: 2px solid var(--border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.task-check.done { background: var(--accent-green); border-color: var(--accent-green); }
+
+/* ===== SUBJECTS SECTION ===== */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.section-header h2 {
+  font-size: 1.3em;
+  font-weight: 800;
+}
+.subjects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.subject-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.subject-card:hover { border-color: var(--accent-blue); transform: translateY(-2px); box-shadow: var(--shadow-glow); }
+.subject-card-header {
+  padding: 16px 20px;
+  background: linear-gradient(135deg, var(--bg-card2), var(--bg-card));
+  border-bottom: 1px solid var(--border);
+}
+.subject-code { font-size: 0.72em; color: var(--accent-cyan); font-weight: 700; letter-spacing: 1px; font-family: 'Montserrat', sans-serif; }
+.subject-name { font-size: 1em; font-weight: 700; margin-top: 4px; font-family: 'Montserrat', sans-serif; }
+.subject-card-body { padding: 14px 20px; }
+.unit-list { list-style: none; }
+.unit-item {
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.83em;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.unit-item:last-child { border-bottom: none; }
+.unit-num { color: var(--accent-blue); font-weight: 700; font-size: 0.85em; flex-shrink: 0; margin-top: 1px; }
+
+/* ===== PYQ SECTION ===== */
+.pyq-subject-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.pyq-subject-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.pyq-subject-header {
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #1a0d3a, #0d1f3a);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.pyq-years { padding: 12px 20px; display: none; }
+.pyq-years.open { display: block; }
+.pyq-year-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.88em;
+}
+.pyq-year-btn:hover { border-color: var(--accent-purple); background: var(--bg-card2); }
+.pyq-questions { padding: 0 14px 14px; display: none; }
+.pyq-questions.open { display: block; }
+.pyq-section-title {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75em;
+  font-weight: 700;
+  color: var(--accent-orange);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 10px 0 6px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+.pyq-q {
+  padding: 10px 12px;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 0.85em;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border: 1px solid var(--border);
+  transition: all 0.2s;
+  font-family: 'Roboto', sans-serif;
+}
+.pyq-q:hover { border-color: var(--accent-blue); color: var(--text-primary); }
+.pyq-answer {
+  padding: 10px 12px;
+  background: #1e90ff11;
+  border-left: 3px solid var(--accent-blue);
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 10px;
+  font-size: 0.82em;
+  color: var(--text-secondary);
+  display: none;
+  font-family: 'Caveat', cursive;
+  font-size: 1em;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+.pyq-answer.open { display: block; }
+
+/* ===== IMPORTANT TOPICS ===== */
+.topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.topic-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.topic-card-header {
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #1a0a2a, #0d1f3a);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.topic-title { font-size: 0.92em; font-weight: 700; font-family: 'Montserrat', sans-serif; }
+.topic-stars { color: var(--accent-orange); font-size: 0.8em; }
+.topic-content { padding: 16px 18px; display: none; font-family: 'Caveat', cursive; font-size: 1.05em; line-height: 1.7; color: var(--text-primary); }
+.topic-content.open { display: block; }
+.freq-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: 0.72em;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  background: #f59e0b22;
+  color: var(--accent-orange);
+  border: 1px solid #f59e0b33;
+  margin-top: 6px;
+}
+
+/* ===== VIDEO SESSION ===== */
+.playlist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.playlist-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+.playlist-card:hover { border-color: var(--accent-red); }
+.playlist-thumb {
+  width: 100%;
+  height: 160px;
+  background: linear-gradient(135deg, #1a0d0d, #2a1515);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3em;
+  position: relative;
+}
+.playlist-thumb a { text-decoration: none; }
+.playlist-info { padding: 14px 16px; }
+.playlist-title { font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 0.92em; margin-bottom: 6px; }
+.playlist-meta { font-size: 0.78em; color: var(--text-muted); }
+.btn-watch {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 7px 16px;
+  background: #ef444422;
+  border: 1px solid #ef444433;
+  border-radius: 8px;
+  color: #ef4444;
+  font-size: 0.8em;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.btn-watch:hover { background: #ef444433; }
+
+/* ===== PLACEMENT ===== */
+.placement-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.placement-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+}
+.placement-card h3 { font-size: 1em; margin-bottom: 12px; color: var(--accent-cyan); }
+.roadmap-step {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  align-items: flex-start;
+}
+.step-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--gradient-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  font-size: 0.78em;
+  flex-shrink: 0;
+}
+.step-text { font-size: 0.85em; color: var(--text-secondary); padding-top: 4px; }
+.step-month { font-family: 'Montserrat', sans-serif; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
+
+/* ===== NOTES ===== */
+.notes-area {
+  width: 100%;
+  min-height: 300px;
+  padding: 16px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-family: 'Caveat', cursive;
+  font-size: 1.1em;
+  line-height: 1.7;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.3s;
+}
+.notes-area:focus { border-color: var(--accent-blue); }
+.btn-save-note {
+  margin-top: 12px;
+  padding: 10px 24px;
+  background: var(--gradient-main);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-save-note:hover { opacity: 0.9; }
+
+/* ===== ADMIN PANEL ===== */
+.admin-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.admin-tab {
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 0.82em;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+.admin-tab.active { background: var(--gradient-main); color: white; border-color: transparent; }
+.admin-content { display: none; }
+.admin-content.active { display: block; }
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85em;
+}
+.admin-table th {
+  padding: 10px 14px;
+  background: var(--bg-card2);
+  text-align: left;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  color: var(--text-secondary);
+  font-size: 0.78em;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.admin-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+.admin-table tr:hover td { background: var(--bg-card2); }
+.btn-danger {
+  padding: 5px 12px;
+  background: #ef444422;
+  border: 1px solid #ef444433;
+  border-radius: 6px;
+  color: var(--accent-red);
+  font-size: 0.8em;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.btn-danger:hover { background: #ef444433; }
+.btn-sm {
+  padding: 5px 12px;
+  background: var(--bg-card2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 0.8em;
+  cursor: pointer;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  transition: all 0.2s;
+  margin-right: 6px;
+}
+.btn-sm:hover { border-color: var(--accent-blue); color: var(--accent-cyan); }
+.admin-form {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.admin-form h3 { font-size: 0.95em; margin-bottom: 16px; color: var(--accent-cyan); font-family: 'Montserrat', sans-serif; }
+.admin-form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 12px; }
+.admin-input {
+  padding: 9px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.88em;
+  outline: none;
+  width: 100%;
+  font-family: 'Roboto', sans-serif;
+}
+.admin-input:focus { border-color: var(--accent-blue); }
+.admin-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 9px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.88em;
+  outline: none;
+  resize: vertical;
+  font-family: 'Roboto', sans-serif;
+}
+.admin-textarea:focus { border-color: var(--accent-blue); }
+.admin-select {
+  padding: 9px 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 0.88em;
+  outline: none;
+  width: 100%;
+  font-family: 'Roboto', sans-serif;
+  cursor: pointer;
+}
+.btn-add {
+  padding: 9px 20px;
+  background: var(--gradient-main);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 0.85em;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-add:hover { opacity: 0.9; }
+
+/* ===== MOBILE ===== */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 6px;
+}
+.hamburger span {
+  display: block;
+  width: 22px; height: 2px;
+  background: var(--text-primary);
+  border-radius: 2px;
+}
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #00000088;
+  z-index: 99;
+}
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-overlay.open { display: block; }
+  .main-content { margin-left: 0; }
+  .hamburger { display: flex; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .search-box { display: none; }
+  .form-row { grid-template-columns: 1fr; }
+}
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: 0.88em;
+  z-index: 9999;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: all 0.3s;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast.success { background: #10b98122; border: 1px solid var(--accent-green); color: var(--accent-green); }
+.toast.error { background: #ef444422; border: 1px solid var(--accent-red); color: var(--accent-red); }
+
+/* ===== LOADING ===== */
+.loading-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg-primary);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.5s;
+}
+.loading-spinner {
+  width: 50px; height: 50px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent-blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== MISC ===== */
+.empty-state {
+  text-align: center;
+  padding: 50px 20px;
+  color: var(--text-muted);
+}
+.empty-state .empty-icon { font-size: 3em; margin-bottom: 12px; }
+.empty-state p { font-size: 0.9em; }
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 100px;
+  font-size: 0.72em;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+}
+.badge-blue { background: #1e90ff22; color: var(--accent-blue); border: 1px solid #1e90ff33; }
+.badge-green { background: #10b98122; color: var(--accent-green); border: 1px solid #10b98133; }
+.badge-purple { background: #7c3aed22; color: #a78bfa; border: 1px solid #7c3aed33; }
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+</style>
+</head>
+<body>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Sidebar Overlay -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- ===== AUTH PAGE ===== -->
+<div class="page active" id="authPage">
+  <div class="auth-container">
+    <div class="auth-logo">
+      <h1>📚 AKTU PORTAL</h1>
+      <p>Complete Study Resource for AKTU Students</p>
+    </div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <div class="auth-tab active" onclick="switchAuthTab('login')">Student Login</div>
+        <div class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</div>
+        <div class="auth-tab" onclick="switchAuthTab('admin')">Admin</div>
+      </div>
+
+      <!-- Login Form -->
+      <div class="auth-form active" id="loginForm">
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="loginEmail" placeholder="Enter your email">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="loginPassword" placeholder="Enter your password">
+        </div>
+        <div class="error-msg" id="loginError"></div>
+        <button class="btn-primary" onclick="loginUser()">Login →</button>
+      </div>
+
+      <!-- Signup Form -->
+      <div class="auth-form" id="signupForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="signupName" placeholder="Your name">
+          </div>
+          <div class="form-group">
+            <label>Roll Number</label>
+            <input type="text" id="signupRoll" placeholder="e.g. 2200123456">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="signupEmail" placeholder="Your email">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Branch</label>
+            <select id="signupBranch">
+              <option value="">Select Branch</option>
+              <option value="ECE">ECE</option>
+              <option value="ME">Mechanical</option>
+              <option value="EE">Electrical</option>
+              <option value="CSE">Computer Science</option>
+              <option value="Civil">Civil</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>College</label>
+            <input type="text" id="signupCollege" placeholder="College name">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="signupPassword" placeholder="Create password">
+        </div>
+        <div class="error-msg" id="signupError"></div>
+        <div class="success-msg" id="signupSuccess"></div>
+        <button class="btn-primary" onclick="signupUser()">Create Account →</button>
+      </div>
+
+      <!-- Admin Form -->
+      <div class="auth-form" id="adminForm">
+        <div class="form-group">
+          <label>Admin Username</label>
+          <input type="text" id="adminUser" placeholder="Enter username">
+        </div>
+        <div class="form-group">
+          <label>Admin Password</label>
+          <input type="password" id="adminPass" placeholder="Enter password">
+        </div>
+        <div class="error-msg" id="adminError"></div>
+        <button class="btn-primary" onclick="loginAdmin()">Admin Login →</button>
+      </div>
+
+      <div class="auth-dev">Developed by <span>HINDESH VERMA</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MAIN APP PAGE ===== -->
+<div class="page" id="appPage">
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">📚 AKTU PORTAL</div>
+      <div class="sidebar-user" id="sidebarUser">
+        <div class="user-name" id="sidebarName">-</div>
+        <div class="user-branch" id="sidebarBranch">-</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-section-title">Main</div>
+      <div class="nav-item active" onclick="showSection('dashboard')"><span class="icon">🏠</span> Dashboard</div>
+      <div class="nav-item" onclick="showSection('syllabus')"><span class="icon">📖</span> Syllabus</div>
+      <div class="nav-item" onclick="showSection('pyq')"><span class="icon">📝</span> Previous Year Q</div>
+      <div class="nav-item" onclick="showSection('topics')"><span class="icon">⭐</span> Important Topics</div>
+      <div class="nav-section-title">Study Tools</div>
+      <div class="nav-item" onclick="showSection('videos')"><span class="icon">▶️</span> Video Session</div>
+      <div class="nav-item" onclick="showSection('notes')"><span class="icon">✏️</span> My Notes</div>
+      <div class="nav-section-title">Extras</div>
+      <div class="nav-item" onclick="showSection('placement')"><span class="icon">💼</span> Placement</div>
+      <div class="nav-item admin-nav" onclick="showSection('admin')" style="display:none"><span class="icon">⚙️</span> Admin Panel</div>
+    </nav>
+    <div class="sidebar-footer">© 2025 HINDESH VERMA · All Rights Reserved</div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></div>
+        <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      </div>
+      <div class="topbar-actions">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" id="globalSearch" placeholder="Search topics, subjects..." oninput="globalSearchHandler(this.value)">
+        </div>
+        <div class="sem-selector">
+          <span>📅</span>
+          <select id="semSelector" onchange="changeSem(this.value)">
+            <optgroup label="─ Year 1 ─"><option value="1">Sem 1</option><option value="2">Sem 2</option></optgroup>
+            <optgroup label="─ Year 2 ─"><option value="3">Sem 3</option><option value="4" selected>Sem 4</option></optgroup>
+            <optgroup label="─ Year 3 ─"><option value="5">Sem 5</option><option value="6">Sem 6</option></optgroup>
+            <optgroup label="─ Year 4 ─"><option value="7">Sem 7</option><option value="8">Sem 8</option></optgroup>
+          </select>
+        </div>
+        <button class="btn-logout" onclick="logout()">Logout</button>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="content-section active" id="section-dashboard">
+      <div class="welcome-banner">
+        <h2>Welcome back, <span id="welcomeName">Student</span>! 👋</h2>
+        <p id="welcomeInfo">Loading your study data...</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon">📖</div><div class="stat-value" id="stat-subjects">0</div><div class="stat-label">Subjects</div></div>
+        <div class="stat-card"><div class="stat-icon">📝</div><div class="stat-value" id="stat-pyq">0</div><div class="stat-label">PYQ Papers</div></div>
+        <div class="stat-card"><div class="stat-icon">⭐</div><div class="stat-value" id="stat-topics">0</div><div class="stat-label">Imp Topics</div></div>
+        <div class="stat-card"><div class="stat-icon">▶️</div><div class="stat-value" id="stat-videos">0</div><div class="stat-label">Playlists</div></div>
+      </div>
+      <div class="dashboard-grid">
+        <div class="dash-card">
+          <h3>📊 Attendance Tracker</h3>
+          <div class="attendance-display">
+            <div class="attendance-circle" id="attCircle" style="--pct:0%">
+              <div class="attendance-pct" id="attPct">0%</div>
+            </div>
+            <div class="att-inputs">
+              <div class="att-input"><label>Total Classes</label><input type="number" id="attTotal" placeholder="100" oninput="updateAttendance()"></div>
+              <div class="att-input"><label>Attended</label><input type="number" id="attAttended" placeholder="85" oninput="updateAttendance()"></div>
+            </div>
+          </div>
+          <button class="btn-save-note" onclick="saveAttendance()">Save Attendance</button>
+        </div>
+        <div class="dash-card">
+          <h3>✅ Today's Progress</h3>
+          <div id="progressList"></div>
+          <button class="btn-save-note" style="margin-top:8px" onclick="addProgressTask()">+ Add Task</button>
+        </div>
+      </div>
+      <div style="margin-top:20px">
+        <div class="dash-card">
+          <h3>⚡ Quick Access</h3>
+          <div class="quick-links">
+            <div class="quick-link" onclick="showSection('syllabus')"><div class="ql-icon">📖</div>Syllabus</div>
+            <div class="quick-link" onclick="showSection('pyq')"><div class="ql-icon">📝</div>PYQ Papers</div>
+            <div class="quick-link" onclick="showSection('topics')"><div class="ql-icon">⭐</div>Imp Topics</div>
+            <div class="quick-link" onclick="showSection('videos')"><div class="ql-icon">▶️</div>Videos</div>
+            <div class="quick-link" onclick="showSection('notes')"><div class="ql-icon">✏️</div>My Notes</div>
+            <div class="quick-link" onclick="showSection('placement')"><div class="ql-icon">💼</div>Placement</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SYLLABUS -->
+    <div class="content-section" id="section-syllabus">
+      <div class="section-header">
+        <h2>📖 Syllabus</h2>
+        <span class="badge badge-blue" id="syllabusLabel">-</span>
+      </div>
+      <div class="subjects-grid" id="syllabusGrid"></div>
+    </div>
+
+    <!-- PYQ -->
+    <div class="content-section" id="section-pyq">
+      <div class="section-header">
+        <h2>📝 Previous Year Questions</h2>
+        <span class="badge badge-purple" id="pyqLabel">-</span>
+      </div>
+      <div class="pyq-subject-cards" id="pyqGrid"></div>
+    </div>
+
+    <!-- IMPORTANT TOPICS -->
+    <div class="content-section" id="section-topics">
+      <div class="section-header">
+        <h2>⭐ Important Topics</h2>
+        <span class="badge badge-green" id="topicsLabel">-</span>
+      </div>
+      <div class="topics-grid" id="topicsGrid"></div>
+    </div>
+
+    <!-- VIDEO SESSION -->
+    <div class="content-section" id="section-videos">
+      <div class="section-header">
+        <h2>▶️ Video Session</h2>
+        <span class="badge badge-blue" id="videosLabel">-</span>
+      </div>
+      <div class="playlist-grid" id="videosGrid"></div>
+    </div>
+
+    <!-- NOTES -->
+    <div class="content-section" id="section-notes">
+      <div class="section-header"><h2>✏️ My Personal Notes</h2></div>
+      <div class="dash-card" style="margin-bottom:16px">
+        <h3>📌 Saved Notes</h3>
+        <div id="notesList"></div>
+      </div>
+      <div class="dash-card">
+        <h3>➕ New Note</h3>
+        <input type="text" id="noteTitle" class="notes-area" style="min-height:auto;padding:10px 14px;font-family:'Montserrat',sans-serif;font-size:0.9em;font-weight:700;margin-bottom:10px" placeholder="Note Title">
+        <textarea class="notes-area" id="noteContent" placeholder="Write your notes here in your own style..."></textarea>
+        <button class="btn-save-note" onclick="saveNote()">💾 Save Note</button>
+      </div>
+    </div>
+
+    <!-- PLACEMENT -->
+    <div class="content-section" id="section-placement">
+      <div class="section-header"><h2>💼 Placement Strategy</h2></div>
+      <div class="placement-grid" id="placementGrid"></div>
+    </div>
+
+    <!-- ADMIN -->
+    <div class="content-section" id="section-admin">
+      <div class="section-header"><h2>⚙️ Admin Panel</h2><span class="badge badge-purple">Admin Only</span></div>
+      <div class="admin-tabs">
+        <div class="admin-tab active" onclick="switchAdminTab('users')">👥 Users</div>
+        <div class="admin-tab" onclick="switchAdminTab('syllabus')">📖 Syllabus</div>
+        <div class="admin-tab" onclick="switchAdminTab('pyq')">📝 PYQ</div>
+        <div class="admin-tab" onclick="switchAdminTab('topics')">⭐ Topics</div>
+        <div class="admin-tab" onclick="switchAdminTab('videos')">▶️ Videos</div>
+        <div class="admin-tab" onclick="switchAdminTab('placement')">💼 Placement</div>
+        <div class="admin-tab" onclick="switchAdminTab('settings')">🔧 Settings</div>
+      </div>
+
+      <!-- Users -->
+      <div class="admin-content active" id="admin-users">
+        <div class="dash-card">
+          <h3>Registered Users</h3>
+          <div style="overflow-x:auto;margin-top:12px">
+            <table class="admin-table" id="usersTable">
+              <thead><tr><th>Name</th><th>Email</th><th>Branch</th><th>Roll No</th><th>College</th><th>Actions</th></tr></thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Syllabus Admin -->
+      <div class="admin-content" id="admin-syllabus">
+        <div class="admin-form">
+          <h3>Add Subject</h3>
+          <div class="admin-form-grid">
+            <select class="admin-select" id="admSylBranch"><option value="">Branch</option><option value="ECE">ECE</option><option value="ME">ME</option><option value="EE">EE</option><option value="CSE">CSE</option><option value="Civil">Civil</option></select>
+            <select class="admin-select" id="admSylSem"><option value="1">Sem 1</option><option value="2">Sem 2</option><option value="3">Sem 3</option><option value="4">Sem 4</option><option value="5">Sem 5</option><option value="6">Sem 6</option><option value="7">Sem 7</option><option value="8">Sem 8</option></select>
+            <input class="admin-input" id="admSylCode" placeholder="Subject Code (e.g. BEC401)">
+            <input class="admin-input" id="admSylName" placeholder="Subject Name">
+          </div>
+          <textarea class="admin-textarea" id="admSylUnits" placeholder="Units (one per line): Unit 1: Networks and Circuits&#10;Unit 2: Semiconductor Devices..."></textarea>
+          <br><button class="btn-add" onclick="adminAddSubject()">Add Subject</button>
+        </div>
+        <div class="dash-card"><h3>Current Subjects</h3><div id="adminSylList" style="margin-top:12px"></div></div>
+      </div>
+
+      <!-- PYQ Admin -->
+      <div class="admin-content" id="admin-pyq">
+        <div class="admin-form">
+          <h3>Add PYQ</h3>
+          <div class="admin-form-grid">
+            <select class="admin-select" id="admPyqBranch"><option value="">Branch</option><option value="ECE">ECE</option><option value="ME">ME</option><option value="EE">EE</option><option value="CSE">CSE</option><option value="Civil">Civil</option></select>
+            <select class="admin-select" id="admPyqSem"><option value="1">Sem 1</option><option value="2">Sem 2</option><option value="3">Sem 3</option><option value="4">Sem 4</option><option value="5">Sem 5</option><option value="6">Sem 6</option><option value="7">Sem 7</option><option value="8">Sem 8</option></select>
+            <input class="admin-input" id="admPyqCode" placeholder="Subject Code">
+            <input class="admin-input" id="admPyqSubject" placeholder="Subject Name">
+            <input class="admin-input" id="admPyqYear" placeholder="Year (e.g. 2024-25)">
+            <select class="admin-select" id="admPyqSection"><option value="A">Section A</option><option value="B">Section B</option><option value="C">Section C</option></select>
+          </div>
+          <textarea class="admin-textarea" id="admPyqQuestion" placeholder="Question text"></textarea>
+          <textarea class="admin-textarea" id="admPyqAnswer" placeholder="Answer/Hint (optional)" style="margin-top:8px"></textarea>
+          <br><button class="btn-add" onclick="adminAddPYQ()">Add PYQ</button>
+        </div>
+        <div class="dash-card"><h3>PYQ Count by Branch</h3><div id="adminPyqStats" style="margin-top:12px"></div></div>
+      </div>
+
+      <!-- Topics Admin -->
+      <div class="admin-content" id="admin-topics">
+        <div class="admin-form">
+          <h3>Add Important Topic</h3>
+          <div class="admin-form-grid">
+            <select class="admin-select" id="admTopicBranch"><option value="">Branch</option><option value="ECE">ECE</option><option value="ME">ME</option><option value="EE">EE</option><option value="CSE">CSE</option><option value="Civil">Civil</option></select>
+            <select class="admin-select" id="admTopicSem"><option value="1">Sem 1</option><option value="2">Sem 2</option><option value="3">Sem 3</option><option value="4">Sem 4</option><option value="5">Sem 5</option><option value="6">Sem 6</option><option value="7">Sem 7</option><option value="8">Sem 8</option></select>
+            <input class="admin-input" id="admTopicCode" placeholder="Subject Code">
+            <input class="admin-input" id="admTopicTitle" placeholder="Topic Title">
+            <input class="admin-input" id="admTopicFreq" placeholder="Frequency (e.g. 4/4 years)">
+            <select class="admin-select" id="admTopicStars">
+              <option value="⭐">⭐ Normal</option>
+              <option value="⭐⭐">⭐⭐ High Priority</option>
+              <option value="⭐⭐⭐">⭐⭐⭐ Must Do</option>
+            </select>
+          </div>
+          <textarea class="admin-textarea" id="admTopicContent" placeholder="Topic content / solution notes..."></textarea>
+          <br><button class="btn-add" onclick="adminAddTopic()">Add Topic</button>
+        </div>
+        <div class="dash-card"><h3>Topics List</h3><div id="adminTopicList" style="margin-top:12px"></div></div>
+      </div>
+
+      <!-- Videos Admin -->
+      <div class="admin-content" id="admin-videos">
+        <div class="admin-form">
+          <h3>Add Video Playlist</h3>
+          <div class="admin-form-grid">
+            <select class="admin-select" id="admVidBranch"><option value="">Branch</option><option value="ECE">ECE</option><option value="ME">ME</option><option value="EE">EE</option><option value="CSE">CSE</option><option value="Civil">Civil</option><option value="All">All Branches</option></select>
+            <select class="admin-select" id="admVidSem"><option value="3">Sem 3</option><option value="4">Sem 4</option><option value="1">Sem 1</option><option value="2">Sem 2</option><option value="3">Sem 3</option><option value="4">Sem 4</option><option value="5">Sem 5</option><option value="6">Sem 6</option><option value="7">Sem 7</option><option value="8">Sem 8</option><option value="All">All Sems</option></select>
+            <input class="admin-input" id="admVidTitle" placeholder="Playlist Title">
+            <input class="admin-input" id="admVidUrl" placeholder="YouTube URL">
+            <input class="admin-input" id="admVidCount" placeholder="Video count">
+            <input class="admin-input" id="admVidChannel" placeholder="Channel name">
+          </div>
+          <button class="btn-add" onclick="adminAddVideo()">Add Playlist</button>
+        </div>
+        <div class="dash-card"><h3>Playlists</h3><div id="adminVidList" style="margin-top:12px"></div></div>
+      </div>
+
+      <!-- Placement Admin -->
+      <div class="admin-content" id="admin-placement">
+        <div class="admin-form">
+          <h3>Add Placement Roadmap</h3>
+          <div class="admin-form-grid">
+            <select class="admin-select" id="admPlaceBranch"><option value="">Branch</option><option value="ECE">ECE</option><option value="ME">ME</option><option value="EE">EE</option><option value="CSE">CSE</option><option value="Civil">Civil</option><option value="All">All</option></select>
+            <input class="admin-input" id="admPlaceTitle" placeholder="Card Title">
+          </div>
+          <textarea class="admin-textarea" id="admPlaceContent" placeholder="Steps (one per line): Month 1-2: DSA Basics&#10;Month 3-4: Projects..."></textarea>
+          <button class="btn-add" onclick="adminAddPlacement()">Add Card</button>
+        </div>
+        <div class="dash-card"><h3>Placement Cards</h3><div id="adminPlaceList" style="margin-top:12px"></div></div>
+      </div>
+
+      <!-- Settings -->
+      <div class="admin-content" id="admin-settings">
+        <div class="dash-card" style="max-width:500px">
+          <h3 style="margin-bottom:16px">Change Admin Password</h3>
+          <div class="form-group"><label>Current Password</label><input type="password" id="admCurPass" class="admin-input" style="margin-top:4px"></div>
+          <div class="form-group" style="margin-top:12px"><label>New Password</label><input type="password" id="admNewPass" class="admin-input" style="margin-top:4px"></div>
+          <button class="btn-add" style="margin-top:12px" onclick="changeAdminPassword()">Update Password</button>
+          <div class="divider"></div>
+          <h3 style="margin-bottom:16px">Reset Student Password</h3>
+          <div class="form-group"><label>Student Email</label><input type="text" id="resetEmail" class="admin-input" style="margin-top:4px" placeholder="student@email.com"></div>
+          <div class="form-group" style="margin-top:12px"><label>New Password</label><input type="password" id="resetNewPass" class="admin-input" style="margin-top:4px"></div>
+          <button class="btn-add" style="margin-top:12px" onclick="resetStudentPassword()">Reset Password</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end main-content -->
+</div><!-- end appPage -->
+
+<!-- Firebase SDKs -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, updatePassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAEO_ntvIpv6jZpQuz6eD821JnmCnO57IQ",
+  authDomain: "aktu-study-portal.firebaseapp.com",
+  projectId: "aktu-study-portal",
+  storageBucket: "aktu-study-portal.firebasestorage.app",
+  messagingSenderId: "351232312112",
+  appId: "1:351232312112:web:f06bad69c584e7d24d3ef5"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// ===== GLOBAL STATE =====
+let currentUser = null;
+let isAdmin = false;
+let currentSem = '4';
+let allData = {
+  syllabus: {},
+  pyq: {},
+  topics: {},
+  videos: {},
+  placement: {}
+};
+
+// ===== BUILT-IN DATA =====
+const builtinData = {
+  syllabus: {
+    ECE: {
+      '3': [
+        { code: 'BEC301', name: 'Network Theory', units: ['Unit 1: Network Theorems & Analysis', 'Unit 2: Graph Theory & Network Topology', 'Unit 3: Transient Analysis (RLC)', 'Unit 4: Two-Port Networks & Parameters', 'Unit 5: Filters & Attenuators'] },
+        { code: 'BEC302', name: 'Electronic Devices & Circuits', units: ['Unit 1: Semiconductor Diodes & Applications', 'Unit 2: BJT Biasing & Small Signal Models', 'Unit 3: FET & MOSFET Characteristics', 'Unit 4: Feedback Amplifiers', 'Unit 5: Oscillators & Multivibrators'] },
+        { code: 'BEC303', name: 'Digital Electronics', units: ['Unit 1: Number Systems & Boolean Algebra', 'Unit 2: Combinational Circuits (MUX, DEMUX, Encoders)', 'Unit 3: Sequential Circuits (Flip-flops, Counters)', 'Unit 4: Shift Registers & Memory', 'Unit 5: ADC/DAC & PLDs'] },
+        { code: 'BAS303', name: 'Mathematics IV', units: ['Unit 1: Partial Differential Equations', 'Unit 2: Applications of PDE', 'Unit 3: Complex Variables & Analytic Functions', 'Unit 4: Contour Integration', 'Unit 5: Statistical Techniques'] },
+        { code: 'BCC301', name: 'Cyber Security', units: ['Unit 1: Introduction to Cyber Security', 'Unit 2: Cryptography Fundamentals', 'Unit 3: Network Security', 'Unit 4: Web Security & Threats', 'Unit 5: Cyber Laws & Ethics'] }
+      ],
+      '4': [
+        { code: 'BEC401', name: 'Communication Engineering', units: ['Unit 1: AM Modulation — DSB, SSB, VSB', 'Unit 2: FM & PM Modulation', 'Unit 3: Noise in Communication Systems', 'Unit 4: Pulse Modulation — PAM, PWM, PPM, PCM', 'Unit 5: Digital Communication — ASK, FSK, PSK'] },
+        { code: 'BEC402', name: 'Analog Circuits', units: ['Unit 1: Feedback Amplifiers & Bode Plots', 'Unit 2: Oscillators — RC, LC, Crystal', 'Unit 3: Op-Amp Applications — Integrator, Differentiator, Filters', 'Unit 4: Power Amplifiers — Class A, B, AB, C', 'Unit 5: Waveform Generation & Shaping'] },
+        { code: 'BEC403', name: 'Signal & Systems', units: ['Unit 1: Classification of Signals & Systems', 'Unit 2: LTI Systems & Convolution', 'Unit 3: Fourier Series & Fourier Transform', 'Unit 4: Laplace Transform & Applications', 'Unit 5: Z-Transform & Discrete-Time Systems'] },
+        { code: 'BAS403', name: 'Mathematics / Open Elective', units: ['Unit 1: Numerical Methods', 'Unit 2: Interpolation & Approximation', 'Unit 3: Numerical Differentiation & Integration', 'Unit 4: Numerical Solution of ODE', 'Unit 5: Probability & Statistical Analysis'] },
+        { code: 'BCC401', name: 'Python Programming', units: ['Unit 1: Python Basics & Data Types', 'Unit 2: Control Structures & Functions', 'Unit 3: OOP in Python', 'Unit 4: File Handling & Exception Handling', 'Unit 5: Libraries — NumPy, Pandas, Matplotlib'] }
+      ]
+    },
+    ME: {
+      '3': [
+        { code: 'BME301', name: 'Thermodynamics', units: ['Unit 1: Basic Concepts & Zeroth Law', 'Unit 2: First Law of Thermodynamics', 'Unit 3: Second Law & Entropy', 'Unit 4: Properties of Steam & Steam Tables', 'Unit 5: Gas Power Cycles'] },
+        { code: 'BME302', name: 'Fluid Mechanics & Fluid Machines', units: ['Unit 1: Fluid Properties & Statics', 'Unit 2: Kinematics of Fluid Flow', 'Unit 3: Bernoulli\'s Equation & Applications', 'Unit 4: Pipe Flow & Head Losses', 'Unit 5: Turbines & Pumps'] },
+        { code: 'BME303', name: 'Materials Engineering', units: ['Unit 1: Crystal Structure & Imperfections', 'Unit 2: Iron-Carbon Phase Diagram', 'Unit 3: Heat Treatment Processes', 'Unit 4: Mechanical Properties & Testing', 'Unit 5: Non-Ferrous Metals & Alloys'] },
+        { code: 'BCC301', name: 'Cyber Security', units: ['Unit 1: Introduction to Cyber Security', 'Unit 2: Cryptography', 'Unit 3: Network Security', 'Unit 4: System Security', 'Unit 5: Cyber Laws'] }
+      ],
+      '4': [
+        { code: 'BME401', name: 'Applied Thermodynamics', units: ['Unit 1: Vapour Power Cycles — Rankine, Modified Rankine', 'Unit 2: Gas Power Cycles — Otto, Diesel, Dual, Brayton', 'Unit 3: Steam Turbines — Impulse & Reaction', 'Unit 4: Air Compressors — Reciprocating & Centrifugal', 'Unit 5: Boilers — Types, Mountings & Accessories'] },
+        { code: 'BME402', name: 'Engineering Mechanics & SOM', units: ['Unit 1: Static Analysis — Trusses, Frames, Cables', 'Unit 2: Moment of Inertia & Centroid', 'Unit 3: Stresses & Strains, Principal Stresses', 'Unit 4: Bending Moment & Shear Force Diagrams', 'Unit 5: Torsion, Columns & Curved Beams'] },
+        { code: 'BME403', name: 'Manufacturing Processes', units: ['Unit 1: Metal Casting — Patterns, Sand Casting, Special Casting', 'Unit 2: Welding — Arc, Gas, TIG, MIG, Resistance', 'Unit 3: Metal Forming — Rolling, Forging, Extrusion, Drawing', 'Unit 4: Metal Cutting — Tool Geometry, Cutting Forces, Tool Wear', 'Unit 5: Unconventional Machining — AJM, USM, EDM, LBM'] },
+        { code: 'BCC401', name: 'Python Programming', units: ['Unit 1: Python Basics', 'Unit 2: Functions & Modules', 'Unit 3: OOP Concepts', 'Unit 4: File I/O', 'Unit 5: Data Science Libraries'] }
+      ]
+    },
+    EE: {
+      '3': [
+        { code: 'BEE301', name: 'Electromagnetic Field Theory', units: ['Unit 1: Vector Analysis & Coordinate Systems', 'Unit 2: Electrostatics — Coulomb\'s Law, Gauss Law', 'Unit 3: Magnetostatics — Biot-Savart, Ampere\'s Law', 'Unit 4: Electromagnetic Induction', 'Unit 5: Maxwell\'s Equations & EM Waves'] },
+        { code: 'BEE302', name: 'Electrical Measurements & Instrumentation', units: ['Unit 1: Measurement Systems & Errors', 'Unit 2: Analog Instruments — PMMC, MI, Dynamometer', 'Unit 3: Bridges — Wheatstone, Maxwell, Schering', 'Unit 4: Electronic Instruments — DVM, CRO', 'Unit 5: Transducers & Signal Conditioning'] },
+        { code: 'BEE303', name: 'Basic Signals & Systems', units: ['Unit 1: Signal Classification & Operations', 'Unit 2: LTI Systems & Convolution', 'Unit 3: Fourier Analysis', 'Unit 4: Laplace Transform', 'Unit 5: Z-Transform'] },
+        { code: 'BCC301', name: 'Cyber Security', units: ['Unit 1: Cyber Security Basics', 'Unit 2: Cryptography', 'Unit 3: Network Security', 'Unit 4: System Security', 'Unit 5: Legal Aspects'] }
+      ],
+      '4': [
+        { code: 'BEE401', name: 'Digital Electronics', units: ['Unit 1: Number Systems & Boolean Algebra', 'Unit 2: Combinational Logic Design', 'Unit 3: Sequential Logic — Counters & Registers', 'Unit 4: PLDs & Memory Devices', 'Unit 5: ADC/DAC Converters'] },
+        { code: 'BEE402', name: 'Electrical Machines-I', units: ['Unit 1: DC Machines — Construction & EMF Equation', 'Unit 2: DC Generator Characteristics', 'Unit 3: DC Motor — Torque & Speed Characteristics', 'Unit 4: Transformers — Construction & EMF Equation', 'Unit 5: Transformer Testing & Efficiency'] },
+        { code: 'BEE403', name: 'Network Analysis & Synthesis', units: ['Unit 1: Network Theorems', 'Unit 2: Graph Theory', 'Unit 3: Two-Port Networks', 'Unit 4: Network Functions & Poles/Zeros', 'Unit 5: Filter Design & Synthesis'] },
+        { code: 'BCC401', name: 'Python Programming', units: ['Unit 1: Python Fundamentals', 'Unit 2: OOP in Python', 'Unit 3: Data Structures', 'Unit 4: File Handling', 'Unit 5: Libraries'] }
+      ]
+    },
+    CSE: {
+      '3': [
+        { code: 'BCS301', name: 'Data Structure', units: ['Unit 1: Arrays, Linked Lists, Stacks & Queues', 'Unit 2: Trees — Binary, BST, AVL, B-Trees', 'Unit 3: Graphs — BFS, DFS, Spanning Trees', 'Unit 4: Sorting — Merge, Quick, Heap Sort', 'Unit 5: Hashing & Collision Resolution'] },
+        { code: 'BCS302', name: 'Computer Organization & Architecture', units: ['Unit 1: Basic Structure of Computers', 'Unit 2: Machine Instructions & Addressing Modes', 'Unit 3: CPU Design — ALU, Control Unit', 'Unit 4: Memory Hierarchy — Cache, Virtual Memory', 'Unit 5: I/O Organization & Peripheral Devices'] },
+        { code: 'BCS303', name: 'Discrete Structures & Theory of Logic', units: ['Unit 1: Set Theory & Relations', 'Unit 2: Functions & Pigeonhole Principle', 'Unit 3: Graph Theory', 'Unit 4: Propositional & Predicate Logic', 'Unit 5: Automata Theory Basics'] },
+        { code: 'BCC301', name: 'Cyber Security', units: ['Unit 1: Introduction', 'Unit 2: Cryptography', 'Unit 3: Network Security', 'Unit 4: Web Security', 'Unit 5: Cyber Laws'] }
+      ],
+      '4': [
+        { code: 'BCS401', name: 'Operating System', units: ['Unit 1: OS Concepts — Process & Thread Management', 'Unit 2: CPU Scheduling Algorithms', 'Unit 3: Process Synchronization & Deadlock', 'Unit 4: Memory Management — Paging, Segmentation', 'Unit 5: File Systems & I/O Management'] },
+        { code: 'BCS402', name: 'Theory of Automata & Formal Languages', units: ['Unit 1: Finite Automata — DFA, NFA', 'Unit 2: Regular Expressions & Pumping Lemma', 'Unit 3: Context Free Grammar & PDA', 'Unit 4: Turing Machines', 'Unit 5: Decidability & Complexity'] },
+        { code: 'BCS403', name: 'OOP with Java', units: ['Unit 1: Java Basics & OOP Concepts', 'Unit 2: Inheritance & Polymorphism', 'Unit 3: Interfaces, Packages & Exception Handling', 'Unit 4: Multithreading & I/O Streams', 'Unit 5: Collections Framework & Generics'] },
+        { code: 'BCC401', name: 'Python Programming', units: ['Unit 1: Python Basics', 'Unit 2: OOP in Python', 'Unit 3: Modules & Packages', 'Unit 4: File Handling', 'Unit 5: Data Libraries'] }
+      ]
+    },
+    Civil: {
+      '1': [{ code: 'BCE101', name: 'Civil Sem 1 — Coming Soon', units: ['Data will be added by admin'] }],
+      '2': [{ code: 'BCE201', name: 'Civil Sem 2 — Coming Soon', units: ['Data will be added by admin'] }],
+      '3': [{ code: 'BCE301', name: 'Civil Sem 3 — Coming Soon', units: ['Data will be added by admin'] }],
+      '4': [{ code: 'BCE401', name: 'Civil Sem 4 — Coming Soon', units: ['Data will be added by admin'] }],
+      '5': [{ code: 'BCE501', name: 'Civil Sem 5 — Coming Soon', units: ['Data will be added by admin'] }],
+      '6': [{ code: 'BCE601', name: 'Civil Sem 6 — Coming Soon', units: ['Data will be added by admin'] }],
+      '7': [{ code: 'BCE701', name: 'Civil Sem 7 — Coming Soon', units: ['Data will be added by admin'] }],
+      '8': [{ code: 'BCE801', name: 'Civil Sem 8 — Coming Soon', units: ['Data will be added by admin'] }]
+    }
+  },
+  pyq: {
+    CSE: {
+      '4': {
+        'BCS401': {
+          name: 'Operating System',
+          years: {
+            '2024-25': {
+              A: ['What are the primary functions of an operating system?', 'A system has 3 processors and 5 programs ready for execution. In how many ways can the processors be assigned to the programs?', 'What is the difference between a process and a program?', 'In a Producer-Consumer system, buffer size is 4. Producer produces 6 items, Consumer consumes 3. Find items in buffer at end.', 'A process executes fork(); fork(); fork(); How many processes are created in total?', 'List three components stored in a PCB.', 'What is the purpose of a page replacement algorithm?'],
+              B: ['Explain the process concept in detail with its states and state transition diagram.', 'Draw Gantt chart and find average waiting time using Preemptive Priority Scheduling. (P1: AT=0, BT=11, Pr=2; P2: AT=5, BT=28, Pr=0; P3: AT=12, BT=2, Pr=3; P4: AT=2, BT=10, Pr=1; P5: AT=9, BT=16, Pr=4)', 'Compare and contrast FCFS, SJF, and Round Robin scheduling algorithms.', 'In optimal page replacement, process accesses pages: 1,3,2,4,2,3,1,2,4,3,1,4 with 3 frames. Find page faults.'],
+              C: ['Discuss the differences between Batch, Interactive, and Time Sharing OS with real-world applications.', 'Two semaphores S1 and S2 initialized to 1. P1: wait(S1); wait(S2); P2: wait(S2); wait(S1). Explain how deadlock may occur.', 'Define Critical Section Problem and list conditions a solution must satisfy.', 'A system shares 9 tape drives. P1: alloc=3, max=7; P2: alloc=1, max=6; P3: alloc=3, max=5. Is system safe or deadlocked?', 'Discuss limitations of Dekker\'s and Peterson\'s solutions for modern multiprocessors.', 'Discuss multiprogramming with variable partitions. Consider disk queue: 47,38,121,191,87,11,92,10 with C-LOOK from cylinder 63. Calculate total head movement.', 'In demand paging with 32-bit logical address, 20-bit physical address, page size 2048 bytes. Find maximum entries in page table.', 'Discuss RAID 0, RAID 1, and RAID 5 in detail.']
+            },
+            '2023-24': {
+              A: ['What is the primary function of an operating system?', 'Define a batch processing system.', 'Define the principle of concurrency.', 'Define a process state.', 'Name one piece of process identification information.', 'Define a resident monitor.', 'Define an I/O subsystem.'],
+              B: ['Compare and contrast time-sharing and multiprogramming operating system concepts.', 'Explain the challenges of achieving mutual exclusion in concurrent programming.', 'Explain the structure and contents of a Process Control Block (PCB).', 'Compare and contrast multiprogramming with fixed partitions and variable partitions.', 'Compare and contrast different disk storage technologies, such as HDDs and SSDs.'],
+              C: ['How does a multiuser operating system differ from a multiprocessing system?', 'Explore the concept of deadlock — prevention and avoidance techniques.', 'Compare Dekker\'s and Peterson\'s algorithms for mutual exclusion.', 'Evaluate strategies for deadlock prevention, avoidance, detection, and recovery.', 'Explain paging and segmentation as memory management techniques.', 'Discuss virtual memory — address translation, page tables, demand paging.', 'Discuss contiguous, linked, and indexed file allocation methods.', 'Explain file directories — hierarchical and flat directory structures.']
+            },
+            '2022-23': {
+              A: ['Define two main functions of an operating system.', 'Explain principal advantages of multiprogramming.', 'Define busy waiting.', 'Define semaphore and its types.', 'Explain starvation problem and its solution.', 'Explain internal and external fragmentation.', 'Explain thrashing and locality of reference.', 'Distinguish between physical and logical address space.', 'Explain various operations associated with a file.', 'Explain tree level directory structure.'],
+              B: ['Explain Multiprocessor OS, Real time system, Time sharing system.', 'Draw Gantt chart for Preemptive and Non-Preemptive Priority Scheduling. (A: AT=0, BT=5, Pr=4; B: AT=2, BT=4, Pr=2; C: AT=2, BT=2, Pr=6; D: AT=4, BT=4, Pr=3) Find avg WT and TAT.', 'Banker\'s Algorithm: 5 processes, 3 resources (A,B,C). Available=2,1,0. Calculate Need matrix, check safe state, can P1 request (1,1,0)?', 'Define process and PCB. Describe process state transition diagram.', 'Explain paging concept with TLB hardware support.'],
+              C: ['Explain RAID and its levels with advantages and disadvantages.', 'Explain file system management and file allocation mechanisms.', 'Explain Producer-Consumer problem solution using semaphore.', 'Explain Dining Philosopher problem solution using semaphore.', 'Demand paging reference string: 0,9,0,1,8,1,8,7,8,7,1,2,8,2,7,8,2,3,8,3 with 3 frames. Find page faults for FIFO, LRU, Optimal.', 'Disk scheduling: queue 45,20,90,10,50,60,80,25,70 starting at track 49. Calculate head movement for SSTF, SCAN, CSCAN, LOOK.']
+            },
+            '2021-22': {
+              A: ['Define Operating system and mention its major functions.', 'Define Real Time Operating System.', 'What do you mean by Concurrent Processes?', 'Define Seek time and Latency time.', 'What do we need Scheduling?', 'What are Performance Criteria in CPU Scheduling?', 'Explain Logical address space and Physical address space.', 'Explain Multiprogramming with fixed partitions.', 'What do you mean by safe state and unsafe state?', 'What do you mean by I/O Buffering?'],
+              B: ['Explain File system protection and security.', 'Explain Mutual Exclusion and Critical Section Problem.', 'Explain Process Control Block (PCB) in CPU Scheduling.', 'Explain Disk storage and Disk scheduling.', 'Explain Multiuser Systems and Multithreaded Systems.'],
+              C: ['Explain File system protection and Linked File allocation methods.', 'Explain Dining Philosopher Problem.', 'Explain Operating System services.', 'Explain Threads and their management.', 'Explain File organization and access mechanism.', 'Disk scheduling: 2000 cylinders, head at 143 (prev at 125). Queue: 86,1470,913,1774,948,1509,1022,1750,130. Calculate SSTF and FCFS.', 'Explain Inter Process Communication models and Schemes.', 'Explain Deadlock system model and characterization.', 'Page replacement: FIFO and Optimal for reference string 7,0,1,2,0,3,0,4,2,3,0,3,2,1,2,0,1,7,0,1 with 3 frames.']
+            }
+          }
+        },
+        'BCS402': {
+          name: 'Theory of Automata & Formal Languages',
+          years: {
+            '2023-24': {
+              A: ['Give mathematical definition of DFA. Differentiate NFA and DFA.', 'Construct DFA to accept string that always ends with 101 over Σ={0,1}.', 'Give regular expressions for binary strings having two consecutive 0s and two consecutive 1s.', 'Compute Language generated by CFG G=({S},{a,b},P,S) where S→SS, S→ab, S→ba, S→ε.', 'Grammar: S→0B|1A, A→0|0S|1AA, B→1|1S|0BB. Determine leftmost derivation for 00110101.', 'Explain two stack PDA. Give a language accepted by two stack PDA but not one stack PDA.', 'Explain Multi Tape Turing Machine.'],
+              B: ['Construct a DFA which accepts all binary numbers whose decimal equivalent is divisible by 4.', 'Compute regular expression using Arden\'s Theorem for the given DFA.', 'Write equivalent left linear grammar from given right linear grammar: S→0A|1B, A→0C|1A|0, B→1B|1A|1, C→0|0A.', 'Differentiate DPDA and NPDA. Construct PDA for L={aⁿbⁿ | n≥1}.', 'Differentiate Deterministic and Non-Deterministic TM. Design TM for L={ww | w∈(a+b)*}.'],
+              C: ['Construct DFA corresponding to NFA with ε moves (given diagram).', 'Express minimum state automata equivalent to given DFA.', 'State Pumping Lemma. Show L={aᵖ | p is prime} is not regular.', 'Discuss closure properties of regular languages (union, concatenation, complement, intersection, difference).', 'Reduce grammar G=({S,A,B},{a,b},P,S) to CNF: S→bA|aB, A→bAA|aS|a, B→aBB|bS|b.', 'Design CFG for L={0ᵐ1ⁿ | m≠n, m,n≥1} and L={aᵖbqcr | p+q=r, p,q≥1}.', 'Construct PDA equivalent to CFG G=({S,A},{0,1},P,S): S→0S1|A, A→1A0|Sε.', 'Construct TM for L={a²ⁿbⁿ | n≥1}. Show instantaneous description for w=aaaabb.']
+            },
+            '2022-23': {
+              A: ['What do you understand by grammar?', 'What do you mean by ε-Closure in FA?', 'State Arden\'s Theorem.', 'State Kleene\'s Theorem.', 'Derive the CFG for (a+b)*.', 'Explain Chomsky Hierarchy.', 'Explain pumping lemma for context free language.', 'Draw graphical representation for PDA.', 'Explain Halting Problem of Turing Machine.', 'Explain Linear Bounded Automata.'],
+              B: ['Construct a DFA for ternary number divisible by 4.', 'Determine FA for regular expression (0+1)*0(0+1)*0(0+1)* over {0,1}.', 'Convert grammar to CNF: S→ABD|AC, A→aA|bAa|a, B→bbA|aB|AB, C→aCa|aD, D→aD|bC.', 'Design PDA for L={WWᵀ | W=(a+b)*}.', 'Church\'s Thesis and Recursive & Recursive Enumerable Language.'],
+              C: ['Construct DFA equivalent to given NFA (diagram).', 'Construct minimum state automata from DFA transition table (q3, q4 final states).', 'Find regular expression using Arden\'s Theorem for given FA.', 'State Pumping Lemma. Prove L={aᵖ | p is prime} is not regular.', 'Check if grammar E→E+E|E-E|E*E|E^E|N, N→0|1|...|9 is ambiguous. Construct unambiguous equivalent.', 'Design two stack PDA for L={aⁿbⁿcⁿ | n≥1}.', 'Design TM for L={aⁿbⁿcⁿ | n≥1}.']
+            },
+            '2018-19': {
+              A: ['Design DFA for L — strings of 0,1 where number of 0\'s not divisible by 3.', 'Write RE for language of 0s and 1s not ending in 01.', 'State and prove Arden\'s Theorem.', 'Applications of Finite Automata.', 'Inherently ambiguous grammars — explain.', 'Write CFG for L=aⁿbⁿ n≥0. Convert to CNF.', 'Differentiate DPDA with NPDA.', 'Define Recursive and Recursively Enumerable Language.', 'Explain Post Correspondence Problem.'],
+              B: ['Define NFA. Differences between NFA and DFA.', 'Moore & Mealy Machine — differences. Convert Moore to Mealy.', 'Show grammar S→a|aAb|abSb, A→aAAb|bS is ambiguous.', 'Construct PDA equivalent to grammar: S→aAA, A→aS|bS|a. Check if "abaaaa" is accepted.', 'PCP: A={1,110,0111}, B={111,001,11}. Find solution.'],
+              C: ['Convert NFA {p,q,r,s},{0,1},δ,p,{q,s} to DFA.', 'Find RE of FA using Arden\'s Theorem.', 'Using Pumping Lemma prove L={0^(n²) | n≥1} is not regular.', 'Convert grammar to GNF: S→AB, A→BS|a, B→SA|b.', 'Design PDA for L={WcWᴿ | W∈(a,b)*}.', 'Design TM for palindromes of a\'s and b\'s.']
+            },
+            '2017-18': {
+              A: ['Define alphabet, string and language.', 'Design RE accepting all strings over {a,b} containing exactly 2 a\'s.', 'Design NFA accepting strings over {a,b} containing substring abba.', 'Define Chomsky Hierarchy.', 'Is CFL closed under union? Give example.', 'Convert NFA into equivalent DFA.', 'Remove useless productions: S→AB|ab, A→aA|B|a, B→D|E.'],
+              B: ['Define DFA and design DFA accepting binary number divisible by 5.', 'Construct RE corresponding to state transition diagram (Fig. 1 — q0,q1,q2 with 0,1 transitions).', 'Reduce G=({S,A,B},{a,b},P,S) to CNF: S→bA|aB, A→bAA|aS|a, B→aBB|bS|b.', 'Design PDA for L={wcwᴿ | w∈(a,b)*}.', 'Define TM. Construct TM for L={aⁿbⁿ | n>0}.'],
+              C: ['Describe Mealy and Moore machines. Convert given Mealy machine to Moore Machine.', 'State Pumping Lemma. Show L={aᵖ | p is prime} is not regular.', 'Discuss inherent ambiguity in CFL. Construct CFG for L={aⁱbʲcᵏ | i=j or j=k}.', 'Differentiate DPDA and NPDA. Discuss two stack PDA.', 'Explain Universal TM and Post Correspondence Problem.']
+            }
+          }
+        },
+        'BCS403': {
+          name: 'OOP with Java',
+          years: {
+            '2024-25': {
+              A: ['Why is Java platform-independent?', 'What is the role of a constructor in a Java class?', 'What is the purpose of the finally block in Java exception handling?', 'How is throw different from throws?', 'What is a functional interface? Give an example.', 'How does Stack differ from Queue?', 'What is a GET vs POST request?'],
+              B: ['Discuss the different data types and control structures in Java with examples.', 'Explain the concept of multithreading. Write a program to implement two threads printing numbers alternatively.', 'What is the Stream API in Java? How does it help in functional-style operations?', 'Compare and contrast ArrayList and LinkedList in terms of performance and usage.', 'What is Spring Boot? How is it different from the traditional Spring framework?'],
+              C: ['Write a Java program to take user input and display the reverse of a string.', 'Explain JVM and Java Runtime Environment.', 'Write a Java program to handle multiple exceptions using try-catch-finally.', 'Write a Java program creating two threads — one for even numbers, one for odd numbers.', 'What are functional interfaces and how are they implemented using lambda expressions?', 'Describe the role of annotations in Java and how type annotations are used.', 'Write a program to demonstrate HashMap and iterate through keys and values.', 'Discuss Collections framework hierarchy. Differentiate List, Set, and Map.', 'Explain DI and its types in Spring. Develop Spring Boot API for CRUD using list as storage.', 'Describe structure of a basic Spring Boot application and its advantages over traditional frameworks.']
+            },
+            '2023-24': {
+              A: ['Describe JVM and byte code in Java Architecture.', 'Define classes and object in Java with example.', 'Explain Interfaces in Java with suitable example.', 'Describe all keywords used for exception handling in Java.', 'Describe various states achieved by thread in its life cycle.', 'Write Java program to create ArrayList<String> with five items and display using forEach method.', 'Explain concept of Sealed classes in Java with example.'],
+              B: ['Explain abstraction and abstract classes in Java with abstract method. Demonstrate with example.', 'Describe ways to create threads in Java with suitable code. Which method is more suitable?', 'Explain functional interfaces. Describe lambda expressions with functional interfaces.', 'Describe Collections framework with hierarchy diagram. Explain List, Set and Queue interfaces.', 'Explain difference between Dependency Injection (DI) and Inversion of Control (IoC) in Spring.'],
+              C: ['Illustrate polymorphism and its types. Write Shape superclass with displayArea() and Rectangle subclass demonstrating method overriding.', 'Illustrate Constructors types in Java. Write Student class with roll_number, name, branch, email. Write all-arg constructor and create two objects.', 'Differentiate checked and unchecked exceptions. Write program for Arithmetic Exception handling.', 'Differentiate Character streams and Byte Streams; and wait() and notify().', 'Explain Java Stream API. Describe Intermediate and terminal operations. Write program to print sum of all even numbers from ArrayList<Integer> containing 1 to 10.', 'Compare switch-case statement with switch-expression in Java with example.', 'Describe LinkedList in Java. Describe any five methods with examples.', 'Describe HashMap in Java. Describe any five methods with examples.', 'Describe Spring container and Spring bean life cycle.', 'Describe Spring Boot framework and its benefits; and RESTful API with Spring Boot.']
+            }
+          }
+        }
+      }
+    },
+    ECE: {
+      '4': {
+        'BEC401': {
+          name: 'Communication Engineering',
+          years: {
+            '2024-25': {
+              A: ['Define amplitude modulation. Derive the expression for power in AM wave.', 'What is PCM? Explain steps involved in PCM system with a diagram.', 'Define frequency modulation. What is modulation index?', 'Explain working of superheterodyne receiver with block diagram.', 'Distinguish between FM and PM with formulas.'],
+              B: ['An AM transmitter radiates 10kW when carrier is unmodulated. Find total power for modulation index of 0.8.', 'Draw and explain the block diagram of PCM transmitter and receiver.', 'Derive the expression for bandwidth of FM signal using Carson\'s rule.'],
+              C: ['Compare AM, FM and PM modulation techniques in detail.', 'Explain noise performance of AM system. Derive figure of merit.']
+            },
+            '2023-24': {
+              A: ['What is DSB-SC modulation? How is it different from conventional AM?', 'Explain working of Phase Locked Loop (PLL) in detail.', 'Define sensitivity, selectivity and fidelity of a radio receiver.', 'What is sampling theorem? State Nyquist criterion.', 'Explain ASK, FSK and PSK modulation techniques.'],
+              B: ['A carrier signal Vc = 10 sin(2π×10⁶t) is amplitude modulated by Vm = 3 sin(2π×1000t). Find modulation index, frequency components and power.', 'Derive expression for FM signal and calculate bandwidth.'],
+              C: ['Explain delta modulation and DPCM. Compare their advantages.', 'Discuss noise in DSB-SC and SSB receivers.']
+            },
+            '2022-23': {
+              A: ['What is vestigial sideband modulation? Where is it used?', 'Define signal to noise ratio. How is it measured?', 'Explain TDM and FDM multiplexing techniques.', 'What are the advantages of digital communication over analog?', 'Explain the working of diode detector for AM demodulation.'],
+              B: ['An FM signal has maximum frequency deviation of 75 kHz and the message signal bandwidth is 15 kHz. Find modulation index and bandwidth.', 'Explain QPSK modulation with constellation diagram.'],
+              C: ['Design a superheterodyne receiver for AM broadcast band. Explain each block.', 'Compare DPCM, delta modulation and PCM.']
+            },
+            '2021-22': {
+              A: ['Explain double sideband suppressed carrier (DSB-SC) modulation.', 'What is threshold effect in FM? Explain pre-emphasis and de-emphasis.', 'Describe working of balanced modulator.', 'Define carrier, sidebands and bandwidth in AM.', 'What is spread spectrum communication?'],
+              B: ['For an AM wave with 40% modulation, calculate the percentage of total power in sidebands.', 'Explain working of PLL as FM demodulator.'],
+              C: ['Discuss various digital modulation techniques. Compare BER performance.', 'Explain PCM system in detail with neat block diagram.']
+            }
+          }
+        },
+        'BEC402': {
+          name: 'Analog Circuits',
+          years: {
+            '2024-25': {
+              A: ['Explain the concept of feedback in amplifiers. What are advantages of negative feedback?', 'Derive the condition for oscillation (Barkhausen criterion).', 'What is an ideal op-amp? List its characteristics.', 'Explain class B push-pull amplifier with diagram.', 'What is crossover distortion? How is it reduced?'],
+              B: ['Design a RC phase shift oscillator for 1 kHz frequency. Calculate component values.', 'Derive voltage gain of inverting and non-inverting op-amp configurations.'],
+              C: ['Compare class A, B, AB and C power amplifiers. Calculate efficiency for each.', 'Design an active low-pass Butterworth filter of 2nd order.']
+            },
+            '2023-24': {
+              A: ['What is the effect of negative feedback on bandwidth and distortion?', 'Explain working of Wein bridge oscillator.', 'Differentiate between current series and voltage shunt feedback.', 'Explain op-amp as integrator and differentiator.', 'What is the significance of slew rate in op-amp?'],
+              B: ['An amplifier has open loop gain of 1000 and feedback fraction of 0.01. Find closed loop gain, bandwidth if open loop BW is 10 kHz.', 'Design a Schmitt trigger using op-amp.'],
+              C: ['Explain LC oscillators — Colpitts and Hartley. Compare their performance.', 'Discuss instrumentation amplifier and its applications.']
+            },
+            '2022-23': {
+              A: ['Define gain, bandwidth, input and output impedance of an op-amp.', 'Explain series voltage regulator using op-amp.', 'What is CMRR? How is it measured?', 'Explain working of sample and hold circuit.', 'What is phase shift in RC oscillator?'],
+              B: ['Calculate the output voltage of a summing amplifier with inputs 1V, 2V and 3V through equal resistors.', 'Design a square wave generator using op-amp.'],
+              C: ['Explain different types of oscillators. Derive frequency of oscillation for each.', 'Design and analyze a 2nd order active band pass filter.']
+            },
+            '2021-22': {
+              A: ['Explain stability of feedback amplifiers using Bode plots.', 'What is virtual ground concept in op-amp?', 'Describe class C amplifier and its applications.', 'What is log amplifier? Give its applications.', 'Explain frequency response of amplifier.'],
+              B: ['An inverting op-amp has Rf = 100kΩ, R1 = 10kΩ. Input is 0.5V. Find output.', 'Derive expression for gain of Hartley oscillator.'],
+              C: ['Explain voltage controlled oscillator (VCO). Discuss its applications in PLL.', 'Compare different feedback topologies with examples.']
+            }
+          }
+        },
+        'BEC403': {
+          name: 'Signal & Systems',
+          years: {
+            '2024-25': {
+              A: ['Define LTI system. State its properties.', 'What is convolution? State convolution theorem.', 'Define Fourier transform. State its properties.', 'What is region of convergence in Laplace transform?', 'Distinguish between bilateral and unilateral Z-transform.'],
+              B: ['Find the convolution of x(t) = u(t) and h(t) = e^(-2t)u(t).', 'Find the inverse Laplace transform of F(s) = (s+3)/((s+1)(s+2)).'],
+              C: ['Explain sampling theorem. What is aliasing? How is it avoided?', 'Analyze a DT system using Z-transform to find impulse response.']
+            },
+            '2023-24': {
+              A: ['Determine if a system is linear, time-invariant, causal and stable.', 'State and prove time shifting property of Fourier transform.', 'Define Z-transform and state its properties.', 'What is DTFT? How is it related to Z-transform?', 'Explain Parseval\'s theorem with example.'],
+              B: ['Find DTFT of x[n] = (0.5)^n u[n] and plot magnitude spectrum.', 'Find inverse Z-transform of X(z) = 1/(1 - 0.5z^-1)(1 + 0.5z^-1).'],
+              C: ['Explain difference between CT and DT signals and systems. Give examples.', 'Solve a given system using state variable analysis.']
+            }
+          }
+        }
+      },
+      '3': {
+        'BEC301': { name: 'Network Theory', years: {
+          '2024-25': { A: ['State and prove Thevenin\'s theorem.', 'Define star-delta transformation.', 'What are mesh and nodal analysis methods?', 'Define poles and zeros of network function.', 'What is the condition for reciprocity in two-port network?'], B: ['Find Thevenin equivalent of a given circuit.', 'Analyze RLC transient circuit using Laplace transform.'], C: ['Analyze a two-port network using Z and Y parameters.', 'Design a low-pass LC filter.'] }
+        }},
+        'BEC302': { name: 'Electronic Devices & Circuits', years: {
+          '2024-25': { A: ['Draw and explain BJT hybrid model.', 'What is biasing? Explain voltage divider bias.', 'Differentiate JFET and MOSFET.', 'What is frequency response of amplifier?', 'Explain Darlington pair.'], B: ['Analyze CE amplifier for voltage gain, input and output impedance.', 'Design a stable bias circuit for BJT.'], C: ['Compare BJT and FET amplifiers.', 'Explain MOSFET as a switch.'] }
+        }}
+      }
+    },
+    ME: {
+      '4': {
+        'BME401': {
+          name: 'Applied Thermodynamics',
+          years: {
+            '2024-25': {
+              A: ['Derive efficiency of Otto cycle in terms of compression ratio.', 'Explain working of Babcock and Wilcox boiler with neat sketch.', 'What are boiler mountings and accessories? Give examples of each.', 'Derive the efficiency of Rankine cycle with T-S diagram.', 'Explain impulse turbine with velocity triangle diagram.'],
+              B: ['An Otto cycle with compression ratio 8 operates between 300K and 1200K. Find efficiency and mean effective pressure.', 'A steam turbine works on Rankine cycle. Boiler pressure 15 bar, condenser pressure 0.1 bar. Find work done and efficiency.', 'In an impulse turbine, steam enters nozzle at 500°C, 20 bar and leaves at 5 bar. Blade speed is 300 m/s. Draw velocity triangle.'],
+              C: ['Compare Impulse and Reaction turbines in detail with diagrams.', 'Explain Diesel cycle with p-V and T-S diagrams. Derive efficiency formula.', 'Describe Brayton cycle for gas turbine. Derive efficiency and find optimum pressure ratio.']
+            },
+            '2023-24': {
+              A: ['Derive efficiency of Diesel cycle.', 'Explain natural and artificial draught in boilers.', 'What is compounding of steam turbines? Explain pressure compounding.', 'What is nozzle? Derive mass flow rate through nozzle.', 'Explain Carnot cycle and its significance.'],
+              B: ['A Diesel engine has compression ratio 18 and cut-off ratio 2. Find efficiency.', 'Calculate draught in mm of water for a chimney of height 35m. Gas temp = 300°C, outside air = 27°C.', 'Rankine cycle: Steam enters turbine at 20 bar, 400°C. Condenser at 0.05 bar. Find specific work output.'],
+              C: ['Explain reheat Rankine cycle. Draw T-S diagram and derive efficiency improvement.', 'Compare different types of compressors with their applications.']
+            },
+            '2022-23': {
+              A: ['Define mean effective pressure. Derive for Otto cycle.', 'Explain Lancashire boiler with diagram.', 'What is blade efficiency? Derive for impulse turbine.', 'Define degree of reaction in turbine.', 'Explain superheating in Rankine cycle and its advantages.'],
+              B: ['An air standard dual cycle has compression ratio 14. Heat added at constant volume = 250 kJ/kg, at constant pressure = 250 kJ/kg. Find efficiency.', 'Impulse turbine: Nozzle angle 20°, blade speed 200 m/s, steam speed 500 m/s. Find blade angles and power.'],
+              C: ['Explain Rankine cycle with and without regeneration. Compare efficiencies.', 'Discuss modern high pressure boilers. Explain Benson boiler.']
+            },
+            '2021-22': {
+              A: ['Derive efficiency of Brayton cycle.', 'What are essential requirements of boiler feed water?', 'Explain reaction turbine principle with Parson\'s turbine.', 'State assumptions for air standard cycles.', 'Explain intercooling in air compressors.'],
+              B: ['A gas turbine plant operates on Brayton cycle. Compression ratio is 6. T₁ = 300K, T₃ = 1200K. Find efficiency and work ratio.', 'Boiler generates 8 kg steam/kg coal. Steam at 10 bar, dry saturated. Feed water at 40°C. Find equivalent evaporation.'],
+              C: ['Compare Impulse and Reaction turbines. Derive degree of reaction.', 'Explain working principle of refrigeration cycle. Derive COP.']
+            }
+          }
+        },
+        'BME402': {
+          name: 'Engineering Mechanics & SOM',
+          years: {
+            '2024-25': {
+              A: ['Explain method of joints for truss analysis.', 'State parallel axis theorem. Derive MOI of rectangle.', 'What is bending equation? State assumptions.', 'Derive torsion equation for circular shaft.', 'State Euler\'s formula for column buckling.'],
+              B: ['Find support reactions and draw SFD and BMD for a simply supported beam with UDL of 10 kN/m over 5m span.', 'A solid shaft transmits 100 kW at 200 rpm. Find diameter if shear stress ≤ 60 MPa.', 'Find principal stresses for element with σx=80, σy=40, τ=30 MPa using Mohr\'s circle.'],
+              C: ['Analyze a Pratt truss with 5 panels using method of sections.', 'Derive Lame\'s equation for thick cylinder. Find stresses for given data.', 'A column of length 4m, both ends pinned, I = 4×10⁻⁶ m⁴. Find Euler\'s critical load. E=200 GPa.']
+            },
+            '2023-24': {
+              A: ['Explain moment area method for deflection.', 'What is Macaulay\'s method? When is it used?', 'Define slenderness ratio. Its significance?', 'What is polar moment of inertia?', 'Derive bending stress distribution across section.'],
+              B: ['A cantilever beam 3m long carries 20 kN load at free end. Draw SFD and BMD.', 'Two shafts in series — find angle of twist and maximum shear stress.', 'Apply Macaulay\'s method to find deflection of beam with multiple loads.'],
+              C: ['Derive and apply Lame\'s equation for thick walled cylinder under internal pressure.', 'Analyze a truss by method of joints and verify by method of sections.']
+            },
+            '2022-23': {
+              A: ['Explain concept of shear centre.', 'What is thin cylinder theory? Derive hoop and longitudinal stress.', 'State theorem of parallel axes.', 'Explain virtual work method for truss analysis.', 'What are different types of beams and supports?'],
+              B: ['A shaft of diameter 80mm is subjected to torque. Max shear stress = 60 MPa. Find torque and angle of twist per meter. G = 80 GPa.', 'Find deflection at midspan of a SS beam loaded with point load at center using Macaulay\'s method.'],
+              C: ['Derive differential equation of elastic curve. Apply to find slope and deflection of cantilever.', 'Explain failure theories — Maximum shear stress and Von Mises theories.']
+            },
+            '2021-22': {
+              A: ['What is Rankine\'s formula for columns?', 'Explain leaf spring and its analysis.', 'Define principal planes and principal stresses.', 'Distinguish between short and long columns.', 'Explain section modulus and its significance.'],
+              B: ['A machine component is subjected to σx=100, σy=-50, τ=60 MPa. Find principal stresses and maximum shear stress.', 'Analyze a beam with overhangs. Draw SFD and BMD.'],
+              C: ['Compare different column theories. Discuss their applicability.', 'Design a close-coiled helical spring for given load-deflection requirements.']
+            }
+          }
+        },
+        'BME403': {
+          name: 'Manufacturing Processes',
+          years: {
+            '2024-25': {
+              A: ['Draw and label tool geometry in ASA system.', 'Explain TIG welding with neat diagram.', 'What is Abrasive Jet Machining? Explain with diagram.', 'Explain Laser Beam Machining working principle.', 'Differentiate hot working and cold working.'],
+              B: ['Calculate cutting force using Merchant\'s circle diagram. Given tool rake angle = 15°, friction angle = 35°, cutting force = 1000N.', 'Explain grinding wheel specification with example: A-60-M-8-V.', 'Describe plasma arc welding and electron beam welding.'],
+              C: ['Explain AJM in detail. Discuss parameters affecting material removal rate.', 'Compare conventional and unconventional machining processes with applications.', 'Describe investment casting process. What are its advantages over sand casting?']
+            },
+            '2023-24': {
+              A: ['Explain tool wear mechanisms — crater and flank wear.', 'What is MIG welding? How does it differ from TIG?', 'Explain EDM working principle.', 'What is superfinishing? When is it used?', 'Define orthogonal and oblique cutting.'],
+              B: ['Calculate tool life using Taylor\'s tool life equation. n=0.25, C=200, cutting speed=100 m/min. Find tool life.', 'Explain resistance welding types with diagrams.', 'Describe USM process and its applications.'],
+              C: ['Explain hot working processes — Rolling, Forging, Extrusion. Compare.', 'Discuss honing, lapping and superfinishing in detail.']
+            },
+            '2022-23': {
+              A: ['Explain types of sand used in mould making.', 'What is flame hardening? Where is it used?', 'Define machinability. List factors affecting it.', 'Explain electrochemical machining (ECM).', 'What is die casting? List its advantages.'],
+              B: ['Explain die forging process with diagram. Calculate forging force.', 'Describe Electron Beam Machining. State its applications and limitations.'],
+              C: ['Compare sand casting, die casting and investment casting processes.', 'Explain gear manufacturing methods — hobbing, shaping and milling.']
+            },
+            '2021-22': {
+              A: ['What is pattern? List types of patterns used in casting.', 'Explain oxy-acetylene gas welding.', 'What are the forces acting in metal cutting?', 'Explain principle of EDM with diagram.', 'What is lapping? Explain its process.'],
+              B: ['In orthogonal cutting, rake angle = 10°, chip thickness ratio = 0.4. Find shear plane angle and friction angle.', 'Explain centrifugal casting process with diagram.'],
+              C: ['Explain extrusion process — direct and indirect. Compare with drawing.', 'Describe various non-conventional machining processes and their selection criteria.']
+            }
+          }
+        }
+      },
+      '3': {
+        'BME301': { name: 'Thermodynamics', years: {
+          '2024-25': { A: ['State and explain zeroth law of thermodynamics.', 'Define enthalpy. Derive SFEE.', 'State Clausius inequality.', 'What is throttling process?', 'Explain Carnot theorem.'], B: ['Air in piston cylinder undergoes polytropic process. Find work done and heat transfer.', 'Calculate entropy change during isothermal expansion of ideal gas.'], C: ['Derive efficiency of Carnot cycle. Show it is maximum.', 'Explain availability and irreversibility concepts.'] }
+        }}
+      }
+    }
+  },
+  topics: {
+    ECE: {
+      '4': [
+        { code: 'BEC401', title: 'AM Modulation & Power Calculation', stars: '⭐⭐', freq: '4/4 years', content: 'AM Wave: v(t) = Vc(1 + ma·cosωmt)cosωct\n\nPower: Pt = Pc(1 + ma²/2)\n\nFor ma=1: Pt = 1.5 Pc\n\nBandwidth = 2fm\n\nModulation Index: ma = Em/Ec = (Emax-Emin)/(Emax+Emin)\n\nNUMERICAL TRICK: If ma = 0.8 and Pc = 10kW\n→ Pt = 10(1 + 0.64/2) = 10 × 1.32 = 13.2 kW\n\nSideband power = Pc·ma²/2 each\nTotal sideband power = Pc·ma²' },
+        { code: 'BEC401', title: 'FM vs PM & Superheterodyne Receiver', stars: '⭐⭐', freq: '4/4 years', content: 'FM: Δf = kf·Am → modulation index mf = Δf/fm\nBW (Carson\'s rule) = 2(Δf + fm) = 2fm(mf + 1)\n\nPM: Δφ = kp·Am → mp = kp·Am (independent of fm)\n\nSuperheterodyne Receiver Blocks:\n1. RF Amplifier → Select station\n2. Mixer → Frequency conversion\n3. Local Oscillator → fLO = fRF + fIF\n4. IF Amplifier → Fixed 455 kHz (AM)\n5. Detector → AM/FM Demodulation\n6. AF Amplifier → Audio output\n\nImage frequency = fRF + 2×fIF\nImage rejection ratio = √(1 + Q²·ρ²)' },
+        { code: 'BEC401', title: 'PCM & Sampling Theorem', stars: '⭐⭐', freq: '4/4 years', content: 'Nyquist Rate: fs ≥ 2fm (minimum sampling frequency)\n\nPCM Steps:\n1. Sampling (PAM signal)\n2. Quantization (2ⁿ levels for n bits)\n3. Encoding (Binary code)\n\nQuantization Noise: Nq = Δ²/12 where Δ = step size\nSNR for PCM ≈ 6.02n + 1.76 dB\n\nBandwidth of PCM = n × fs/2\n\nFor 8-bit PCM with fm=4kHz:\nfs = 8kHz, bits = 64000 bps\nBW = 32 kHz' },
+        { code: 'BEC402', title: 'BJT Amplifier & Feedback Analysis', stars: '⭐⭐', freq: '4/4 years', content: 'CE Amplifier Voltage Gain: Av = -hfe·Rc/hie\n\nWith Negative Feedback:\nAf = A/(1 + Aβ)\nBWf = BW(1 + Aβ)\nRif = Ri(1 + Aβ) [for series feedback]\nRof = Ro/(1 + Aβ) [for shunt feedback]\n\nDesensitivity factor = (1 + Aβ)\n\nFour Types of Feedback:\n1. Voltage series → High Rin, Low Rout\n2. Voltage shunt → Low Rin, Low Rout\n3. Current series → High Rin, High Rout\n4. Current shunt → Low Rin, High Rout' },
+        { code: 'BEC402', title: 'Oscillators — Barkhausen & RC/LC', stars: '⭐⭐', freq: '4/4 years', content: 'Barkhausen Criterion:\n|Aβ| = 1 and ∠Aβ = 0° (or 360°)\n\nRC Phase Shift Oscillator:\nf = 1/(2π√6·RC)\nMinimum A = 29\n\nWein Bridge Oscillator:\nf = 1/(2πRC)\nA = 3 (minimum for oscillation)\n\nHartley Oscillator:\nf = 1/(2π√((L1+L2)C))\nβ = L1/L2\n\nColpitts Oscillator:\nf = 1/(2π√(LC_eq)) where Ceq = C1C2/(C1+C2)\nβ = C1/C2' },
+        { code: 'BEC403', title: 'Fourier Transform Properties', stars: '⭐⭐', freq: '4/4 years', content: 'Key Fourier Transform Pairs:\nδ(t) ↔ 1\nu(t) ↔ πδ(f) + 1/j2πf\ne^(-at)u(t) ↔ 1/(a+j2πf)\nrect(t/τ) ↔ τ·sinc(fτ)\n\nProperties to Remember:\n• Linearity: ax(t)+by(t) ↔ aX(f)+bY(f)\n• Time Shift: x(t-t₀) ↔ X(f)e^(-j2πft₀)\n• Frequency Shift: x(t)e^(j2πf₀t) ↔ X(f-f₀)\n• Duality: X(t) ↔ x(-f)\n• Convolution: x(t)*y(t) ↔ X(f)·Y(f)\n• Parseval: ∫|x(t)|²dt = ∫|X(f)|²df' },
+        { code: 'BEC403', title: 'Laplace & Z-Transform', stars: '⭐⭐', freq: '4/4 years', content: 'Laplace Transform Pairs:\nu(t) ↔ 1/s\ne^(-at)u(t) ↔ 1/(s+a)\nδ(t) ↔ 1\ntu(t) ↔ 1/s²\n\nInitial Value Theorem: x(0+) = lim s→∞ sX(s)\nFinal Value Theorem: x(∞) = lim s→0 sX(s)\n\nZ-Transform Pairs:\nδ[n] ↔ 1\nu[n] ↔ z/(z-1)\naⁿu[n] ↔ z/(z-a)\n\nROC Rules:\n• Right-sided: |z| > |pole|\n• Left-sided: |z| < |pole|\n• Two-sided: ring region\n\nSystem Stability: Poles inside unit circle' }
+      ],
+      '3': [
+        { code: 'BEC301', title: 'Network Theorems', stars: '⭐⭐', freq: '4/4 years', content: 'Thevenin\'s Theorem:\nVth = Open circuit voltage at terminals\nRth = Resistance looking into terminals (sources deactivated)\n\nNorton\'s Theorem:\nIn = Short circuit current\nRn = Rth\n\nConversion: Vth = In × Rth\n\nMaximum Power Transfer:\nRL = Rth for maximum power\nPmax = Vth²/4Rth\n\nSuperposition: Applicable only to linear circuits\nMillman\'s Theorem: For parallel voltage sources' }
+      ]
+    },
+    ME: {
+      '4': [
+        { code: 'BME401', title: 'Rankine Cycle Numerical — SAME 3 YEARS!', stars: '⭐⭐', freq: '4/4 years — REPEATED!', content: 'Standard Rankine Cycle Numerical:\n\nGiven: P1 (boiler) bar, P2 (condenser) bar, dry saturated steam\n\nProcess:\n1→2: Isentropic expansion in turbine\n2→3: Condensation at P2\n3→4: Pump work\n4→1: Heat addition in boiler\n\nFormulas:\nTurbine work: wt = h1 - h2\nPump work: wp = v3(P1-P2) × 100 kJ/kg\n[P in bar, v in m³/kg]\nh4 = h3 + wp\n\nHeat Input: q = h1 - h4\nEfficiency: η = (wt - wp)/q\n\nREMEMBER from steam tables:\n• hf, hfg at condenser pressure\n• h1 at boiler pressure (dry sat) = hg\n• s1 = sg at boiler pressure\n• At turbine exit: x = (s1-sf)/sfg at P2\n• h2 = hf + x·hfg at P2' },
+        { code: 'BME401', title: 'Impulse Turbine Velocity Triangle — SAME 3 YEARS!', stars: '⭐⭐', freq: '4/4 years — REPEATED!', content: 'Impulse Turbine Velocity Triangle:\n\nGiven: α (nozzle angle), u (blade speed), C1 (steam speed)\n\nInlet Triangle:\nWhirl velocity: Cw1 = C1·cosα\nFlow velocity: Cf1 = C1·sinα\nRelative velocity: Vr1 = √(C1²+u²-2C1·u·cosα)\nBlade inlet angle: β1 = arctan(Cf1/(Cw1-u))\n\nExit Triangle (assume no friction: Vr2=Vr1):\nCw2 = Vr2·cosβ2 - u\n\nWork Done: W = u(Cw1+Cw2)\nBlade Efficiency: ηb = 2u(Cw1+Cw2)/C1²\n\nMaximum ηb at u/C1 = cosα/2\nMax ηb = cos²α' },
+        { code: 'BME401', title: 'Otto & Diesel Cycle Efficiency', stars: '⭐⭐', freq: '4/4 years', content: 'Otto Cycle:\nη = 1 - 1/rᵞ⁻¹ where γ=1.4, r=compression ratio\n\nFor r=8: η = 1 - 1/8⁰·⁴ = 1 - 1/2.297 = 56.5%\n\nDiesel Cycle:\nη = 1 - (1/rᵞ⁻¹) × (ρᵞ-1)/(γ(ρ-1))\nwhere ρ = cut-off ratio\n\nBrayton Cycle (Gas Turbine):\nη = 1 - 1/rp^((γ-1)/γ)\nwhere rp = pressure ratio\n\nOptimum pressure ratio for max work:\nrp_opt = (T3/T1)^(γ/2(γ-1))\n\nMEP = Net work/Swept volume' },
+        { code: 'BME402', title: 'SFD & BMD — Beam Analysis', stars: '⭐⭐', freq: '4/4 years', content: 'Steps for SFD & BMD:\n\n1. Find support reactions (ΣFy=0, ΣM=0)\n2. Draw SFD (positive upward force = positive shear)\n3. Draw BMD (sagging = positive)\n\nKey Relations:\ndV/dx = -w(x) [distributed load]\ndM/dx = V [shear force]\n\nCommon Formulas:\nSS beam, central point load P:\nMax BM = PL/4 at center\nMax deflection = PL³/48EI\n\nSS beam, UDL w per unit length:\nMax BM = wL²/8 at center\nMax deflection = 5wL⁴/384EI\n\nCantilever, end load P:\nMax BM = PL at fixed end\nMax deflection = PL³/3EI' },
+        { code: 'BME402', title: 'Torsion & Shaft Design — SAME 2 YEARS!', stars: '⭐⭐', freq: '4/4 years', content: 'Torsion Equation:\nT/J = τ/r = Gθ/L\n\nFor Solid Shaft:\nJ = πd⁴/32\nτmax = 16T/πd³\n\nFor Hollow Shaft:\nJ = π(D⁴-d⁴)/32\n\nPower Transmission:\nT = P×60/(2πN) [in N·m, P in Watts, N in rpm]\n\nAngle of Twist:\nθ = TL/GJ [in radians]\n\nNUMERICAL APPROACH:\n1. Find T from P and N\n2. Apply torsion equation for diameter\n3. Find angle of twist\n4. Check stiffness requirement' },
+        { code: 'BME402', title: 'Macaulay\'s Method — SAME 2 YEARS!', stars: '⭐⭐', freq: '4/4 years', content: 'Macaulay\'s Method for Beam Deflection:\n\nEI(d²y/dx²) = M(x) using Macaulay brackets <x-a>\n\nBrackets <x-a> = 0 when x < a\n              = (x-a) when x > a\n\nSteps:\n1. Take origin at left support\n2. Write BM expression using Macaulay brackets\n3. Integrate twice\n4. Apply boundary conditions (y=0 at supports)\n5. Solve for C1 and C2\n6. Find deflection at required point\n\nExample: SS beam, central load P at L/2\nEIy = Px/2<x>-P/2<x-L/2>² + C1x\nAt x=L/2: max deflection = PL³/48EI' },
+        { code: 'BME402', title: 'Lame\'s Equation — Thick Cylinder', stars: '⭐⭐', freq: '4/4 years', content: 'Lame\'s Equations:\nHoop Stress: σh = A + B/r²\nRadial Stress: σr = A - B/r²\n\nConstants from BC:\nAt r=ri: σr = -pi (internal pressure)\nAt r=ro: σr = -po (external pressure, 0 for open)\n\nFor Internal Pressure Only (po=0):\nA = pi·ri²/(ro²-ri²)\nB = pi·ri²·ro²/(ro²-ri²)\n\nMax hoop stress at r=ri:\nσh_max = pi(ro²+ri²)/(ro²-ri²)\n\nThick vs Thin: Use thick if t/Di > 0.05\n\nStrain Energy: U = V(σh²+σr²-2μσhσr)/2E' },
+        { code: 'BME403', title: 'Tool Geometry ASA System — NEVER MISSED!', stars: '⭐⭐', freq: '4/4 years — NEVER MISSED!', content: 'ASA Tool Nomenclature:\nBack Rake Angle (γb): In machine plane (+ = positive rake)\nSide Rake Angle (γs): In plane ⊥ to feed\nEnd Clearance Angle (αe): Below cutting edge\nSide Clearance Angle (αs): Side of tool\nEnd Cutting Edge Angle (φe): End of tool\nSide Cutting Edge Angle (φs): SCEA\nNose Radius (r): Tool tip radius\n\nFor mild steel: +ve rake angle used\nFor hard materials: -ve or 0° rake\n\nMerchant\'s Circle:\nResultant force R = √(Fc²+Ft²)\nFriction angle: λ = arctan(F/N)\nShear angle: φ = 45 + γ/2 - λ/2\n\nCutting power = Fc × V (kW)' },
+        { code: 'BME403', title: 'TIG & MIG Welding — NEVER MISSED!', stars: '⭐⭐', freq: '4/4 years — NEVER MISSED!', content: 'TIG (Tungsten Inert Gas) Welding:\n• Non-consumable tungsten electrode\n• Shielding gas: Argon or Helium\n• Filler rod added separately\n• Used for: Stainless steel, aluminum, thin sheets\n• DC straight polarity for steel\n• DC reverse polarity for aluminum\n\nMIG (Metal Inert Gas) Welding:\n• Consumable wire electrode (continuously fed)\n• Shielding gas: Argon, CO2, or mixture\n• Faster than TIG\n• Used for: Thick steel sections, fabrication\n• Process: Semi-automatic or automatic\n\nComparison:\nTIG: Better quality, slower, expensive, thin sections\nMIG: Higher deposition rate, suitable for thick sections' },
+        { code: 'BME403', title: 'AJM & LBM Machining', stars: '⭐⭐', freq: '4/4 years', content: 'Abrasive Jet Machining (AJM):\n• High velocity stream of abrasive particles\n• Gas pressure: 2-8 kg/cm²\n• Nozzle-work distance: 0.5-10 mm\n• Abrasives: Al2O3, SiC\n• Applications: Deburring, drilling glass, brittle materials\n• Cannot machine ductile materials effectively\n\nLaser Beam Machining (LBM):\n• High energy laser beam melts/vaporizes material\n• Types: CO2 laser, Nd:YAG laser\n• No contact → no tool wear\n• Very precise → ±0.005 mm\n• Applications: Drilling small holes, cutting, scribing\n• Limitations: HAZ formation, reflective materials difficult\n\nMRR depends on:\n• Velocity of abrasive\n• Size and concentration of abrasive\n• Hardness of workpiece' }
+      ],
+      '3': [
+        { code: 'BME301', title: 'Thermodynamics Laws', stars: '⭐', freq: '4/4 years', content: 'First Law: Q - W = ΔU (closed system)\nSFEE: Q - W = m[(h2-h1) + (V2²-V1²)/2 + g(z2-z1)]\n\nSecond Law:\nClausius: No process that transfers heat from cold to hot without work\nKelvin-Planck: No engine converts all heat to work\n\nEntropy: dS = dQrev/T\nFor irreversible: dS > dQ/T\nFor reversible: dS = dQ/T' }
+      ]
+    },
+    CSE: {
+      '4': [
+        { code: 'BCS401', title: 'CPU Scheduling — Gantt Chart Numericals', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: 'FCFS: Non-preemptive, convoy effect\nWT = Start time - Arrival time\nTAT = Completion - Arrival time\n\nSJF (Preemptive=SRTF): Minimum remaining burst time gets CPU\n\nRound Robin: If burst > quantum → preempt, add to queue end\n\nPriority (recent papers): 0 = Highest priority\n\nNUMERICAL TABLE FORMAT:\nProcess | AT | BT | Priority | Start | CT | TAT | WT\n\nAvg WT = ΣWT/n\nAvg TAT = ΣTAT/n\n\nComparison:\nFCFS: Simple but poor avg WT\nSJF: Minimum avg WT (optimal), starvation possible\nRR: Fair, good response, overhead\nPriority: Flexible, aging prevents starvation' },
+        { code: 'BCS401', title: "Banker's Algorithm — NEVER MISSED", stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: "Step 1 — Need Matrix:\nNeed[i][j] = Max[i][j] - Allocation[i][j]\n\nStep 2 — Safety Algorithm:\nWork = Available (copy)\nFinish[i] = false for all\nFind i: Finish[i]=false AND Need[i] ≤ Work\n→ Work += Allocation[i], Finish[i] = true\nRepeat → if all Finish=true: SAFE STATE\n\nStep 3 — Resource Request:\nIf Request ≤ Need AND Request ≤ Available:\n→ Tentatively allocate\n→ Run Safety Algorithm\n→ If safe: GRANT; else: WAIT\n\nTip: Always write Need matrix first then safe sequence!" },
+        { code: 'BCS401', title: 'PCB + Process States — SURE SHOT', stars: '⭐⭐', freq: '4/4 years', content: '5 Process States:\nNew → Ready → Running → Waiting → Terminated\n\nPCB Contents:\n• PID, Process State, Program Counter\n• CPU Registers, Scheduling Info (priority)\n• Memory limits, I/O status, Accounting info\n\nfork() Numerical:\n3 fork() calls → 2³ = 8 processes total\n\nContext Switching: Save PCB of current, load PCB of new' },
+        { code: 'BCS401', title: 'Page Replacement — FIFO/LRU/Optimal', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: 'FIFO: Replace oldest loaded page (use queue)\nLRU: Replace least recently used (track last use)\nOptimal: Replace page used farthest in future\n\nPage Faults: Count each time page NOT in frames\n\nBelady\'s Anomaly: Only FIFO suffers (more frames→more faults)\n\nPage Table Entries Numerical:\n32-bit logical, page size 2048 = 2^11\nPage bits = 32-11 = 21 bits\nMax entries = 2^21 = 2097152\n\nEAT (Effective Access Time) with TLB:\nEAT = h×(TLB time + mem time) + (1-h)×(TLB + 2×mem)\nwhere h = hit ratio' },
+        { code: 'BCS401', title: 'Deadlock — Conditions + Banker\'s Safety', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: '4 Necessary Conditions:\n1. Mutual Exclusion\n2. Hold and Wait\n3. No Preemption\n4. Circular Wait\n\nSemaphore Deadlock (2024-25 paper exact!):\nS1=1, S2=1\nP1: wait(S1); wait(S2);\nP2: wait(S2); wait(S1);\n→ P1 holds S1, waits S2\n→ P2 holds S2, waits S1 → DEADLOCK!\n\nRAG: Cycle with single-instance resources = Deadlock\n\nBanker\'s Safety Check:\nP1:alloc=3,max=7; P2:alloc=1,max=6; P3:alloc=3,max=5\nTotal=9, Need: P1=4, P2=5, P3=2, Available=2\nSeq: P3(need=2≤2)→avail=5; P2(need=5≤5)→avail=6; P1(need=4≤6) → SAFE' },
+        { code: 'BCS401', title: 'Semaphores — Producer-Consumer & Dining Philosophers', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: 'Critical Section — 3 conditions:\n1. Mutual Exclusion\n2. Progress\n3. Bounded Waiting\n\nProducer-Consumer:\nmutex=1, empty=n, full=0\nProducer: wait(empty)→wait(mutex)→produce→signal(mutex)→signal(full)\nConsumer: wait(full)→wait(mutex)→consume→signal(mutex)→signal(empty)\n\nDining Philosophers (5):\nProblem: All pick left fork → deadlock!\nSolution: Allow max 4 philosophers OR pick both atomically\n\nPeterson\'s Solution (2 processes):\nflag[i]=true; turn=j;\nwhile(flag[j] && turn==j); // busy wait\n// critical section\nflag[i]=false;\nLimitation: Doesn\'t work on modern multiprocessors (memory reordering)' },
+        { code: 'BCS401', title: 'Disk Scheduling + File Allocation', stars: '⭐⭐', freq: '4/4 years — SURE SHOT', content: 'C-LOOK (2024-25 Numerical):\nQueue: 47,38,121,191,87,11,92,10; Head=63 moving UP\nSort: 10,11,38,47,87,92,121,191\nFrom 63, go UP: 87,92,121,191 → jump back to 10,11,38,47\nMovement = (191-63)+(191-10) = 128+181 = 309 cylinders\n\nFile Allocation:\nContiguous: Fast direct access, external fragmentation\nLinked: No fragmentation, no direct access\nIndexed: Best of both, inode structure in Unix\n\nRAID Levels:\nRAID 0: Striping only — performance, no redundancy\nRAID 1: Mirroring — full redundancy, 50% capacity\nRAID 5: Striping + distributed parity — balance' },
+        { code: 'BCS402', title: 'DFA Construction — SURE SHOT (7x+ years)', stars: '⭐⭐', freq: '7+ years — ABSOLUTE SURE SHOT', content: 'DFA: M = (Q, Σ, δ, q0, F)\n\nDFA for binary divisible by N:\nStates = remainders {0,1,...,N-1}\nδ(q,0) = (2q) mod N\nδ(q,1) = (2q+1) mod N\nFinal state = q0 (remainder 0)\n\nDivisible by 4: States q0,q1,q2,q3\nδ(q0,0)=q0, δ(q0,1)=q1\nδ(q1,0)=q2, δ(q1,1)=q3\nδ(q2,0)=q0, δ(q2,1)=q1 ...\n\nDFA Minimization:\n1. Mark (final, non-final) pairs as distinguishable\n2. Mark (p,q) if δ(p,a) and δ(q,a) already distinguishable\n3. Merge all unmarked (indistinguishable) pairs' },
+        { code: 'BCS402', title: 'NFA to DFA — Subset Construction SURE SHOT', stars: '⭐⭐', freq: '7+ years — SURE SHOT', content: 'Subset Construction:\n1. Compute ε-closure(q0) = start DFA state\n2. For each DFA state S, for each input a:\n   → MOVE(S,a) = union of δ(q,a) for all q in S\n   → ε-closure(MOVE(S,a)) = new DFA state\n3. Final states: any DFA state containing NFA final state\n\nε-closure: All states via ε transitions (including self)\n\nEXAM TIP:\n• Compute ALL ε-closures FIRST (show work clearly)\n• Then make transition table\n• Label DFA states as sets: {1,2,3}, {2,4}, etc.' },
+        { code: 'BCS402', title: 'Pumping Lemma — L={aᵖ | p prime} Proof', stars: '⭐⭐', freq: '6+ years — SURE SHOT', content: 'Pumping Lemma Statement:\nFor any regular L with pumping length p:\nw=xyz where |xy|≤p, |y|≥1, xyⁱz∈L for all i≥0\n\nProof L={aᵖ | p is prime} is NOT regular:\n1. Assume L regular, pumping length = p\n2. Choose w = a^p (p is prime ✓)\n3. w=xyz, |xy|≤p, let |y|=k (k≥1)\n4. For i=p+1: |xy^(p+1)z| = p + pk = p(1+k)\n5. Since k≥1: 1+k≥2, so p(1+k) is COMPOSITE\n6. Contradiction! ∴ L is NOT regular ✓' },
+        { code: 'BCS402', title: 'CFG to CNF Conversion — SURE SHOT (5x+)', stars: '⭐⭐', freq: '5+ years — SURE SHOT', content: 'CNF Rules: A→BC or A→a only\n\nConversion Steps:\n1. Remove ε-productions\n   Find nullable: A→ε directly or transitively\n   Add combinations, remove A→ε\n\n2. Remove unit productions (A→B)\n   Replace with all B-productions\n\n3. Remove useless productions\n\n4. Convert long rules:\n   A→aBC: Add Ta→a, then A→TaBC\n   A→BCD: Add X→CD, then A→BX\n\nEXAMPLE from 2022-23 paper:\nS→bA|aB, A→bAA|aS|a, B→aBB|bS|b\nAdd Tb→b, Ta→a\nS→TbA|TaB\nA→TbAA→TbX1 where X1→AA\nA→TaS|a\nB→TaBB→TaX2 where X2→BB\nB→TbS|b' },
+        { code: 'BCS402', title: 'PDA Design — aⁿbⁿ, wwᴿ, Two Stack', stars: '⭐⭐', freq: '7+ years — SURE SHOT', content: 'PDA for L={aⁿbⁿ}:\nδ(q0,a,Z0)=(q0,AZ0) — push A\nδ(q0,a,A)=(q0,AA) — push A\nδ(q0,b,A)=(q1,ε) — pop A (switch phase)\nδ(q1,b,A)=(q1,ε) — pop A\nδ(q1,ε,Z0)=(q2,Z0) — accept\n\nPDA for L={wwᴿ}:\nPhase 1: Push everything\nδ(q0,ε,-)=(q1,-) — non-deterministic switch at middle\nPhase 2: Pop matching\nδ(q1,a,A)=(q1,ε); δ(q1,b,B)=(q1,ε)\nδ(q1,ε,Z0)=(q2,Z0) — accept\n\nTwo Stack PDA for L={aⁿbⁿcⁿ}:\nStack1: push a\'s, pop on b\'s\nStack2: push b\'s, pop on c\'s\n(Single stack PDA CANNOT accept this language!)' },
+        { code: 'BCS402', title: 'Turing Machine Design — SURE SHOT', stars: '⭐⭐', freq: '6+ years — SURE SHOT', content: 'TM for L={aⁿbⁿ}:\n(q0,a)→(q1,X,R) mark a\n(q1,a)→(q1,a,R) skip a\'s\n(q1,b)→(q2,Y,L) mark b\n(q2,a)→(q2,a,L) move left\n(q2,X)→(q0,X,R) next iteration\n(q0,Y)→(q3,Y,R) all done\n(q3,Y)→(q3,Y,R) skip Y\'s\n(q3,B)→(qf,B,R) ACCEPT\n\nHalting Problem — UNDECIDABLE:\nAssume H(M,w) decides halting.\nConstruct D(M): if H(M,M)=halts → loop; else halt\nD(D): if D halts → loops; if D loops → halts → Contradiction!\n\nChurch\'s Thesis: Every effectively computable function = Turing computable' },
+        { code: 'BCS402', title: 'Chomsky Hierarchy + Closure Properties', stars: '⭐⭐', freq: '5+ years — SURE SHOT', content: 'Type 3 — Regular: DFA/NFA | A→aB or A→a\nType 2 — CFL: PDA | A→γ\nType 1 — CSL: LBA | αAβ→αγβ\nType 0 — RE: TM | α→β\n\nHierarchy: Type3 ⊂ Type2 ⊂ Type1 ⊂ Type0\n\nRegular Languages — CLOSED under:\n✓ Union, Intersection, Complement\n✓ Concatenation, Kleene*, Reversal\n✓ Homomorphism, Inverse Homomorphism\n\nCFLs — CLOSED under:\n✓ Union, Concatenation, Kleene*\n✗ Intersection, Complement\n\nProof regular closed under complement:\nSwap final and non-final states in DFA' },
+        { code: 'BCS403', title: 'Exception Handling Programs — SURE SHOT', stars: '⭐⭐', freq: '2/2 years — SURE SHOT', content: 'Exception Hierarchy:\nThrowable → Error (don\'t catch!) / Exception\nException → Checked (IOException) / Unchecked (RuntimeException)\n\ntry-catch-finally program:\ntry {\n  int[] arr = {1,2,3};\n  int x = 10/0; // ArithmeticException\n  arr[5] = 1;   // ArrayIndexOutOfBounds\n} catch(ArithmeticException e) {\n  System.out.println("Arithmetic: "+e.getMessage());\n} catch(ArrayIndexOutOfBoundsException e) {\n  System.out.println("Array: "+e.getMessage());\n} finally {\n  System.out.println("finally ALWAYS runs!");\n}\n\nthrow: throw new IllegalArgumentException("msg");\nthrows: void read() throws IOException { ... }\n\nfinally executes even after return statement!' },
+        { code: 'BCS403', title: 'Multithreading — Even/Odd Program SURE SHOT', stars: '⭐⭐', freq: '2/2 years — SURE SHOT', content: 'Two threads — Even and Odd:\npublic class EvenOddDemo {\n  public static void main(String[] args) {\n    Thread even = new Thread(() -> {\n      for(int i=0; i<=10; i+=2)\n        System.out.println("Even: "+i);\n    });\n    Thread odd = new Thread(() -> {\n      for(int i=1; i<=10; i+=2)\n        System.out.println("Odd: "+i);\n    });\n    even.start();\n    odd.start();\n  }\n}\n\nThread Lifecycle:\nNew → start() → Runnable → CPU assigned → Running\n→ wait()/sleep() → Blocked/Waiting → Back to Runnable\n→ run() completes → Dead/Terminated\n\nRunnable preferred over Thread extend (allows other inheritance)' },
+        { code: 'BCS403', title: 'Collections + HashMap Program — SURE SHOT', stars: '⭐⭐', freq: '2/2 years — SURE SHOT', content: 'Collections Hierarchy (MUST DRAW):\nCollection → List (ArrayList, LinkedList)\n           → Set (HashSet, TreeSet)\n           → Queue (PriorityQueue)\nMap → HashMap, TreeMap (separate from Collection)\n\nArrayList vs LinkedList:\nArrayList: O(1) random access, O(n) insert middle\nLinkedList: O(n) access, O(1) insert/delete anywhere\n\nHashMap 5 Methods Program:\nHashMap<String,Integer> map = new HashMap<>();\nmap.put("Alice", 90);        // add\nmap.put("Bob", 85);\nmap.get("Alice");            // returns 90\nmap.remove("Bob");           // delete\nmap.containsKey("Alice");    // true\nmap.size();                  // 1\n// Iterate keys and values:\nfor(Map.Entry<String,Integer> e : map.entrySet())\n  System.out.println(e.getKey()+": "+e.getValue());\n// Or with forEach:\nmap.forEach((k,v) -> System.out.println(k+": "+v));' },
+        { code: 'BCS403', title: 'Lambda + Stream API — SURE SHOT', stars: '⭐⭐', freq: '2/2 years — SURE SHOT', content: '@FunctionalInterface = exactly ONE abstract method\n\nLambda syntax: (params) -> expression\n\nSum of even numbers 1-10 (EXACT exam question):\nList<Integer> list = new ArrayList<>();\nfor(int i=1; i<=10; i++) list.add(i);\nint sum = list.stream()\n  .filter(n -> n%2 == 0)    // intermediate\n  .reduce(0, Integer::sum);  // terminal\nSystem.out.println("Sum of evens: " + sum); // 30\n\nIntermediate operations (lazy):\nfilter(), map(), sorted(), distinct(), limit()\n\nTerminal operations (trigger execution):\nforEach(), collect(), reduce(), count(), findFirst()\n\nMethod Reference: System.out::println\nConstructor Reference: ArrayList::new' },
+        { code: 'BCS403', title: 'Spring Boot + DI — SURE SHOT', stars: '⭐⭐', freq: '2/2 years — SURE SHOT', content: 'IoC: Container manages object lifecycle\nDI: Dependencies injected externally\n\nDI Types:\n1. Constructor: @Autowired on constructor\n2. Setter: @Autowired on setter method\n3. Field: @Autowired on field (most common)\n\nSpring Boot CRUD (exam expects this code):\n@RestController\n@RequestMapping("/students")\npublic class StudentController {\n  private List<String> students = new ArrayList<>();\n  \n  @GetMapping\n  public List<String> getAll() { return students; }\n  \n  @PostMapping\n  public String add(@RequestBody String name) {\n    students.add(name);\n    return "Added: " + name;\n  }\n  \n  @DeleteMapping("/{index}")\n  public String delete(@PathVariable int index) {\n    return "Removed: " + students.remove(index);\n  }\n}\n\nSpring Boot vs Spring: No XML, auto-config, embedded Tomcat!' }
+      ],
+      '3': [
+        { code: 'BCS301', title: 'Data Structures — Arrays, Trees, Sorting', stars: '⭐', freq: '4/4 years', content: 'Arrays: O(1) access, O(n) search\nLinked List: O(n) access, O(1) insert at head\nStack (LIFO): push/pop O(1)\nQueue (FIFO): enqueue/dequeue O(1)\nBST: O(log n) avg, O(n) worst case\nAVL: Self-balancing, |height diff| ≤ 1\nHashing: O(1) avg search, handle collisions\nQuick Sort: O(n log n) avg, O(n²) worst\nMerge Sort: O(n log n) always, O(n) space' }
+      ]
+    }
+  },
+  videos: [],
+  placement: []
+};
+
+// ===== FIREBASE HELPER FUNCTIONS =====
+async function getPortalData() {
+  try {
+    const docRef = doc(db, 'portal', 'data');
+    const snap = await getDoc(docRef);
+    return snap.exists() ? snap.data() : null;
+  } catch(e) { return null; }
+}
+
+async function savePortalData(data) {
+  try {
+    await setDoc(doc(db, 'portal', 'data'), data, { merge: true });
+    return true;
+  } catch(e) { return false; }
+}
+
+async function getUserData(uid) {
+  try {
+    const snap = await getDoc(doc(db, 'users', uid));
+    return snap.exists() ? snap.data() : null;
+  } catch(e) { return null; }
+}
+
+async function saveUserData(uid, data) {
+  try {
+    await setDoc(doc(db, 'users', uid), data, { merge: true });
+    return true;
+  } catch(e) { return false; }
+}
+
+async function getAllUsers() {
+  try {
+    const snap = await getDocs(collection(db, 'users'));
+    const users = [];
+    snap.forEach(d => users.push({ id: d.id, ...d.data() }));
+    return users;
+  } catch(e) { return []; }
+}
+
+// ===== AUTH FUNCTIONS =====
+window.switchAuthTab = function(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => {
+    const tabs = ['login','signup','admin'];
+    t.classList.toggle('active', tabs[i] === tab);
+  });
+  document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+  document.getElementById(tab + 'Form').classList.add('active');
+};
+
+window.signupUser = async function() {
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const password = document.getElementById('signupPassword').value;
+  const branch = document.getElementById('signupBranch').value;
+  const college = document.getElementById('signupCollege').value.trim();
+  const roll = document.getElementById('signupRoll').value.trim();
+  const errEl = document.getElementById('signupError');
+  const sucEl = document.getElementById('signupSuccess');
+
+  if (!name || !email || !password || !branch || !roll) {
+    errEl.textContent = 'Please fill all required fields.';
+    errEl.style.display = 'block'; return;
+  }
+  errEl.style.display = 'none';
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, password);
+    await setDoc(doc(db, 'users', cred.user.uid), { name, email, branch, college, roll, createdAt: new Date().toISOString() });
+    sucEl.textContent = 'Account created! Please login.';
+    sucEl.style.display = 'block';
+    setTimeout(() => { sucEl.style.display='none'; window.switchAuthTab('login'); }, 2000);
+  } catch(e) {
+    errEl.textContent = e.message.includes('email-already') ? 'Email already registered.' : e.message;
+    errEl.style.display = 'block';
+  }
+};
+
+window.loginUser = async function() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch(e) {
+    errEl.textContent = 'Invalid email or password.';
+    errEl.style.display = 'block';
+  }
+};
+
+window.loginAdmin = function() {
+  const user = document.getElementById('adminUser').value;
+  const pass = document.getElementById('adminPass').value;
+  const adminCreds = JSON.parse(localStorage.getItem('adminCreds') || '{"u":"admin","p":"admin123"}');
+  if (user === adminCreds.u && pass === adminCreds.p) {
+    isAdmin = true;
+    currentUser = { displayName: 'Admin', email: 'admin@portal.com', uid: 'admin', branch: 'Admin', role: 'admin' };
+    initApp();
+  } else {
+    document.getElementById('adminError').textContent = 'Invalid admin credentials.';
+    document.getElementById('adminError').style.display = 'block';
+  }
+};
+
+window.logout = function() {
+  if (isAdmin) { isAdmin = false; currentUser = null; showAuth(); return; }
+  signOut(auth);
+};
+
+function showAuth() {
+  document.getElementById('authPage').classList.add('active');
+  document.getElementById('appPage').classList.remove('active');
+}
+
+// ===== INIT APP =====
+async function initApp() {
+  document.getElementById('authPage').classList.remove('active');
+  document.getElementById('appPage').classList.add('active');
+  document.getElementById('loadingOverlay').style.display = 'flex';
+
+  // Load portal data from Firestore
+  const stored = await getPortalData();
+  if (stored) {
+    if (stored.syllabus) mergeSyllabus(stored.syllabus);
+    if (stored.pyq) mergePyq(stored.pyq);
+    if (stored.topics) mergeTopics(stored.topics);
+    if (stored.videos) allData.videos = stored.videos;
+    if (stored.placement) allData.placement = stored.placement;
+  }
+
+  // Load user personal data
+  let userData = {};
+  if (!isAdmin && currentUser && currentUser.uid !== 'admin') {
+    userData = await getUserData(currentUser.uid) || {};
+  }
+
+  // Update UI
+  const name = currentUser?.displayName || userData.name || currentUser?.email?.split('@')[0] || 'Student';
+  const branch = userData.branch || currentUser?.branch || 'ECE';
+  document.getElementById('welcomeName').textContent = name;
+  const semN = parseInt(currentSem); const yrN = Math.ceil(semN/2);
+  document.getElementById('welcomeInfo').textContent = `Branch: ${branch} | Year ${yrN} — Sem ${semN} | Keep studying consistently! 🎯`;
+  document.getElementById('sidebarName').textContent = name;
+  document.getElementById('sidebarBranch').textContent = isAdmin ? '⚙️ Administrator' : branch;
+
+  if (isAdmin) document.querySelector('.admin-nav').style.display = 'flex';
+
+  // Load attendance
+  const att = userData.attendance || { total: 0, attended: 0 };
+  document.getElementById('attTotal').value = att.total || '';
+  document.getElementById('attAttended').value = att.attended || '';
+  updateAttendanceDisplay(att.total || 0, att.attended || 0);
+
+  // Load progress tasks
+  const tasks = userData.tasks || [];
+  renderProgressTasks(tasks);
+
+  currentSem = userData.sem || '4';
+  document.getElementById('semSelector').value = currentSem;
+
+  document.getElementById('loadingOverlay').style.display = 'none';
+  refreshCurrentSection();
+  updateStats();
+}
+
+function mergeSyllabus(firestoreData) {
+  for (const branch in firestoreData) {
+    if (!allData.syllabus[branch]) allData.syllabus[branch] = {};
+    for (const sem in firestoreData[branch]) {
+      const existing = builtinData.syllabus[branch]?.[sem] || [];
+      allData.syllabus[branch][sem] = [...existing, ...(firestoreData[branch][sem] || [])];
+    }
+  }
+}
+
+function mergePyq(firestoreData) {
+  for (const branch in firestoreData) {
+    if (!allData.pyq[branch]) allData.pyq[branch] = {};
+    for (const sem in firestoreData[branch]) {
+      if (!allData.pyq[branch][sem]) allData.pyq[branch][sem] = {};
+      const bSems = builtinData.pyq[branch]?.[sem] || {};
+      allData.pyq[branch][sem] = { ...bSems, ...(firestoreData[branch][sem] || {}) };
+    }
+  }
+}
+
+function mergeTopics(firestoreData) {
+  for (const branch in firestoreData) {
+    if (!allData.topics[branch]) allData.topics[branch] = {};
+    for (const sem in firestoreData[branch]) {
+      const existing = builtinData.topics[branch]?.[sem] || [];
+      allData.topics[branch][sem] = [...existing, ...(firestoreData[branch][sem] || [])];
+    }
+  }
+}
+
+// Initialize allData from builtin
+allData.syllabus = JSON.parse(JSON.stringify(builtinData.syllabus));
+allData.pyq = JSON.parse(JSON.stringify(builtinData.pyq));
+allData.topics = JSON.parse(JSON.stringify(builtinData.topics));
+
+// ===== SECTION NAVIGATION =====
+window.showSection = function(name) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.textContent.toLowerCase().includes(name.toLowerCase().replace('-','').replace('_',''))) n.classList.add('active');
+  });
+  document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+  document.getElementById('section-' + name).classList.add('active');
+  const titles = { dashboard:'Dashboard', syllabus:'Syllabus', pyq:'Previous Year Questions', topics:'Important Topics', videos:'Video Session', notes:'My Notes', placement:'Placement', admin:'Admin Panel' };
+  document.getElementById('topbarTitle').textContent = titles[name] || name;
+  closeSidebar();
+  refreshSection(name);
+};
+
+function refreshCurrentSection() {
+  const active = document.querySelector('.content-section.active');
+  if (active) refreshSection(active.id.replace('section-', ''));
+}
+
+function refreshSection(name) {
+  const branch = getCurrentBranch();
+  if (name === 'syllabus') renderSyllabus(branch, currentSem);
+  if (name === 'pyq') renderPYQ(branch, currentSem);
+  if (name === 'topics') renderTopics(branch, currentSem);
+  if (name === 'videos') renderVideos(branch, currentSem);
+  if (name === 'placement') renderPlacement(branch);
+  if (name === 'notes') renderNotes();
+  if (name === 'admin') { refreshAdminContent(); loadUsers(); }
+}
+
+function getCurrentBranch() {
+  if (isAdmin) return 'ECE';
+  return window._userBranch || 'ECE';
+}
+
+window.changeSem = function(sem) {
+  currentSem = sem;
+  const sn = parseInt(sem), yn = Math.ceil(sn/2);
+  const br = getCurrentBranch();
+  const wi = document.getElementById('welcomeInfo');
+  if(wi) wi.textContent = 'Branch: ' + br + ' | Year ' + yn + ' — Sem ' + sn + ' | Keep studying consistently! 🎯';
+  if(currentUser?.uid && currentUser.uid !== 'admin') saveUserData(currentUser.uid, {sem}).catch(()=>{});
+  refreshCurrentSection();
+  updateStats();
+};
+
+// ===== RENDER FUNCTIONS =====
+function renderSyllabus(branch, sem) {
+  const data = allData.syllabus[branch]?.[sem] || [];
+  const grid = document.getElementById('syllabusGrid');
+  document.getElementById('syllabusLabel').textContent = `${branch} — Sem ${sem}`;
+  if (!data.length) {
+    const semN = parseInt(sem), yrN = Math.ceil(semN/2);
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>Year ' + yrN + ' Sem ' + semN + ' ka syllabus abhi available nahi hai.</p><p style="margin-top:8px;font-size:0.8em;color:var(--text-muted)">Admin panel se add karo ya wait karo — data jald aayega!</p></div>';
+    return;
+  }
+  grid.innerHTML = data.map(sub => `
+    <div class="subject-card">
+      <div class="subject-card-header">
+        <div class="subject-code">${sub.code}</div>
+        <div class="subject-name">${sub.name}</div>
+      </div>
+      <div class="subject-card-body">
+        <ul class="unit-list">
+          ${sub.units.map((u,i) => `<li class="unit-item"><span class="unit-num">U${i+1}</span>${u.replace(/^Unit \d+: /,'')}</li>`).join('')}
+        </ul>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderPYQ(branch, sem) {
+  const data = allData.pyq[branch]?.[sem] || {};
+  const grid = document.getElementById('pyqGrid');
+  document.getElementById('pyqLabel').textContent = `${branch} — Sem ${sem}`;
+  const codes = Object.keys(data);
+  if (!codes.length) {
+    const semN2 = parseInt(sem), yrN2 = Math.ceil(semN2/2);
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><p>Year ' + yrN2 + ' Sem ' + semN2 + ' ke PYQ abhi available nahi hain.</p><p style="margin-top:8px;font-size:0.8em;color:var(--text-muted)">Sem 3 & 4 ke PYQ ECE/ME/CSE ke liye available hain.</p></div>';
+    return;
+  }
+  grid.innerHTML = codes.map(code => {
+    const sub = data[code];
+    const years = Object.keys(sub.years || {});
+    return `
+      <div class="pyq-subject-card">
+        <div class="pyq-subject-header" onclick="togglePyqSubject(this)">
+          <div class="subject-code">${code}</div>
+          <div class="subject-name">${sub.name}</div>
+          <div style="font-size:0.75em;color:var(--accent-cyan);margin-top:4px">${years.length} years available ▼</div>
+        </div>
+        <div class="pyq-years">
+          ${years.map(yr => `
+            <div>
+              <div class="pyq-year-btn" onclick="togglePyqYear(this)">
+                <span>📄 ${yr}</span><span>▶</span>
+              </div>
+              <div class="pyq-questions">
+                ${renderPYQSections(sub.years[yr])}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderPYQSections(yearData) {
+  return ['A','B','C'].map(sec => {
+    if (!yearData[sec]?.length) return '';
+    return `
+      <div class="pyq-section-title">Section ${sec}</div>
+      ${yearData[sec].map((q,i) => `
+        <div class="pyq-q" onclick="togglePyqAnswer(this)">
+          <strong>Q${i+1}.</strong> ${q}
+        </div>
+        <div class="pyq-answer">💡 This is a ${sec==='A'?'short':'long'} answer question. Key points to cover in your answer based on AKTU pattern. Refer to your textbook for detailed solution.</div>
+      `).join('')}
+    `;
+  }).join('');
+}
+
+window.togglePyqSubject = function(el) {
+  const yearsEl = el.nextElementSibling;
+  yearsEl.classList.toggle('open');
+};
+
+window.togglePyqYear = function(el) {
+  const qEl = el.nextElementSibling;
+  qEl.classList.toggle('open');
+  el.querySelector('span:last-child').textContent = qEl.classList.contains('open') ? '▼' : '▶';
+};
+
+window.togglePyqAnswer = function(el) {
+  el.nextElementSibling.classList.toggle('open');
+};
+
+function renderTopics(branch, sem) {
+  const data = allData.topics[branch]?.[sem] || [];
+  const grid = document.getElementById('topicsGrid');
+  document.getElementById('topicsLabel').textContent = `${branch} — Sem ${sem}`;
+  if (!data.length) {
+    const semN3 = parseInt(sem), yrN3 = Math.ceil(semN3/2);
+    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">⭐</div><p>Year ' + yrN3 + ' Sem ' + semN3 + ' ke important topics abhi available nahi hain.</p><p style="margin-top:8px;font-size:0.8em;color:var(--text-muted)">Sem 3 & 4 ke topics ECE/ME/CSE ke liye available hain.</p></div>';
+    return;
+  }
+  grid.innerHTML = data.map((t,i) => `
+    <div class="topic-card">
+      <div class="topic-card-header" onclick="toggleTopic(this)">
+        <div>
+          <div style="font-size:0.72em;color:var(--accent-cyan);margin-bottom:4px;font-family:'Montserrat',sans-serif;font-weight:700">${t.code}</div>
+          <div class="topic-title">${t.title}</div>
+          <div class="freq-badge">${t.freq}</div>
+        </div>
+        <div class="topic-stars">${t.stars}</div>
+      </div>
+      <div class="topic-content">${t.content.replace(/\n/g,'<br>')}</div>
+    </div>
+  `).join('');
+}
+
+window.toggleTopic = function(el) {
+  el.nextElementSibling.classList.toggle('open');
+};
+
+function renderVideos(branch, sem) {
+  const data = allData.videos.filter(v => v.branch === branch || v.branch === 'All');
+  const grid = document.getElementById('videosGrid');
+  document.getElementById('videosLabel').textContent = branch;
+  if (!data.length) { grid.innerHTML = '<div class="empty-state"><div class="empty-icon">▶️</div><p>No playlists added yet. Admin will add video sessions soon.</p></div>'; return; }
+  const icons = ['🎬','📹','🎥','📺','🎞️'];
+  grid.innerHTML = data.map((v,i) => `
+    <div class="playlist-card">
+      <div class="playlist-thumb">${icons[i%5]}</div>
+      <div class="playlist-info">
+        <div class="playlist-title">${v.title}</div>
+        <div class="playlist-meta">📺 ${v.channel || 'Channel'} · ${v.count || '?'} videos</div>
+        <a href="${v.url}" target="_blank" class="btn-watch">▶ Watch Now</a>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderPlacement(branch) {
+  const data = allData.placement.filter(p => p.branch === branch || p.branch === 'All');
+  const grid = document.getElementById('placementGrid');
+  if (!data.length) {
+    grid.innerHTML = `
+      <div class="placement-card" style="grid-column:1/-1">
+        <div class="empty-state"><div class="empty-icon">💼</div><p>Placement roadmap coming soon! Admin will add branch-wise placement strategy.</p></div>
+      </div>
+    `;
+    return;
+  }
+  grid.innerHTML = data.map(card => `
+    <div class="placement-card">
+      <h3>${card.title}</h3>
+      ${card.steps.map((step,i) => `
+        <div class="roadmap-step">
+          <div class="step-num">${i+1}</div>
+          <div class="step-text"><div class="step-month">${step.split(':')[0] || ''}</div>${step.split(':').slice(1).join(':') || step}</div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+function renderNotes() {
+  const notes = JSON.parse(localStorage.getItem('notes_' + (currentUser?.uid||'guest')) || '[]');
+  const list = document.getElementById('notesList');
+  if (!notes.length) { list.innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><p>No notes yet. Write your first note below!</p></div>'; return; }
+  list.innerHTML = notes.map((n,i) => `
+    <div style="padding:12px;background:var(--bg-secondary);border:1px solid var(--border);border-radius:10px;margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <strong style="font-family:'Montserrat',sans-serif;font-size:0.9em">${n.title}</strong>
+        <button class="btn-danger" onclick="deleteNote(${i})" style="padding:3px 8px;font-size:0.75em">Delete</button>
+      </div>
+      <div style="font-family:'Caveat',cursive;font-size:1em;color:var(--text-secondary);line-height:1.6">${n.content}</div>
+      <div style="font-size:0.72em;color:var(--text-muted);margin-top:6px">${new Date(n.date).toLocaleDateString()}</div>
+    </div>
+  `).join('');
+}
+
+// ===== STATS UPDATE =====
+function updateStats() {
+  const branch = getCurrentBranch();
+  const subCount = (allData.syllabus[branch]?.[currentSem] || []).length;
+  const pyqSubs = Object.keys(allData.pyq[branch]?.[currentSem] || {});
+  let pyqCount = 0;
+  pyqSubs.forEach(code => pyqCount += Object.keys(allData.pyq[branch][currentSem][code].years || {}).length);
+  const topicCount = (allData.topics[branch]?.[currentSem] || []).length;
+  const vidCount = allData.videos.filter(v => v.branch === branch || v.branch === 'All').length;
+  document.getElementById('stat-subjects').textContent = subCount;
+  document.getElementById('stat-pyq').textContent = pyqCount;
+  document.getElementById('stat-topics').textContent = topicCount;
+  document.getElementById('stat-videos').textContent = vidCount;
+}
+
+// ===== ATTENDANCE =====
+window.updateAttendance = function() {
+  const total = parseInt(document.getElementById('attTotal').value) || 0;
+  const attended = parseInt(document.getElementById('attAttended').value) || 0;
+  updateAttendanceDisplay(total, attended);
+};
+
+function updateAttendanceDisplay(total, attended) {
+  const pct = total > 0 ? Math.round((attended/total)*100) : 0;
+  const circle = document.getElementById('attCircle');
+  const pctEl = document.getElementById('attPct');
+  circle.style.setProperty('--pct', pct + '%');
+  pctEl.textContent = pct + '%';
+  pctEl.style.color = pct >= 75 ? 'var(--accent-green)' : pct >= 60 ? 'var(--accent-orange)' : 'var(--accent-red)';
+}
+
+window.saveAttendance = async function() {
+  const total = parseInt(document.getElementById('attTotal').value) || 0;
+  const attended = parseInt(document.getElementById('attAttended').value) || 0;
+  if (currentUser && currentUser.uid !== 'admin') {
+    if (currentUser?.uid) await saveUserData(currentUser.uid, { attendance: { total, attended } });
+  }
+  showToast('Attendance saved!', 'success');
+};
+
+// ===== PROGRESS TASKS =====
+function renderProgressTasks(tasks) {
+  const list = document.getElementById('progressList');
+  if (!tasks.length) { list.innerHTML = '<div style="font-size:0.85em;color:var(--text-muted);padding:10px 0">No tasks yet. Add your study goals!</div>'; return; }
+  list.innerHTML = tasks.map((t,i) => `
+    <div class="task-item">
+      <div class="task-check ${t.done?'done':''}" onclick="toggleTask(${i})">${t.done?'✓':''}</div>
+      <span style="text-decoration:${t.done?'line-through':'none'};color:${t.done?'var(--text-muted)':'var(--text-primary)'}">${t.text}</span>
+      <button onclick="deleteTask(${i})" style="margin-left:auto;background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.9em">✕</button>
+    </div>
+  `).join('');
+}
+
+window.addProgressTask = function() {
+  const text = prompt('Enter task:');
+  if (!text) return;
+  const tasks = JSON.parse(localStorage.getItem('tasks_' + (currentUser?.uid||'guest')) || '[]');
+  tasks.push({ text, done: false });
+  localStorage.setItem('tasks_' + (currentUser?.uid||'guest'), JSON.stringify(tasks));
+  renderProgressTasks(tasks);
+};
+
+window.toggleTask = function(i) {
+  const tasks = JSON.parse(localStorage.getItem('tasks_' + (currentUser?.uid||'guest')) || '[]');
+  tasks[i].done = !tasks[i].done;
+  localStorage.setItem('tasks_' + (currentUser?.uid||'guest'), JSON.stringify(tasks));
+  renderProgressTasks(tasks);
+};
+
+window.deleteTask = function(i) {
+  const tasks = JSON.parse(localStorage.getItem('tasks_' + (currentUser?.uid||'guest')) || '[]');
+  tasks.splice(i, 1);
+  localStorage.setItem('tasks_' + (currentUser?.uid||'guest'), JSON.stringify(tasks));
+  renderProgressTasks(tasks);
+};
+
+// ===== NOTES =====
+window.saveNote = function() {
+  const title = document.getElementById('noteTitle').value.trim();
+  const content = document.getElementById('noteContent').value.trim();
+  if (!title || !content) { showToast('Enter title and content!', 'error'); return; }
+  const notes = JSON.parse(localStorage.getItem('notes_' + (currentUser?.uid||'guest')) || '[]');
+  notes.unshift({ title, content, date: new Date().toISOString() });
+  localStorage.setItem('notes_' + (currentUser?.uid||'guest'), JSON.stringify(notes));
+  document.getElementById('noteTitle').value = '';
+  document.getElementById('noteContent').value = '';
+  renderNotes();
+  showToast('Note saved!', 'success');
+};
+
+window.deleteNote = function(i) {
+  const notes = JSON.parse(localStorage.getItem('notes_' + (currentUser?.uid||'guest')) || '[]');
+  notes.splice(i, 1);
+  localStorage.setItem('notes_' + (currentUser?.uid||'guest'), JSON.stringify(notes));
+  renderNotes();
+};
+
+// ===== SEARCH =====
+window.globalSearchHandler = function(query) {
+  if (!query.trim()) return;
+  const branch = getCurrentBranch();
+  const sem = currentSem;
+  query = query.toLowerCase();
+  const results = [];
+
+  // Search syllabus
+  (allData.syllabus[branch]?.[sem] || []).forEach(sub => {
+    if (sub.name.toLowerCase().includes(query) || sub.code.toLowerCase().includes(query)) {
+      results.push({ type: 'Subject', text: `${sub.code} - ${sub.name}`, action: 'syllabus' });
+    }
+  });
+
+  // Search topics
+  (allData.topics[branch]?.[sem] || []).forEach(t => {
+    if (t.title.toLowerCase().includes(query) || t.code.toLowerCase().includes(query)) {
+      results.push({ type: 'Topic', text: t.title, action: 'topics' });
+    }
+  });
+
+  if (results.length > 0) {
+    showSection(results[0].action);
+    showToast(`Found ${results.length} result(s) for "${query}"`, 'success');
+  } else {
+    showToast('No results found', 'error');
+  }
+};
+
+// ===== ADMIN FUNCTIONS =====
+window.switchAdminTab = function(tab) {
+  document.querySelectorAll('.admin-tab').forEach(t => {
+    t.classList.toggle('active', t.textContent.trim().toLowerCase().includes(tab) || t.getAttribute('onclick')?.includes("'"+tab+"'"));
+  });
+  document.querySelectorAll('.admin-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('admin-' + tab).classList.add('active');
+  if (tab === 'users') loadUsers();
+  if (tab === 'syllabus') renderAdminSylList();
+  if (tab === 'pyq') renderAdminPyqStats();
+  if (tab === 'topics') renderAdminTopicList();
+  if (tab === 'videos') renderAdminVidList();
+  if (tab === 'placement') renderAdminPlaceList();
+};
+
+async function loadUsers() {
+  const users = await getAllUsers();
+  const tbody = document.getElementById('usersTableBody');
+  if (!users.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted)">No registered users yet</td></tr>'; return; }
+  tbody.innerHTML = users.map(u => `
+    <tr>
+      <td>${u.name||'-'}</td>
+      <td>${u.email||'-'}</td>
+      <td><span class="badge badge-blue">${u.branch||'-'}</span></td>
+      <td>${u.roll||'-'}</td>
+      <td>${u.college||'-'}</td>
+      <td><button class="btn-danger" onclick="deleteUser('${u.id}')">Remove</button></td>
+    </tr>
+  `).join('');
+}
+
+window.deleteUser = async function(uid) {
+  if (!confirm('Remove this user?')) return;
+  await deleteDoc(doc(db, 'users', uid));
+  loadUsers();
+  showToast('User removed', 'success');
+};
+
+window.adminAddSubject = async function() {
+  const branch = document.getElementById('admSylBranch').value;
+  const sem = document.getElementById('admSylSem').value;
+  const code = document.getElementById('admSylCode').value.trim();
+  const name = document.getElementById('admSylName').value.trim();
+  const unitsText = document.getElementById('admSylUnits').value.trim();
+  if (!branch || !code || !name) { showToast('Fill required fields!', 'error'); return; }
+  const units = unitsText.split('\n').filter(u => u.trim());
+  if (!allData.syllabus[branch]) allData.syllabus[branch] = {};
+  if (!allData.syllabus[branch][sem]) allData.syllabus[branch][sem] = [];
+  allData.syllabus[branch][sem].push({ code, name, units });
+  await savePortalDataSubset();
+  renderAdminSylList();
+  document.getElementById('admSylCode').value='';
+  document.getElementById('admSylName').value='';
+  document.getElementById('admSylUnits').value='';
+  showToast('Subject added! ✅', 'success');
+};
+
+window.adminAddPYQ = async function() {
+  const branch = document.getElementById('admPyqBranch').value;
+  const sem = document.getElementById('admPyqSem').value;
+  const code = document.getElementById('admPyqCode').value.trim();
+  const subject = document.getElementById('admPyqSubject').value.trim();
+  const year = document.getElementById('admPyqYear').value.trim();
+  const section = document.getElementById('admPyqSection').value;
+  const question = document.getElementById('admPyqQuestion').value.trim();
+  if (!branch || !code || !year || !question) { showToast('Fill required fields!', 'error'); return; }
+  if (!allData.pyq[branch]) allData.pyq[branch] = {};
+  if (!allData.pyq[branch][sem]) allData.pyq[branch][sem] = {};
+  if (!allData.pyq[branch][sem][code]) allData.pyq[branch][sem][code] = { name: subject, years: {} };
+  if (!allData.pyq[branch][sem][code].years[year]) allData.pyq[branch][sem][code].years[year] = { A:[], B:[], C:[] };
+  allData.pyq[branch][sem][code].years[year][section].push(question);
+  await savePortalDataSubset();
+  renderAdminPyqStats();
+  document.getElementById('admPyqCode').value='';
+  document.getElementById('admPyqSubject').value='';
+  document.getElementById('admPyqYear').value='';
+  document.getElementById('admPyqQuestion').value='';
+  document.getElementById('admPyqAnswer').value='';
+  showToast('PYQ added! ✅', 'success');
+};
+
+window.adminAddTopic = async function() {
+  const branch = document.getElementById('admTopicBranch').value;
+  const sem = document.getElementById('admTopicSem').value;
+  const code = document.getElementById('admTopicCode').value.trim();
+  const title = document.getElementById('admTopicTitle').value.trim();
+  const freq = document.getElementById('admTopicFreq').value.trim();
+  const stars = document.getElementById('admTopicStars').value;
+  const content = document.getElementById('admTopicContent').value.trim();
+  if (!branch || !code || !title) { showToast('Fill required fields!', 'error'); return; }
+  if (!allData.topics[branch]) allData.topics[branch] = {};
+  if (!allData.topics[branch][sem]) allData.topics[branch][sem] = [];
+  allData.topics[branch][sem].push({ code, title, freq, stars, content });
+  await savePortalDataSubset();
+  renderAdminTopicList();
+  document.getElementById('admTopicCode').value='';
+  document.getElementById('admTopicTitle').value='';
+  document.getElementById('admTopicFreq').value='';
+  document.getElementById('admTopicContent').value='';
+  showToast('Topic added! ✅', 'success');
+};
+
+window.adminAddVideo = async function() {
+  const branch = document.getElementById('admVidBranch').value;
+  const sem = document.getElementById('admVidSem').value;
+  const title = document.getElementById('admVidTitle').value.trim();
+  const url = document.getElementById('admVidUrl').value.trim();
+  const count = document.getElementById('admVidCount').value.trim();
+  const channel = document.getElementById('admVidChannel').value.trim();
+  if (!branch || !title || !url) { showToast('Fill required fields!', 'error'); return; }
+  allData.videos.push({ branch, sem, title, url, count, channel });
+  await savePortalDataSubset();
+  renderAdminVidList();
+  document.getElementById('admVidTitle').value='';
+  document.getElementById('admVidUrl').value='';
+  document.getElementById('admVidCount').value='';
+  document.getElementById('admVidChannel').value='';
+  showToast('Playlist added! ✅', 'success');
+};
+
+window.adminAddPlacement = async function() {
+  const branch = document.getElementById('admPlaceBranch').value;
+  const title = document.getElementById('admPlaceTitle').value.trim();
+  const stepsText = document.getElementById('admPlaceContent').value.trim();
+  if (!branch || !title) { showToast('Fill required fields!', 'error'); return; }
+  const steps = stepsText.split('\n').filter(s => s.trim());
+  allData.placement.push({ branch, title, steps });
+  await savePortalDataSubset();
+  renderAdminPlaceList();
+  document.getElementById('admPlaceTitle').value='';
+  document.getElementById('admPlaceContent').value='';
+  showToast('Placement card added! ✅', 'success');
+};
+
+async function savePortalDataSubset() {
+  // Save admin-added data to Firestore
+  // We extract only the data NOT in builtinData (admin additions)
+  const adminSyllabus = {};
+  for (const branch in allData.syllabus) {
+    for (const sem in allData.syllabus[branch]) {
+      const builtin = (builtinData.syllabus[branch]?.[sem] || []).map(s => s.code);
+      const adminAdded = allData.syllabus[branch][sem].filter(s => !builtin.includes(s.code));
+      if (adminAdded.length) {
+        if (!adminSyllabus[branch]) adminSyllabus[branch] = {};
+        adminSyllabus[branch][sem] = adminAdded;
+      }
+    }
+  }
+
+  const adminPyq = {};
+  for (const branch in allData.pyq) {
+    for (const sem in allData.pyq[branch]) {
+      const builtinCodes = Object.keys(builtinData.pyq[branch]?.[sem] || {});
+      for (const code in allData.pyq[branch][sem]) {
+        if (!builtinCodes.includes(code)) {
+          if (!adminPyq[branch]) adminPyq[branch] = {};
+          if (!adminPyq[branch][sem]) adminPyq[branch][sem] = {};
+          adminPyq[branch][sem][code] = allData.pyq[branch][sem][code];
+        }
+      }
+    }
+  }
+
+  const adminTopics = {};
+  for (const branch in allData.topics) {
+    for (const sem in allData.topics[branch]) {
+      const builtinTitles = (builtinData.topics[branch]?.[sem] || []).map(t => t.title);
+      const adminAdded = (allData.topics[branch][sem] || []).filter(t => !builtinTitles.includes(t.title));
+      if (adminAdded.length) {
+        if (!adminTopics[branch]) adminTopics[branch] = {};
+        adminTopics[branch][sem] = adminAdded;
+      }
+    }
+  }
+
+  const firestoreData = {
+    syllabus: adminSyllabus,
+    pyq: adminPyq,
+    topics: adminTopics,
+    videos: allData.videos,
+    placement: allData.placement
+  };
+  await savePortalData(firestoreData);
+}
+
+function renderAdminSylList() {
+  const list = document.getElementById('adminSylList');
+  let html = '';
+  for (const branch in allData.syllabus) {
+    for (const sem in allData.syllabus[branch]) {
+      allData.syllabus[branch][sem].forEach((s,i) => {
+        const isBuiltin = (builtinData.syllabus[branch]?.[sem] || []).some(b => b.code === s.code);
+        html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+          <span><strong>${s.code}</strong> — ${s.name} <span class="badge badge-blue">${branch} S${sem}</span>${isBuiltin ? ' <span class="badge badge-green">Built-in</span>' : ''}</span>
+          ${!isBuiltin ? `<button class="btn-danger" onclick="adminDeleteSubject('${branch}','${sem}',${i})">Delete</button>` : ''}
+        </div>`;
+      });
+    }
+  }
+  list.innerHTML = html || '<div class="empty-state"><p>No subjects added yet</p></div>';
+}
+
+function renderAdminPyqStats() {
+  const el = document.getElementById('adminPyqStats');
+  let html = '';
+  for (const branch in allData.pyq) {
+    for (const sem in allData.pyq[branch]) {
+      const codes = Object.keys(allData.pyq[branch][sem]);
+      html += `<div style="padding:6px 0;border-bottom:1px solid var(--border)"><strong>${branch} Sem${sem}:</strong> ${codes.join(', ')} (${codes.length} subjects)</div>`;
+    }
+  }
+  el.innerHTML = html;
+}
+
+function renderAdminTopicList() {
+  const el = document.getElementById('adminTopicList');
+  let html = '';
+  for (const branch in allData.topics) {
+    for (const sem in allData.topics[branch]) {
+      (allData.topics[branch][sem] || []).forEach((t,i) => {
+        const isBuiltin = (builtinData.topics[branch]?.[sem] || []).some(b => b.title === t.title);
+        html += `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+          <span>${t.stars} <strong>${t.title}</strong> <span class="badge badge-blue">${branch} S${sem} ${t.code}</span>${isBuiltin ? ' <span class="badge badge-green">Built-in</span>' : ''}</span>
+          ${!isBuiltin ? `<button class="btn-danger" onclick="adminDeleteTopic('${branch}','${sem}',${i})">Delete</button>` : ''}
+        </div>`;
+      });
+    }
+  }
+  el.innerHTML = html || '<div class="empty-state"><p>No topics added yet</p></div>';
+}
+
+function renderAdminVidList() {
+  const el = document.getElementById('adminVidList');
+  if (!allData.videos.length) { el.innerHTML = '<div class="empty-state"><p>No playlists added</p></div>'; return; }
+  el.innerHTML = allData.videos.map((v,i) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span><strong>${v.title}</strong> <span class="badge badge-blue">${v.branch}</span></span>
+      <button class="btn-danger" onclick="adminDeleteVideo(${i})">Delete</button>
+    </div>
+  `).join('');
+}
+
+window.adminDeleteSubject = async function(branch, sem, idx) {
+  if (!confirm('Delete this subject?')) return;
+  allData.syllabus[branch][sem].splice(idx, 1);
+  await savePortalDataSubset();
+  renderAdminSylList();
+  showToast('Subject deleted!', 'success');
+};
+
+window.adminDeleteTopic = async function(branch, sem, idx) {
+  if (!confirm('Delete this topic?')) return;
+  allData.topics[branch][sem].splice(idx, 1);
+  await savePortalDataSubset();
+  renderAdminTopicList();
+  showToast('Topic deleted!', 'success');
+};
+
+window.adminDeleteVideo = async function(i) {
+  allData.videos.splice(i, 1);
+  await savePortalDataSubset();
+  renderAdminVidList();
+  showToast('Deleted!', 'success');
+};
+
+function renderAdminPlaceList() {
+  const el = document.getElementById('adminPlaceList');
+  if (!allData.placement.length) { el.innerHTML = '<div class="empty-state"><p>No placement cards</p></div>'; return; }
+  el.innerHTML = allData.placement.map((p,i) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span><strong>${p.title}</strong> <span class="badge badge-blue">${p.branch}</span></span>
+      <button class="btn-danger" onclick="adminDeletePlacement(${i})">Delete</button>
+    </div>
+  `).join('');
+}
+
+window.adminDeletePlacement = async function(i) {
+  allData.placement.splice(i, 1);
+  await savePortalDataSubset();
+  renderAdminPlaceList();
+  showToast('Deleted!', 'success');
+};
+
+window.changeAdminPassword = function() {
+  const cur = document.getElementById('admCurPass').value;
+  const newP = document.getElementById('admNewPass').value;
+  const stored = JSON.parse(localStorage.getItem('adminCreds') || '{"u":"admin","p":"admin123"}');
+  if (cur !== stored.p) { showToast('Current password incorrect!', 'error'); return; }
+  stored.p = newP;
+  localStorage.setItem('adminCreds', JSON.stringify(stored));
+  showToast('Admin password updated!', 'success');
+};
+
+window.resetStudentPassword = async function() {
+  const email = document.getElementById('resetEmail').value.trim();
+  const newPass = document.getElementById('resetNewPass').value;
+  if (!email || !newPass) { showToast('Fill both fields!', 'error'); return; }
+  showToast('Password reset feature requires Firebase Admin SDK. Please use Firebase Console to reset passwords.', 'error');
+};
+
+function refreshAdminContent() {
+  const activeAdminTab = document.querySelector('.admin-content.active');
+  if (activeAdminTab?.id === 'admin-users') loadUsers();
+}
+
+// ===== SIDEBAR =====
+window.toggleSidebar = function() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebarOverlay').classList.toggle('open');
+};
+window.closeSidebar = function() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+};
+
+// ===== TOAST =====
+window.showToast = function(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type + ' show';
+  setTimeout(() => t.classList.remove('show'), 3000);
+};
+
+// ===== AUTH STATE LISTENER =====
+onAuthStateChanged(auth, async (user) => {
+  document.getElementById('loadingOverlay').style.display = 'none';
+  if (user && !isAdmin) {
+    currentUser = user;
+    const userData = await getUserData(user.uid);
+    if (userData) {
+      window._userBranch = userData.branch || 'ECE';
+      currentUser.displayName = userData.name || user.email;
+    }
+    initApp();
+  } else if (!isAdmin) {
+    showAuth();
+  }
+});
+
+</script>
+</body>
+</html>
